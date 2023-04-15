@@ -1,0 +1,92 @@
+[
+    {
+      "title": "Camiseta",
+      "description": "Una camiseta de algodón",
+      "price": 20.99,
+      "thumbnail": "https://example.com/camiseta.jpg",
+      "code": "CAM001",
+      "stock": 50,
+      "id": 1
+    },
+    {
+      "title": "Pantalones",
+      "description": "Unos pantalones de tela",
+      "price": 49.99,
+      "thumbnail": "https://example.com/pantalones.jpg",
+      "code": "PAN001",
+      "stock": 25,
+      "id": 2
+    },
+    {
+      "title": "Zapatos",
+      "description": "Unos zapatos de cuero",
+      "price": 99.99,
+      "thumbnail": "https://example.com/zapatos.jpg",
+      "code": "ZAP001",
+      "stock": 10,
+      "id": 3
+    },
+    {
+      "title": "Camisa",
+      "description": "Una camisa de seda",
+      "price": 39.99,
+      "thumbnail": "https://example.com/camisa.jpg",
+      "code": "CAS001",
+      "stock": 30,
+      "id": 4
+    },
+    {
+      "title": "Gorra",
+      "description": "Una gorra de béisbol",
+      "price": 14.99,
+      "thumbnail": "https://example.com/gorra.jpg",
+      "code": "GOR001",
+      "stock": 100,
+      "id": 5
+    },
+    {
+      "title": "Calcetines",
+      "description": "Unos calcetines de algodón",
+      "price": 9.99,
+      "thumbnail": "https://example.com/calcetines.jpg",
+      "code": "CAL001",
+      "stock": 75,
+      "id": 6
+    },
+    {
+      "title": "Chaqueta",
+      "description": "Una chaqueta de cuero",
+      "price": 199.99,
+      "thumbnail": "https://example.com/chaqueta.jpg",
+      "code": "CHA001",
+      "stock": 5,
+      "id": 7
+    },
+    {
+      "title": "Vestido",
+      "description": "Un vestido de fiesta",
+      "price": 149.99,
+      "thumbnail": "https://example.com/vestido.jpg",
+      "code": "VES001",
+      "stock": 15,
+      "id": 8
+    },
+    {
+      "title": "Sombrero",
+      "description": "Un sombrero de paja",
+      "price": 29.99,
+      "thumbnail": "https://example.com/sombrero.jpg",
+      "code": "SOM001",
+      "stock": 20,
+      "id": 9
+    },
+    {
+      "title": "Falda",
+      "description": "Una falda de algodón",
+      "price": 59.99,
+      "thumbnail": "https://example.com/falda.jpg",
+      "code": "FAL001",
+      "stock": 40,
+      "id": 10
+    }
+  ]
