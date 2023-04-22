@@ -1,0 +1,101 @@
+[
+    {
+        "id": 1,
+        "title": "Bicicleta de montaña",
+        "description": "Bicicleta de montaña con cuadro de aluminio, frenos de disco y 27 velocidades",
+        "price": 750,
+        "code": "BICMONT001",
+        "stock": 15,
+        "category": "Deportes",
+        "status": true,
+        "thumbnails": []
+    },
+    {
+        "id": 2,
+        "title": "Laptop HP",
+        "description": "Laptop HP de 14 pulgadas con procesador Intel Core i5, 8GB de RAM y 256GB de almacenamiento SSD",
+        "price": 1200,
+        "code": "LAPHP001",
+        "stock": 8,
+        "category": "Tecnología",
+        "status": true,
+        "thumbnails": []
+    },
+    {
+        "id": 3,
+        "title": "Silla de oficina",
+        "description": "Silla de oficina ergonómica con respaldo alto y ajuste de altura",
+        "price": 200,
+        "code": "SILLOFI001",
+        "stock": 20,
+        "category": "Hogar",
+        "status": true,
+        "thumbnails": []
+    },
+    {
+        "id": 4,
+        "title": "Smartphone Samsung",
+        "description": "Smartphone Samsung Galaxy S21 5G con pantalla de 6.2 pulgadas, 8GB de RAM y 128GB de almacenamiento interno",
+        "price": 900,
+        "code": "SMSUNG001",
+        "stock": 12,
+        "category": "Tecnología",
+        "status": true,
+        "thumbnails": []
+    },
+    {
+        "id": 5,
+        "title": "Cámara digital",
+        "description": "Cámara digital compacta con sensor de 20.1 megapíxeles y zoom óptico de 8x",
+        "price": 300,
+        "code": "CAMDIG001",
+        "stock": 5,
+        "category": "Electrónica",
+        "status": true,
+        "thumbnails": []
+    },
+    {
+        "id": 6,
+        "title": "Pantalones de mezclilla",
+        "description": "Pantalones de mezclilla para hombre, corte recto y tallas disponibles del 28 al 36",
+        "price": 50,
+        "code": "PANTMEZ001",
+        "stock": 30,
+        "category": "Ropa",
+        "status": true,
+        "thumbnails": []
+    },
+    {
+        "title": "Reloj inteligente",
+        "description": "Reloj inteligente con monitor de frecuencia cardíaca, GPS y resistencia al agua",
+        "price": 150,
+        "code": "RELI001",
+        "stock": 25,
+        "category": "Tecnología",
+        "status": true,
+        "thumdnails": [],
+        "id": 7
+    },
+    {
+        "title": "Reloj inteligente v2",
+        "description": "Reloj inteligente con monitor de frecuencia cardíaca, GPS y resistencia al agua",
+        "price": 160,
+        "code": "RELI002",
+        "stock": 25,
+        "category": "Tecnología",
+        "status": true,
+        "thumdnails": [],
+        "id": 8
+    },
+    {
+        "title": "Reloj inteligente v4",
+        "description": "Reloj inteligente con monitor de frecuencia cardíaca, GPS y resistencia al agua",
+        "price": 200,
+        "code": "RELI004",
+        "stock": 25,
+        "category": "Tecnología",
+        "status": true,
+        "thumdnails": [],
+        "id": 9
+    }
+]
