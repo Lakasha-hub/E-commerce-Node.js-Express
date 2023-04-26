@@ -33,6 +33,7 @@ cartsRouter.post("/", async (req, res) => {
 cartsRouter.post("/:cid/product/:pid", async (req, res) => {
   //Get cid and pid param
   const { cid, pid } = req.params;
+  const { quantity } = req.body;
 
   //Create instance of product manager to verify pid is valid
   const productManager = new ProductManager();
@@ -47,7 +48,7 @@ cartsRouter.post("/:cid/product/:pid", async (req, res) => {
   }
 
   //Call method addProductToCart
-  const cart = await cartsManager.addProductToCart(cid, pid);
+  const cart = await cartsManager.addProductToCart(cid, pid, quantity);
   //If there is an error
   if (typeof cart == "string") {
     return res.status(404).json({
@@ -55,6 +56,7 @@ cartsRouter.post("/:cid/product/:pid", async (req, res) => {
     });
   }
   return res.status(200).json({
+    msg: 'Product/s added correctly',
     cart, 
   });
 

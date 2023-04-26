@@ -21,7 +21,7 @@ class CartsManager {
     carts.push(newCart);
 
     //Re-Write file with Carts
-    fs.promises.writeFile(this.path, JSON.stringify(carts));
+    fs.promises.writeFile(this.path, JSON.stringify(carts, null, 2));
     return newCart;
   };
 
@@ -39,6 +39,11 @@ class CartsManager {
 
   getCartById = async (cid) => {
     try {
+      //Verify pid is type number
+      if (cid <= 0 || isNaN(cid)) {
+        throw new Error("cid is not a valid number");
+      }
+
       //Call file with Carts
       const carts = await this.getCarts();
 
@@ -54,7 +59,7 @@ class CartsManager {
     }
   };
 
-  addProductToCart = async (cid, pid) => {
+  addProductToCart = async (cid, pid, quantity = 1) => {
     try {
       //Call file with Carts
       const carts = await this.getCarts();
@@ -63,30 +68,46 @@ class CartsManager {
       cid = parseInt(cid);
       pid = parseInt(pid);
 
+      //Verify cid is type number
+      if (cid <= 0 || isNaN(cid)) {
+        throw new Error("cid is not a valid number");
+      }
+
+      //Verify pid is type number
+      if (pid <= 0 || isNaN(pid)) {
+        throw new Error("pid is not a valid number");
+      }
+
+      //Verify quantity is type number
+      if (quantity <= 0 || typeof quantity == 'string') {
+        throw new Error("quantity is not a valid number");
+      }
+
       //Verify Cart Exists
       const cart = carts.find((c) => cid === c.id);
       if (!cart) {
         throw new Error(`There is no cart registered with id: ${cid}`);
       }
 
-      //If the product exists in the cart
+      //Verify if product exists in cart
       const existProduct = cart.products.find((p) => p.id === pid);
+      //if product exists 
       if (existProduct) {
-        //Increment quantity of product
-        existProduct.quantity += 1;
+        //Increment quantity of product, default(1) or (quantity sent)
+        existProduct.quantity += quantity;
         //Re-Write file of Carts
-        fs.promises.writeFile(this.path, JSON.stringify(carts));
+        fs.promises.writeFile(this.path, JSON.stringify(carts, null, 2));
         return cart;
       }
 
-      //If product not exists in the cart add one
+      //If product not exists in the cart add one(default) or add(quantity sent)
       cart.products.push({
         id: pid,
-        quantity: 1,
+        quantity,
       });
 
       //Re-Write file of Carts
-      fs.promises.writeFile(this.path, JSON.stringify(carts));
+      fs.promises.writeFile(this.path, JSON.stringify(carts, null, 2));
       return cart;
     } catch (error) {
       console.log(error);

@@ -16,20 +16,25 @@ class ProductManager {
         throw new Error("The product is registered");
       }
       //Default values
-      newProduct.status = true;
-      newProduct.thumdnails = [];
+      if(!newProduct.status){
+        newProduct.status = true;
+      };
+
+      if (!newProduct.thumbnails) {
+        newProduct.thumbnails = [];
+      };
 
       //Adds id autoincrementable
       products.length == 0
         ? (newProduct.id = 1)
-        //Get last element id and increment by 1 for the newProduct
-        : (newProduct.id = products[products.length - 1].id + 1); 
+        : //Get last element id and increment by 1 for the newProduct
+          (newProduct.id = products[products.length - 1].id + 1);
 
       //Add newProduct to Products Array
       products.push(newProduct);
 
       //Re-Write file with Products
-      fs.promises.writeFile(this.path, JSON.stringify(products));
+      fs.promises.writeFile(this.path, JSON.stringify(products, null, 2));
 
       return newProduct;
     } catch (error) {
@@ -54,6 +59,11 @@ class ProductManager {
 
   getProductById = async (pid) => {
     try {
+      //Verify pid is type number
+      if (pid <= 0 || isNaN(pid)) {
+        throw new Error("pid is not a valid number");
+      }
+
       //Call file with Products
       const products = await this.getProducts();
 
@@ -72,6 +82,11 @@ class ProductManager {
 
   updateProduct = async (pid, properties = Object) => {
     try {
+      //Verify pid is type number
+      if (pid <= 0 || isNaN(pid)) {
+        throw new Error("pid is not a valid number");
+      };
+      
       //Verify product is an Object
       if (typeof properties !== "object") {
         throw new Error(
@@ -100,7 +115,7 @@ class ProductManager {
       products[oldProductIndex] = newProduct;
 
       //Re-Write file of products
-      fs.promises.writeFile(this.path, JSON.stringify(products));
+      fs.promises.writeFile(this.path, JSON.stringify(products, null, 2));
 
       return newProduct;
     } catch (error) {
@@ -125,7 +140,7 @@ class ProductManager {
       products.splice(existsProductIndex, 1);
 
       //Re-Write file with Products
-      fs.promises.writeFile(this.path, JSON.stringify(products));
+      fs.promises.writeFile(this.path, JSON.stringify(products, null, 2));
     } catch (error) {
       console.log(error);
       return error.message;

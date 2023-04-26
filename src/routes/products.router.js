@@ -13,9 +13,11 @@ productsRouter.get("/", async (req, res) => {
   //Get query param Limit
   const { limit } = req.query;
 
-  //Return all products if limit is not a number or is not sent
-  if (isNaN(Number(limit))) {
-    return res.status(200).json({ products });
+  //Verify limit is a number
+  if (limit <= 0 || isNaN(limit)) {
+    return res.status(400).json({
+      msg: "limit is not a valid number",
+    });
   }
 
   //Return filtered products
@@ -26,28 +28,47 @@ productsRouter.get("/", async (req, res) => {
 productsRouter.get("/:pid", async (req, res) => {
   //Get pid param
   const { pid } = req.params;
-
   //Find product
-  const result = await productManager.getProductById(pid);
-  //if not exists
-  if (typeof result == "string") {
-    return res.status(404).json({
-      msg: result,
+  const product = await productManager.getProductById(pid);
+  //if catch error respond 400
+  if (typeof product == "string") {
+    return res.status(400).json({
+      msg: product, //error.message
     });
   }
-  return res.status(200).json({ result });
+  return res.status(200).json({ product });
 });
 
 productsRouter.post("/", async (req, res) => {
   //Get product for body
-  const { title, description, price, code, stock, category } = req.body;
-  const newProduct = { title, description, price, code, stock, category };
+  const {
+    title,
+    description,
+    price,
+    code,
+    stock,
+    category,
+    thumbnails,
+    status,
+  } = req.body;
+  const newProduct = {
+    title,
+    description,
+    price,
+    code,
+    stock,
+    category,
+    thumbnails,
+    status,
+  };
 
   //Verify Required properties -- Middleware
   for (const propertie of Object.keys(newProduct)) {
+    //Except not required properties
+    if (propertie == "thumbnails" || propertie == "status") continue;
     if (!newProduct[propertie]) {
       return res.status(400).json({
-        msg: "Missing properties",
+        msg: `Missing propertie: ${propertie}`,
       });
     }
   }
