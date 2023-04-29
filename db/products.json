@@ -108,5 +108,16 @@
     "thumbnails": [],
     "status": true,
     "id": 10
+  },
+  {
+    "title": "TV Smart 50 pulgadas",
+    "description": "Tele para ver los partidos de argentina",
+    "price": 12130,
+    "code": "TVS50",
+    "stock": 99,
+    "category": "Tecnología",
+    "thumbnails": [],
+    "status": true,
+    "id": 11
   }
 ]

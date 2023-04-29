@@ -4,17 +4,23 @@ import ProductManager from "../models/products.model.js";
 //Create instance of ProductManager
 const productManager = new ProductManager();
 //Create instance of Router
-const productsRouter = Router();
+const router = Router();
 
-productsRouter.get("/", async (req, res) => {
+router.get("/", async (req, res) => {
   //Call file with Products
   let products = await productManager.getProducts();
 
   //Get query param Limit
   const { limit } = req.query;
 
-  //Verify limit is a number
-  if (limit <= 0 || isNaN(limit)) {
+  //If limit is not sent
+  if (!limit) {
+    //Return all products
+    return res.status(200).json({ products });
+  }
+
+  //Verify limit is a valid number
+  if (limit <= 0 || isNaN(limit) || limit > products.length) {
     return res.status(400).json({
       msg: "limit is not a valid number",
     });
@@ -25,7 +31,7 @@ productsRouter.get("/", async (req, res) => {
   return res.status(200).json({ products });
 });
 
-productsRouter.get("/:pid", async (req, res) => {
+router.get("/:pid", async (req, res) => {
   //Get pid param
   const { pid } = req.params;
   //Find product
@@ -39,7 +45,7 @@ productsRouter.get("/:pid", async (req, res) => {
   return res.status(200).json({ product });
 });
 
-productsRouter.post("/", async (req, res) => {
+router.post("/", async (req, res) => {
   //Get product for body
   const {
     title,
@@ -82,13 +88,17 @@ productsRouter.post("/", async (req, res) => {
     });
   }
 
+  //Send Products to realTimeProducts with socket in req.io
+  const productsToView = await productManager.getProducts();
+  req.io.emit("GetProductsUpdated", productsToView);
+
   return res.status(200).json({
     msg: "Product added correctly",
     product,
   });
 });
 
-productsRouter.put("/:pid", async (req, res) => {
+router.put("/:pid", async (req, res) => {
   //Get Product ID for params
   const { pid } = req.params;
   //Get properties from body
@@ -108,7 +118,7 @@ productsRouter.put("/:pid", async (req, res) => {
   });
 });
 
-productsRouter.delete("/:pid", async (req, res) => {
+router.delete("/:pid", async (req, res) => {
   //Get Product ID for params
   const { pid } = req.params;
 
@@ -121,10 +131,15 @@ productsRouter.delete("/:pid", async (req, res) => {
       msg: product, //error.message
     });
   }
+
+  //Send Products Updated to realTimeProducts with socket in req.io
+  const productsToView = await productManager.getProducts();
+  req.io.emit("GetProductsUpdated", productsToView);
+
   return res.status(200).json({
     msg: "The product has been removed",
     product, //Product Deleted
   });
 });
 
-export default productsRouter;
+export default router;

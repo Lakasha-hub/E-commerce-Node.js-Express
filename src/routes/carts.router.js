@@ -5,9 +5,9 @@ import ProductManager from "../models/products.model.js";
 //Create instance of CartsManager
 const cartsManager = new CartsManager();
 //Create instance of Router
-const cartsRouter = Router();
+const router = Router();
 
-cartsRouter.get("/:cid", async (req, res) => {
+router.get("/:cid", async (req, res) => {
   //Get cid param
   const { cid } = req.params;
 
@@ -22,7 +22,7 @@ cartsRouter.get("/:cid", async (req, res) => {
   return res.status(200).json({ cart });
 });
 
-cartsRouter.post("/", async (req, res) => {
+router.post("/", async (req, res) => {
   const cart = await cartsManager.createCart();
   return res.status(200).json({
     msg: "The Cart has been successfully created",
@@ -30,7 +30,7 @@ cartsRouter.post("/", async (req, res) => {
   });
 });
 
-cartsRouter.post("/:cid/product/:pid", async (req, res) => {
+router.post("/:cid/product/:pid", async (req, res) => {
   //Get cid and pid param
   const { cid, pid } = req.params;
   const { quantity } = req.body;
@@ -62,4 +62,4 @@ cartsRouter.post("/:cid/product/:pid", async (req, res) => {
 
 });
 
-export default cartsRouter;
+export default router;

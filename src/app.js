@@ -1,19 +1,48 @@
-import Express, { urlencoded } from "express";
+import Express from "express";
+import handlebars from "express-handlebars";
+import dotenv from "dotenv";
+import { Server } from "socket.io";
+
+import __dirname from "./utils.js";
 import productsRouter from "./routes/products.router.js";
 import cartsRouter from "./routes/carts.router.js";
+import viewsRouter from "./routes/views.router.js";
 
 //Create instance of express
 const app = Express();
+//Config dotenv to read enviroment variables(PORT)
+dotenv.config();
+const PORT = process.env.PORT;
+
+//Server Express
+const server = app.listen(PORT, () => {
+  console.log(`Server running on: http://localhost:${PORT}`);
+});
+
+//Connect Server to io (Server Socket)
+const io = new Server(server);
+
+//Handlebars config
+app.engine("handlebars", handlebars.engine());
+app.set("views", `${__dirname}/views`);
+app.set("view engine", "handlebars");
 
 //Middlewares Express
 app.use(Express.json());
 app.use(Express.urlencoded({ extended: true }));
+app.use(Express.static(`${__dirname}/public`));
+
+//Middleware to add socket.io
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
 
 //Routes
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
+app.use("/", viewsRouter);
 
-//Server Listen
-app.listen(8080, () => {
-  console.log("Server running on: http://localhost:8080");
+io.on("connection", (socket) => {
+  console.log("New Client Connected");
 });
