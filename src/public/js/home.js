@@ -4,7 +4,7 @@ let products;
 fetch("/api/products/")
   .then((res) => res.json())
   .then((data) => {
-    products = data.products;
+    products = data.payload;
     createRowOfProducts(products);
   })
   .catch((error) => console.log(error));

@@ -4,15 +4,20 @@ const router = Router();
 
 router.get("/home", (req, res) => {
   res.render("home", {
-    title: 'Home'
+    title: "Home",
   });
 });
 
-router.get('/realTimeProducts', (req, res) =>{
-  res.render("realTimeProducts",{
-    title: 'Real Time Products'
-  })
-})
+router.get("/realTimeProducts", async(req, res) => {
+  res.render("realTimeProducts", {
+    title: "Real Time Products",
+  });
+});
 
+router.get("/chat", async(req, res) => {
+  res.render("chat", {
+    title: "Chat",
+  });
+});
 
 export default router;
