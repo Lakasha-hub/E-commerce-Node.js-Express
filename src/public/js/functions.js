@@ -21,7 +21,7 @@ const createRowOfProducts = (products) => {
       <p class="card-text">Category:${element.category}</p>
       <p class="card-text">Status:${element.status}</p>
       <p class="card-text">Thumbnails:${element.thumbnails}</p>
-      <p class="card-text">Id:${element.id}</p>
+      <p class="card-text">Id:${element._id}</p>
       `;
 
     card.appendChild(cardBody);
@@ -33,4 +33,25 @@ const createRowOfProducts = (products) => {
   document.body.appendChild(rowBody);
 };
 
-export { createRowOfProducts };
+const createViewOfMessages = (messages) => {
+
+  const messagesBody = document.querySelector(".messages");
+
+  messages.forEach((element) => {
+    const card = document.createElement("div");
+    card.classList.add("card");
+    card.classList.add("w-50");
+    const cardBody = document.createElement("div");
+    cardBody.classList.add("card-body");
+
+    cardBody.innerHTML = `${element.user}:
+    ${element.messages}`;
+
+    card.appendChild(cardBody);
+    messagesBody.appendChild(card);
+  });
+
+  document.body.appendChild(messagesBody);
+};
+
+export { createRowOfProducts, createViewOfMessages};

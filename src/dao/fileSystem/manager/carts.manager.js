@@ -2,7 +2,7 @@ import fs from "fs";
 
 class CartsManager {
   constructor() {
-    this.path = "./db/carts.json";
+    this.path = `./db/carts.json`;
   }
 
   createCart = async () => {
@@ -79,7 +79,7 @@ class CartsManager {
       }
 
       //Verify quantity is type number
-      if (quantity <= 0 || typeof quantity == 'string') {
+      if (quantity <= 0 || typeof quantity == "string") {
         throw new Error("quantity is not a valid number");
       }
 
@@ -91,7 +91,7 @@ class CartsManager {
 
       //Verify if product exists in cart
       const existProduct = cart.products.find((p) => p.id === pid);
-      //if product exists 
+      //if product exists
       if (existProduct) {
         //Increment quantity of product, default(1) or (quantity sent)
         existProduct.quantity += quantity;

@@ -2,7 +2,7 @@ import fs from "fs";
 
 class ProductManager {
   constructor() {
-    this.path = "./db/products.json";
+    this.path = `./db/products.json`;
   }
 
   addProduct = async (newProduct = Object) => {
