@@ -34,7 +34,6 @@ const createRowOfProducts = (products) => {
 };
 
 const createViewOfMessages = (messages) => {
-
   const messagesBody = document.querySelector(".messages");
 
   messages.forEach((element) => {
@@ -45,7 +44,7 @@ const createViewOfMessages = (messages) => {
     cardBody.classList.add("card-body");
 
     cardBody.innerHTML = `${element.user}:
-    ${element.messages}`;
+    ${element.message}`;
 
     card.appendChild(cardBody);
     messagesBody.appendChild(card);
@@ -54,4 +53,4 @@ const createViewOfMessages = (messages) => {
   document.body.appendChild(messagesBody);
 };
 
-export { createRowOfProducts, createViewOfMessages};
+export { createRowOfProducts, createViewOfMessages };
