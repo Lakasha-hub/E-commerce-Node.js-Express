@@ -1,9 +1,20 @@
 .card {
   margin-top: 10px;
   margin-left: 10px;
+  position: relative;
+  z-index: 1;
 }
 
-.inputMessages {
+.messages{
+  margin-bottom: 60px;
+}
+
+.inputMessages{
+  position: absolute;
+  z-index: 2;
+}
+
+.input-group {
   position: fixed;
   bottom: 0;
   left: 0;

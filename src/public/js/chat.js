@@ -1,4 +1,3 @@
-import Swal from "sweetalert2";
 import { createViewOfMessages } from "./functions.js";
 
 const socket = io({
@@ -21,6 +20,7 @@ Swal.fire({
 }).then((result) => {
   newUser = result.value;
   socket.connect();
+  socket.emit("getMessages");
   socket.emit("newParticipant", newUser);
 });
 
@@ -30,10 +30,24 @@ socket.on("UpdateMessages", (messages) => {
   createViewOfMessages(messages);
 });
 
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    const newMessage = document.querySelector(".form-control");
+    if (newMessage.value.trim().length < 0) {
+      return Swal.fire({
+        position: "top-end",
+        title: "You need write something!!!",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+    socket.emit("createMessage", { message: newMessage.value, user: newUser });
+    newMessage.value = "";
+  }
+});
 document.querySelector(".btn").addEventListener("click", () => {
-  const newMessage = document.querySelector(".form-control").value;
-
-  if (newMessage.trim().length > 0) {
+  const newMessage = document.querySelector(".form-control");
+  if (newMessage.value.trim().length < 0) {
     return Swal.fire({
       position: "top-end",
       title: "You need write something!!!",
@@ -41,7 +55,8 @@ document.querySelector(".btn").addEventListener("click", () => {
       timer: 1500,
     });
   }
-  socket.emit("createMessage", { message: newMessage.trim(), user: newUser });
+  socket.emit("createMessage", { message: newMessage.value, user: newUser });
+  newMessage.value = "";
 });
 
 socket.on("newConnection", (user) => {
