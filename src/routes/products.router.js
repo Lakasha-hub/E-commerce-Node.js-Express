@@ -1,109 +1,52 @@
 import { Router } from "express";
-import ProductManager from "../models/products.model.js";
 
-//Create instance of ProductManager
-const productManager = new ProductManager();
+import { validateGetQueryParams } from "../middlewares/validateGetProductsParams.middleware.js";
+import { verifyCodeDuplicated } from "../middlewares/verifyCodeDuplicated.middleware.js";
+import { verifyMongoID } from "../middlewares/verifyMongoID.middleware.js";
+import { validateProductCamps } from "../middlewares/validateProductCamps.middleware.js";
+import {
+  productsPost,
+  productsGet,
+  productsGetById,
+  productsPut,
+  productsDelete,
+} from "../controllers/products.controller.js";
+
 //Create instance of Router
-const productsRouter = Router();
+const router = Router();
 
-productsRouter.get("/", async (req, res) => {
-  //Call file with Products
-  let products = await productManager.getProducts();
+router.get("/", [validateGetQueryParams], productsGet);
 
-  //Get query param Limit
-  const { limit } = req.query;
+router.post("/", [validateProductCamps, verifyCodeDuplicated], productsPost);
 
-  //Return all products if limit is not a number or is not sent
-  if (isNaN(Number(limit))) {
-    return res.status(200).json({ products });
-  }
+router.get("/:id", [verifyMongoID], productsGetById);
 
-  //Return filtered products
-  products = products.slice(0, Number(limit));
-  return res.status(200).json({ products });
-});
+router.put("/:id", [verifyMongoID], productsPut);
 
-productsRouter.get("/:pid", async (req, res) => {
-  //Get pid param
-  const { pid } = req.params;
+router.delete("/:id", [verifyMongoID], productsDelete)
 
-  //Find product
-  const result = await productManager.getProductById(pid);
-  //if not exists
-  if (typeof result == "string") {
-    return res.status(404).json({
-      msg: result,
-    });
-  }
-  return res.status(200).json({ result });
-});
+// router.delete("/:pid", async (req, res) => {
+//   //Get Product ID for params
+//   const { pid } = req.params;
 
-productsRouter.post("/", async (req, res) => {
-  //Get product for body
-  const { title, description, price, code, stock, category } = req.body;
-  const newProduct = { title, description, price, code, stock, category };
+//   //Call method deleteProduct
+//   const product = await productManager.deleteProduct(pid);
 
-  //Verify Required properties -- Middleware
-  for (const propertie of Object.keys(newProduct)) {
-    if (!newProduct[propertie]) {
-      return res.status(400).json({
-        msg: "Missing properties",
-      });
-    }
-  }
+//   //if catch error respond 400
+//   if (typeof product == "string") {
+//     return res.status(400).json({
+//       msg: product, //error.message
+//     });
+//   }
 
-  //Call method addProduct
-  const product = await productManager.addProduct(newProduct);
-  //if catch error respond 400
-  if (typeof product == "string") {
-    return res.status(400).json({
-      msg: product, //error.message
-    });
-  }
+//   //Send Products Updated to realTimeProducts with socket in req.io
+//   const productsToView = await productManager.getProducts();
+//   req.io.emit("GetProductsUpdated", productsToView);
 
-  return res.status(200).json({
-    msg: "Product added correctly",
-    product,
-  });
-});
+//   return res.status(200).json({
+//     msg: "The product has been removed",
+//     product, //Product Deleted
+//   });
+// });
 
-productsRouter.put("/:pid", async (req, res) => {
-  //Get Product ID for params
-  const { pid } = req.params;
-  //Get properties from body
-  const { ...properties } = req.body;
-
-  //Call method updateProduct
-  const product = await productManager.updateProduct(pid, properties);
-  //if catch error respond 400
-  if (typeof product == "string") {
-    return res.status(400).json({
-      msg: product, //error.message
-    });
-  }
-  return res.status(200).json({
-    msg: "The product has been successfully updated",
-    product,
-  });
-});
-
-productsRouter.delete("/:pid", async (req, res) => {
-  //Get Product ID for params
-  const { pid } = req.params;
-
-  //Call method deleteProduct
-  const product = await productManager.deleteProduct(pid);
-
-  //if catch error respond 400
-  if (typeof product == "string") {
-    return res.status(400).json({
-      msg: product, //error.message
-    });
-  }
-  return res.status(200).json({
-    msg: "The product has been removed",
-    product, //Product Deleted
-  });
-});
-
-export default productsRouter;
+export default router;

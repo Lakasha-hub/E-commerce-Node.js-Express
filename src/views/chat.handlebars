@@ -1,0 +1,36 @@
+<head>
+  <link rel="stylesheet" href="/css/chat.css" />
+</head>
+
+<div>
+  <nav class="navbar bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+        <img
+          src="/img/ninja-programming.png"
+          alt="Logo"
+          width="30"
+          height="24"
+          class="d-inline-block align-text-top"
+        />
+        Chat
+      </a>
+    </div>
+  </nav>
+
+  <div class="messages">
+  </div>
+
+  <div class="inputMessages">
+    <div class="input-group">
+      <input type="text" class="form-control" placeholder="Write Something" />
+      <div class="input-group-append">
+        <button class="btn btn-primary" type="button">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script type="module" src="/socket.io/socket.io.js"></script>
+<script type="module" src="/js/chat.js"></script>
