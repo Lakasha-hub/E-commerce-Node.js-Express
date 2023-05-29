@@ -5,12 +5,14 @@ import { Server } from "socket.io";
 import mongoose from "mongoose";
 
 import __dirname from "./utils.js";
+
 import productsRouter from "./routes/products.router.js";
 import cartsRouter from "./routes/carts.router.js";
 import viewsRouter from "./routes/views.router.js";
 
-import ProductsManager from "./dao/mongo/manager/products.manager.js";
+import productsHandler from "./listeners/products.handler.js";
 import registerChatHandler from "./listeners/messages.handler.js";
+
 //Create instance of express
 const app = Express();
 //Config dotenv to read enviroment variables(PORT)
@@ -51,10 +53,5 @@ app.use("/", viewsRouter);
 io.on("connection", async (socket) => {
   console.log("New Client Connected");
   registerChatHandler(io, socket);
-  //Create instance of Products Manager
-  const productManager = new ProductsManager();
-  //Call method getProducts() and send to view with socket
-  const productsToView = await productManager.getProducts();
-
-  io.emit("GetProductsUpdated", productsToView);
+  productsHandler(io, socket);
 });

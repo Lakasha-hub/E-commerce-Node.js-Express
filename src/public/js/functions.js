@@ -22,6 +22,7 @@ const createRowOfProducts = (products) => {
       <p class="card-text">Status:${element.status}</p>
       <p class="card-text">Thumbnails:${element.thumbnails}</p>
       <p class="card-text">Id:${element._id}</p>
+      <button type="button" class="btn btn-primary">Add To Cart</button>
       `;
 
     card.appendChild(cardBody);

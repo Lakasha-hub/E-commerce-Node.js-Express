@@ -3,18 +3,75 @@ import ProductsManager from "../dao/mongo/manager/products.manager.js";
 const productManager = new ProductsManager();
 
 const productsGet = async (req, res) => {
-  //Get query param Limit
-  const { limit } = req.query;
+  const {
+    limit = 10,
+    page = 1,
+    sort,
+    sortUpdated,
+    query,
+    queryUpdated,
+  } = req.query;
 
-  //If limit is not sent
-  if (!limit) {
-    //Return all products
-    const products = await productManager.getProducts();
-    return res.status(200).json({ payload: products });
+
+  const baseUrl = `http://localhost:${process.env.PORT}/api/products/`
+  let prevLink;
+  let nextLink;
+
+  if (!query) {
+    const result = await productManager.getProducts(
+      {},
+      { limit: limit, page: page, sort: sortUpdated, lean: true }
+    );
+
+    result.hasPrevPage
+      ? (prevLink = `${baseUrl}?limit=${limit}&page=${parseInt(page) - 1}&sort=${sort}`)
+      : (prevLink = null);
+
+    result.hasNextPage
+      ? (nextLink = `${baseUrl}?limit=${limit}&page=${parseInt(page) + 1}&sort=${sort}`)
+      : (nextLink = null);
+
+    return res.status(200).json({
+      status: "Success",
+      payload: result.docs,
+      totalDocs: result.totalDocs,
+      prevPage: result.prevPage,
+      nextPage: result.nextPage,
+      page: result.page,
+      hasPrevPage: result.hasPrevPage,
+      hasNextPage: result.hasNextPage,
+      prevLink,
+      nextLink,
+    });
   }
 
-  const products = await productManager.getProducts().limit(limit);
-  return res.status(200).json({ payload: products });
+  const result = await productManager.getProducts(queryUpdated, {
+    limit: limit,
+    page: page,
+    sort: sortUpdated,
+    lean: true,
+  });
+
+  result.hasPrevPage
+    ? (prevLink = `${baseUrl}?limit=${limit}&page=${parseInt(page) - 1}&sort=${sort}&query=${query}`)
+    : (prevLink = null);
+
+  result.hasNextPage
+    ? (nextLink = `${baseUrl}?limit=${limit}&page=${parseInt(page) + 1}&sort=${sort}&query=${query}`)
+    : (nextLink = null);
+
+  return res.status(200).json({
+    status: "Success",
+    payload: result.docs,
+    totalDocs: result.totalDocs,
+    prevPage: result.prevPage,
+    nextPage: result.nextPage,
+    page: result.page,
+    hasPrevPage: result.hasPrevPage,
+    hasNextPage: result.hasNextPage,
+    prevLink,
+    nextLink,
+  });
 };
 
 const productsPost = async (req, res) => {
@@ -34,7 +91,7 @@ const productsPost = async (req, res) => {
 
     const productsToView = await productManager.getProducts();
     req.io.emit("GetProductsUpdated", productsToView);
-    
+
     return res.status(201).json({
       msg: "New product created",
       payload: newProduct,
@@ -76,7 +133,7 @@ const productsPut = async (req, res) => {
 
     const productsToView = await productManager.getProducts();
     req.io.emit("GetProductsUpdated", productsToView);
-    
+
     res.status(200).json({
       msg: "The product has been successfully updated",
       payload: result,

@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { validateLimit } from "../middlewares/verifyLimit.middleware.js";
+import { validateGetQueryParams } from "../middlewares/validateGetProductsParams.middleware.js";
 import { verifyCodeDuplicated } from "../middlewares/verifyCodeDuplicated.middleware.js";
 import { verifyMongoID } from "../middlewares/verifyMongoID.middleware.js";
 import { validateProductCamps } from "../middlewares/validateProductCamps.middleware.js";
@@ -15,7 +15,7 @@ import {
 //Create instance of Router
 const router = Router();
 
-router.get("/", [validateLimit], productsGet);
+router.get("/", [validateGetQueryParams], productsGet);
 
 router.post("/", [validateProductCamps, verifyCodeDuplicated], productsPost);
 

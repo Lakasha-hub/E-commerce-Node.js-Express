@@ -1,8 +1,8 @@
 import productModel from "../models/product.model.js";
 
 export default class ProductsManager {
-  getProducts = (params) => {
-    return productModel.find(params).lean();
+  getProducts = (query, options) => {
+    return productModel.paginate(query, options)
   };
 
   getProductBy = (param) => {
