@@ -1,63 +1,34 @@
 import { Router } from "express";
-import CartsManager from "../models/carts.model.js";
-import ProductManager from "../models/products.model.js";
 
-//Create instance of CartsManager
-const cartsManager = new CartsManager();
+import { verifyMongoID } from "../middlewares/verifyMongoID.middleware.js";
+import {
+  cartsDeleteAllProducts,
+  cartsDeleteProduct,
+  cartsGet,
+  cartsGetById,
+  cartsPost,
+  cartsPostProduct,
+  cartsUpdateAllProducts,
+  cartsUpdateQuantity,
+} from "../controllers/carts.controller.js";
+
 //Create instance of Router
-const cartsRouter = Router();
+const router = Router();
 
-cartsRouter.get("/:cid", async (req, res) => {
-  //Get cid param
-  const { cid } = req.params;
+router.get("/", cartsGet);
 
-  //find Cart
-  const cart = await cartsManager.getCartById(cid);
-  //if not exist
-  if (typeof cart == "string") {
-    return res.status(404).json({
-      msg: cart, //error.message
-    });
-  }
-  return res.status(200).json({ cart });
-});
+router.post("/", cartsPost);
 
-cartsRouter.post("/", async (req, res) => {
-  const cart = await cartsManager.createCart();
-  return res.status(200).json({
-    msg: "The Cart has been successfully created",
-    cart,
-  });
-});
+router.get("/:id", [verifyMongoID], cartsGetById);
 
-cartsRouter.post("/:cid/product/:pid", async (req, res) => {
-  //Get cid and pid param
-  const { cid, pid } = req.params;
+router.put("/:id", [verifyMongoID], cartsUpdateAllProducts);
 
-  //Create instance of product manager to verify pid is valid
-  const productManager = new ProductManager();
+router.delete("/:id", [verifyMongoID], cartsDeleteAllProducts);
 
-  //Verify pid exists
-  const productValid = await productManager.getProductById(pid);
-  //if catch error respond 400
-  if (typeof productValid == "string") {
-    return res.status(400).json({
-      msg: productValid, // Error.message from getProductById
-    });
-  }
+router.post("/:id/products/:pid", [verifyMongoID], cartsPostProduct);
 
-  //Call method addProductToCart
-  const cart = await cartsManager.addProductToCart(cid, pid);
-  //If there is an error
-  if (typeof cart == "string") {
-    return res.status(404).json({
-      msg: cart, //error.message
-    });
-  }
-  return res.status(200).json({
-    cart, 
-  });
+router.put("/:id/products/:pid", [verifyMongoID], cartsUpdateQuantity);
 
-});
+router.delete("/:id/products/:pid", [verifyMongoID], cartsDeleteProduct);
 
-export default cartsRouter;
+export default router;
