@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import mongoosePaginate from "mongoose-paginate-v2";
 
 const collection = "Products";
 
@@ -9,12 +10,12 @@ const productSchema = new mongoose.Schema(
       required: "The title is required",
     },
     description: {
-      type:String,
-      required: "The description is required"
+      type: String,
+      required: "The description is required",
     },
     price: {
-      type:Number,
-      required: "The price is required"
+      type: Number,
+      required: "The price is required",
     },
     code: {
       type: String,
@@ -41,6 +42,8 @@ const productSchema = new mongoose.Schema(
   },
   { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } }
 );
+
+productSchema.plugin(mongoosePaginate);
 
 const productModel = mongoose.model(collection, productSchema);
 

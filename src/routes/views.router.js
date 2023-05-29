@@ -8,15 +8,27 @@ router.get("/home", (req, res) => {
   });
 });
 
-router.get("/realTimeProducts", async(req, res) => {
+router.get("/realTimeProducts", async (req, res) => {
   res.render("realTimeProducts", {
     title: "Real Time Products",
   });
 });
 
-router.get("/chat", async(req, res) => {
+router.get("/chat", async (req, res) => {
   res.render("chat", {
     title: "Chat",
+  });
+});
+
+router.get("/products", async (req, res) => {
+  res.render("products", {
+    title: "Products",
+  });
+});
+
+router.get("/carts/:id", async (req, res) => {
+  res.render("cart", {
+    title: "Cart",
   });
 });
 

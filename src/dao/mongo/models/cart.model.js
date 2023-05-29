@@ -10,8 +10,9 @@ const cartSchema = new mongoose.Schema(
           type: Number,
           default: 1,
         },
-        _id: {
-          type: String,
+        product: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Products",
           required: "The Product id is required",
         },
       },
@@ -19,6 +20,9 @@ const cartSchema = new mongoose.Schema(
   },
   { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } }
 );
+
+cartSchema.pre("find", function(){ this.populate("products.product")})
+cartSchema.pre("findOne", function(){ this.populate("products.product")})
 
 const cartModel = mongoose.model(collection, cartSchema);
 

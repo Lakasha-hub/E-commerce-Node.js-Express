@@ -19,7 +19,7 @@ export default class CartsManager {
 
   updateProductOfCart = (id, product) => {
     return cartModel.findOneAndUpdate(
-      { _id: id, "products._id": product._id },
+      { _id: id, "products.product": product.product },
       { $inc: { "products.$.quantity": product.quantity } }
     );
   };
@@ -29,5 +29,28 @@ export default class CartsManager {
       _id: id,
       products: { $elemMatch: { pid: pid } },
     });
+  };
+
+  deleteProductOfCart = (id, pid) => {
+    return cartModel.findByIdAndUpdate(id, {
+      $pull: { products: { product: pid } },
+    });
+  };
+
+  updateAllProducts = (id, productsUpdated) => {
+    return cartModel.findByIdAndUpdate(id, {
+      $set: { products: productsUpdated },
+    });
+  };
+
+  updateQuantityOfProduct = (id, pid, quantity) => {
+    return cartModel.findOneAndUpdate(
+      { _id: id, "products.product": pid },
+      { $set: { "products.$.quantity": quantity } }
+    );
+  };
+
+  deleteAllProducts = (id) => {
+    return cartModel.findByIdAndUpdate(id, { $set: { products: [] } });
   };
 }
