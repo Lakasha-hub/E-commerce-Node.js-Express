@@ -3,11 +3,14 @@ import handlebars from "express-handlebars";
 import dotenv from "dotenv";
 import { Server } from "socket.io";
 import mongoose from "mongoose";
+import session from "express-session";
+import MongoStore from "connect-mongo";
 
 import __dirname from "./utils.js";
 
 import productsRouter from "./routes/products.router.js";
 import cartsRouter from "./routes/carts.router.js";
+import usersRouter from "./routes/users.router.js";
 import viewsRouter from "./routes/views.router.js";
 
 import productsHandler from "./listeners/products.handler.js";
@@ -29,6 +32,19 @@ const connection = mongoose.connect(process.env.DB_CONNECTION);
 //Connect Server to io (Server Socket)
 const io = new Server(server);
 
+//Sessions config
+app.use(
+  session({
+    store: new MongoStore({
+      mongoUrl: process.env.DB_CONNECTION,
+      ttl: 120,
+    }),
+    secret: "SecretKey",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
 //Handlebars config
 app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);
@@ -48,6 +64,7 @@ app.use((req, res, next) => {
 //Routes
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
+app.use("/api/users", usersRouter);
 app.use("/", viewsRouter);
 
 io.on("connection", async (socket) => {
