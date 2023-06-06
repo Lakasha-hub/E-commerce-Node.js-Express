@@ -19,8 +19,8 @@ const validateGetQueryParams = async (req, res, next) => {
 
   if (query) {
     const filter = query.split(":");
-    const key = filter[0];
-    let value = filter[1];
+    const key = filter[0].trim();
+    let value = filter[1].trim();
     if (typeof parseInt(value) === "number" && !isNaN(parseInt(value)))
       value = parseInt(value);
     req.query.queryUpdated = { [key]: value };
