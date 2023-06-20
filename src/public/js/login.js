@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   const btn = document.querySelector(".btn-primary");
-  btn.addEventListener("click", () => {
+  btn.addEventListener("click", function btnListener() {
     const email = document.querySelector("#inputEmail4").value;
     const password = document.querySelector("#inputPassword4").value;
 
@@ -9,23 +9,27 @@ document.addEventListener("DOMContentLoaded", () => {
         position: "top-end",
         title: "Complete all camps",
         showConfirmButton: false,
-        timer: 1500,
+        timer: 2000,
       });
     }
 
-    fetch(`/api/users/?query=email=${email}/password=${password}`)
-      .then((response) => response.json())
+    fetch(`/api/sessions/login/?email=${email}&&password=${password}`)
+      .then(async (response) => {
+        const responseData = await response.json();
+        if (responseData.error) throw new Error(responseData.error);
+        return responseData;
+      })
       .then((data) => {
-        data = data.payload;
         window.location.replace("/products");
       })
       .catch((error) => {
-        console.log(error)
+        if (error == "Error: Attempts limit reached")
+          btn.removeEventListener("click", btnListener);
         return Swal.fire({
           position: "top-end",
-          title: "email or password is not correct",
+          title: `${error}`,
           showConfirmButton: false,
-          timer: 1500,
+          timer: 2000,
         });
       });
   });

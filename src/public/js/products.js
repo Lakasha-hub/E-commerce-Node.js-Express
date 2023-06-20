@@ -12,10 +12,9 @@ fetch("/api/products/")
 const btn = document.querySelector(".btn-danger");
 if (btn) {
   btn.addEventListener("click", () => {
-    fetch("/api/users/logout")
+    fetch("/api/sessions/logout")
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         window.location.replace("/login");
       })
       .catch((error) => console.log(error));

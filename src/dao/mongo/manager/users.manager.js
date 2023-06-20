@@ -8,4 +8,8 @@ export default class UsersManager {
   createUser = (user) => {
     return userModel.create(user);
   };
+
+  updateUserByID = (id, params) => {
+    return userModel.findByIdAndUpdate(id, params);
+  };
 }

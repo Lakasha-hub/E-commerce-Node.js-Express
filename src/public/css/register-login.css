@@ -36,3 +36,20 @@ h1 {
   align-items: center;
   margin-top: 20px;
 }
+
+p {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+a {
+  text-decoration: none;
+}
+
+.btn-light {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
