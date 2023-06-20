@@ -5,12 +5,14 @@ import { Server } from "socket.io";
 import mongoose from "mongoose";
 import session from "express-session";
 import MongoStore from "connect-mongo";
+import passport from "passport";
 
+import initializePassportStrategies from "./config/passport.config.js";
 import __dirname from "./utils.js";
 
 import productsRouter from "./routes/products.router.js";
 import cartsRouter from "./routes/carts.router.js";
-import usersRouter from "./routes/users.router.js";
+import sessionsRouter from "./routes/sessions.router.js";
 import viewsRouter from "./routes/views.router.js";
 
 import productsHandler from "./listeners/products.handler.js";
@@ -61,12 +63,17 @@ app.use((req, res, next) => {
   next();
 });
 
+//Initialize Passport Strategies
+app.use(passport.initialize());
+initializePassportStrategies();
+
 //Routes
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartsRouter);
-app.use("/api/users", usersRouter);
+app.use("/api/sessions", sessionsRouter);
 app.use("/", viewsRouter);
 
+//Socket config
 io.on("connection", async (socket) => {
   console.log("New Client Connected");
   registerChatHandler(io, socket);

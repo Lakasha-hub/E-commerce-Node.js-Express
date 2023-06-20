@@ -5,7 +5,11 @@ const id = url.pathname.split("/").pop();
 
 let cart;
 fetch(`/api/carts/${id}`)
-  .then((res) => res.json())
+  .then(async (response) => {
+    const responseData = await response.json();
+    if (responseData.error) throw new Error(responseData.error);
+    return responseData;
+  })
   .then((data) => {
     cart = data.payload;
     createRowOfProductsCarts(cart.products);
