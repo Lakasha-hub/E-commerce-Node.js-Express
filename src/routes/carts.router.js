@@ -1,6 +1,7 @@
-import { Router } from "express";
+import BaseRouter from "./router.js";
 
 import { verifyMongoID } from "../middlewares/verifyMongoID.middleware.js";
+
 import {
   cartsDeleteAllProducts,
   cartsDeleteProduct,
@@ -12,23 +13,22 @@ import {
   cartsUpdateQuantity,
 } from "../controllers/carts.controller.js";
 
-//Create instance of Router
-const router = Router();
+export default class CartsRouter extends BaseRouter {
+  init() {
+    this.get("/", cartsGet);
 
-router.get("/", cartsGet);
+    this.post("/", cartsPost);
 
-router.post("/", cartsPost);
+    this.get("/:id", [verifyMongoID], cartsGetById);
 
-router.get("/:id", [verifyMongoID], cartsGetById);
+    this.put("/:id", [verifyMongoID], cartsUpdateAllProducts);
 
-router.put("/:id", [verifyMongoID], cartsUpdateAllProducts);
+    this.delete("/:id", [verifyMongoID], cartsDeleteAllProducts);
 
-router.delete("/:id", [verifyMongoID], cartsDeleteAllProducts);
+    this.post("/:id/products/:pid", [verifyMongoID], cartsPostProduct);
 
-router.post("/:id/products/:pid", [verifyMongoID], cartsPostProduct);
+    this.put("/:id/products/:pid", [verifyMongoID], cartsUpdateQuantity);
 
-router.put("/:id/products/:pid", [verifyMongoID], cartsUpdateQuantity);
-
-router.delete("/:id/products/:pid", [verifyMongoID], cartsDeleteProduct);
-
-export default router;
+    this.delete("/:id/products/:pid", [verifyMongoID], cartsDeleteProduct);
+  }
+}

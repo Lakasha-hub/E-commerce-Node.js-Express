@@ -1,71 +1,82 @@
-import UsersManager from "../dao/mongo/manager/users.manager.js";
-import { createHash, validatePassword } from "../utils.js";
+import { usersService } from "../dao/mongo/manager/index.js";
+import {
+  createHash,
+  validatePassword,
+  generateToken,
+} from "../services/auth.service.js";
 
-const userManager = new UsersManager();
-
-const userGetBy = async (req, res) => {
-  if (req.session.messages) {
-    return res.redirect("/api/sessions/loginFail");
-  }
-  req.session.user = {
+const userLogin = async (req, res) => {
+  const user = {
     id: req.user.id,
     name: req.user.name,
     email: req.user.email,
+    age: req.user.age,
     role: req.user.role,
   };
-  return res.status(200).json({ payload: req.session.user });
+  const accessToken = generateToken(user);
+  res
+    .cookie("authToken", accessToken, {
+      maxAge: 1000 * 60 * 60 * 24,
+      httpOnly: true,
+      sameSite: "lax",
+    })
+    .sendSuccess("Login OK");
 };
 
-const userPost = async (req, res) => {
-  return res.status(201).json({ msg: "User successfully created" });
+const userRegister = async (req, res) => {
+  return res.sendCreated("User successfully created");
 };
 
 const userRestorePassword = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    let user = await userManager.getUserBy({ email: email });
+    let user = await usersService.getUserBy({ email: email });
     if (!user) throw new Error("There is no registered user with this email");
 
     const newHashedPassword = await createHash(password);
-    user = await userManager.updateUserByID(user._id, {
+    user = await usersService.updateUserByID(user._id, {
       password: newHashedPassword,
     });
 
-    return res.status(200).json({ payload: user });
+    return res.sendSuccessWithPayload(user);
   } catch (error) {
-    return res.status(400).json({ error: error.message });
+    return res.sendBadRequest(error);
   }
 };
 
 const userLogout = async (req, res) => {
-  try {
-    if (!req.session) {
-      throw new Error("There is no session active");
-    }
-    req.session.destroy();
-    return res.status(200).json({ msg: "Session Eliminated" });
-  } catch (error) {
-    return res.status(400).json({ error: error.message });
-  }
-};
-
-const userFormFail = async (req, res) => {
-  const error = req.session.messages[req.session.messages.length - 1];
-  return res.status(400).json({ error });
+  res.clearCookie("authToken").sendSuccess("Log Out OK");
 };
 
 const userLoginGithub = async (req, res) => {
-  // if (req.session.messages) {
-  //   return res.redirect("/api/sessions/loginFail");
-  // }
-  req.session.user = {
+  const user = {
     id: req.user.id,
     name: req.user.first_name,
     email: req.user.email,
+    age: req.user.age,
     role: req.user.role,
   };
-  return res.status(200).json({ payload: req.session.user });
+
+  const accessToken = generateToken(user);
+  res
+    .cookie("authToken", accessToken, {
+      maxAge: 1000 * 60 * 60 * 24,
+      httpOnly: true,
+      sameSite: "lax",
+    })
+    .sendSuccess("Login OK");
 };
 
-export { userGetBy, userPost, userLoginGithub, userRestorePassword, userLogout, userFormFail };
+const currentUser = async (req, res) => {
+  res.sendSuccessWithPayload(req.user);
+};
+
+export {
+  userLogin,
+  userRegister,
+  userLoginGithub,
+  userRestorePassword,
+  userLogout,
+  currentUser,
+};

@@ -1,47 +1,58 @@
-import { Router } from "express";
-import passport from "passport";
+import BaseRouter from "./router.js";
 
+import { passportCall } from "../services/auth.service.js";
 import {
-  userFormFail,
-  userGetBy,
+  currentUser,
+  userLogin,
   userLoginGithub,
   userLogout,
-  userPost,
+  userRegister,
   userRestorePassword,
 } from "../controllers/sessions.controller.js";
 
-import { attempsLimitReached } from "../middlewares/attempsLimit.middleware.js";
+// import { attempsLimitReached } from "../middlewares/attempsLimit.middleware.js";
 
-const router = Router();
+export default class SessionsRouter extends BaseRouter {
+  init() {
+    this.post(
+      "/register",
+      ["NO_AUTH"],
+      passportCall("register", { strategyType: "locals" }),
+      userRegister
+    );
 
-router.get(
-  "/login",
-  passport.authenticate("login", {
-    failureRedirect: "/api/sessions/loginFail",
-    failureMessage: true,
-  }),
-  userGetBy
-);
+    this.post(
+      "/login",
+      ["NO_AUTH"],
+      passportCall("login", { strategyType: "locals" }),
+      userLogin
+    );
 
-router.get("/loginFail", [attempsLimitReached], userFormFail);
+    this.post("/restorePassword", ["NO_AUTH"], userRestorePassword);
 
-router.post(
-  "/register",
-  passport.authenticate("register", {
-    failureRedirect: "/api/sessions/registerFail",
-    failureMessage: true,
-  }),
-  userPost
-);
+    this.get(
+      "/logout",
+      passportCall("jwt", { strategyType: "jwt" }),
+      userLogout
+    );
 
-router.get("/registerFail", userFormFail);
+    this.get(
+      "/github",
+      ["NO_AUTH"],
+      passportCall("github", { strategyType: "github" })
+    );
 
-router.post("/restorePassword", userRestorePassword);
+    this.get(
+      "/githubcallback",
+      ["NO_AUTH"],
+      passportCall("github", { strategyType: "github" }),
+      userLoginGithub
+    );
 
-router.get("/logout", userLogout);
-
-router.get("/github", passport.authenticate("github"));
-
-router.get("/githubcallback", passport.authenticate("github"), userLoginGithub);
-
-export default router;
+    this.get(
+      "/current",
+      passportCall("jwt", { strategyType: "jwt" }),
+      currentUser
+    );
+  }
+}

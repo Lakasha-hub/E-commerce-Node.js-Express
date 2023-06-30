@@ -1,6 +1,4 @@
-import ProductsManager from "../dao/mongo/manager/products.manager.js";
-
-const productManager = new ProductsManager();
+import { productsService } from "../dao/mongo/manager/index.js";
 
 const productsGet = async (req, res) => {
   const {
@@ -12,27 +10,29 @@ const productsGet = async (req, res) => {
     queryUpdated,
   } = req.query;
 
-
-  const baseUrl = `http://localhost:${process.env.PORT}/api/products/`
+  const baseUrl = `http://localhost:${process.env.PORT}/api/products/`;
   let prevLink;
   let nextLink;
 
   if (!query) {
-    const result = await productManager.getProducts(
+    const result = await productsService.getProducts(
       {},
       { limit: limit, page: page, sort: sortUpdated, lean: true }
     );
 
     result.hasPrevPage
-      ? (prevLink = `${baseUrl}?limit=${limit}&page=${parseInt(page) - 1}&sort=${sort}`)
+      ? (prevLink = `${baseUrl}?limit=${limit}&page=${
+          parseInt(page) - 1
+        }&sort=${sort}`)
       : (prevLink = null);
 
     result.hasNextPage
-      ? (nextLink = `${baseUrl}?limit=${limit}&page=${parseInt(page) + 1}&sort=${sort}`)
+      ? (nextLink = `${baseUrl}?limit=${limit}&page=${
+          parseInt(page) + 1
+        }&sort=${sort}`)
       : (nextLink = null);
 
-    return res.status(200).json({
-      status: "Success",
+    return res.sendSuccessWithPayload({
       payload: result.docs,
       totalDocs: result.totalDocs,
       prevPage: result.prevPage,
@@ -45,7 +45,7 @@ const productsGet = async (req, res) => {
     });
   }
 
-  const result = await productManager.getProducts(queryUpdated, {
+  const result = await productsService.getProducts(queryUpdated, {
     limit: limit,
     page: page,
     sort: sortUpdated,
@@ -53,15 +53,18 @@ const productsGet = async (req, res) => {
   });
 
   result.hasPrevPage
-    ? (prevLink = `${baseUrl}?limit=${limit}&page=${parseInt(page) - 1}&sort=${sort}&query=${query}`)
+    ? (prevLink = `${baseUrl}?limit=${limit}&page=${
+        parseInt(page) - 1
+      }&sort=${sort}&query=${query}`)
     : (prevLink = null);
 
   result.hasNextPage
-    ? (nextLink = `${baseUrl}?limit=${limit}&page=${parseInt(page) + 1}&sort=${sort}&query=${query}`)
+    ? (nextLink = `${baseUrl}?limit=${limit}&page=${
+        parseInt(page) + 1
+      }&sort=${sort}&query=${query}`)
     : (nextLink = null);
 
-  return res.status(200).json({
-    status: "Success",
+  return res.sendSuccessWithPayload({
     payload: result.docs,
     totalDocs: result.totalDocs,
     prevPage: result.prevPage,
@@ -87,30 +90,27 @@ const productsPost = async (req, res) => {
       category,
       thumbnails,
     };
-    newProduct = await productManager.createProduct(newProduct);
+    newProduct = await productsService.createProduct(newProduct);
 
-    const productsToView = await productManager.getProducts();
+    const productsToView = await productsService.getProducts();
     req.io.emit("GetProductsUpdated", productsToView);
 
-    return res.status(201).json({
-      msg: "New product created",
-      payload: newProduct,
-    });
+    return res.sendCreated("New product created");
   } catch (error) {
-    return res.status(400).json({ error: error.message });
+    return res.sendBadRequest(error.message);
   }
 };
 
 const productsGetById = async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await productManager.getProductById(id);
+    const result = await productsService.getProductById(id);
     if (!result) {
       throw new Error(`There is not registered product with id: ${id}`);
     }
-    return res.status(200).json({ payload: result });
+    return res.sendSuccessWithPayload(result);
   } catch (error) {
-    return res.status(400).json({ error: error.message });
+    return res.sendBadRequest(error.message);
   }
 };
 
@@ -119,7 +119,7 @@ const productsPut = async (req, res) => {
     const { id } = req.params;
     const { code, ...properties } = req.body;
 
-    const product_exists = await productManager.getProducts({ code: code });
+    const product_exists = await productsService.getProducts({ code: code });
     product_exists.forEach((p) => {
       if (p._id != id) {
         throw new Error(
@@ -128,38 +128,33 @@ const productsPut = async (req, res) => {
       }
     });
 
-    await productManager.updateProduct(id, properties);
-    const result = await productManager.getProductById(id);
+    await productsService.updateProduct(id, properties);
+    const result = await productsService.getProductById(id);
 
-    const productsToView = await productManager.getProducts();
+    const productsToView = await productsService.getProducts();
     req.io.emit("GetProductsUpdated", productsToView);
 
-    res.status(200).json({
-      msg: "The product has been successfully updated",
-      payload: result,
-    });
+    res.sendSuccessWithPayload(result);
   } catch (error) {
-    return res.status(400).json({ error: error.message });
+    return res.sendBadRequest(error.message);
   }
 };
 
 const productsDelete = async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await productManager.getProductById(id);
+    const result = await productsService.getProductById(id);
     if (!result) {
       throw new Error(`There is no registered product with id: ${id}`);
     }
 
-    await productManager.deleteProduct(id);
-    const productsToView = await productManager.getProducts();
+    await productsService.deleteProduct(id);
+    const productsToView = await productsService.getProducts();
     req.io.emit("GetProductsUpdated", productsToView);
 
-    return res.status(200).json({
-      msg: "The product has been removed",
-    });
+    return res.sendSuccess("The product has been removed")
   } catch (error) {
-    return res.status(400).json({ error: error.message });
+    return res.sendBadRequest(error.message)
   }
 };
 

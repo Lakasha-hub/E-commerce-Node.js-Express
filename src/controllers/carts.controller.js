@@ -1,35 +1,29 @@
+import { cartsService, productsService } from "../dao/mongo/manager/index.js";
 import { isValidObjectId } from "mongoose";
-import CartsManager from "../dao/mongo/manager/carts.manager.js";
-import ProductsManager from "../dao/mongo/manager/products.manager.js";
-
-const cartManager = new CartsManager();
 
 const cartsGet = async (req, res) => {
-  const result = await cartManager.getCarts();
-  return res.status(200).json({ payload: result });
+  const result = await cartsService.getCarts();
+  return res.sendSuccessWithPayload(result);
 };
 
 const cartsPost = async (req, res) => {
   const defaultCart = {
     products: [],
   };
-  const result = await cartManager.createCart(defaultCart);
-  return res.status(201).json({
-    msg: "The Cart has been successfully created",
-    payload: result,
-  });
+  const result = await cartsService.createCart(defaultCart);
+  return res.sendCreatedWithPayload(result);
 };
 
 const cartsGetById = async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await cartManager.getCartById(id);
+    const result = await cartsService.getCartById(id);
     if (!result) {
       throw new Error(`There is no registered cart with id: ${id}`);
     }
-    return res.status(200).json({ payload: result });
+    return res.sendSuccessWithPayload(result);
   } catch (error) {
-    return res.status(404).json({ error: error.message });
+    return res.sendNotFound(error.message);
   }
 };
 
@@ -51,13 +45,12 @@ const cartsPostProduct = async (req, res) => {
       throw new Error(`The product id: ${pid} is not valid`);
     }
 
-    const productManager = new ProductsManager();
-    const product_exists = await productManager.getProductById(pid);
+    const product_exists = await productsService.getProductById(pid);
     if (!product_exists) {
       throw new Error(`There is not registered product with id: ${pid}`);
     }
 
-    const cart = await cartManager.getCartById(id);
+    const cart = await cartsService.getCartById(id);
     if (!cart) {
       throw new Error(`There is not registered cart with id: ${id}`);
     }
@@ -65,22 +58,20 @@ const cartsPostProduct = async (req, res) => {
     const productExistsInCart = cart.products.find((p) => p.product == pid);
 
     if (!productExistsInCart) {
-      await cartManager.addProductToCart(id, {
+      await cartsService.addProductToCart(id, {
         product: pid,
         quantity,
       });
-      const result = await cartManager.getCartById(id);
-      return res
-        .status(200)
-        .json({ payload: result, msg: "product not exists" });
+      const result = await cartsService.getCartById(id);
+      return res.sendSuccessWithPayload(result);
     }
 
-    await cartManager.updateProductOfCart(id, { product: pid, quantity });
-    const result = await cartManager.getCartById(id);
+    await cartsService.updateProductOfCart(id, { product: pid, quantity });
+    const result = await cartsService.getCartById(id);
 
-    return res.status(200).json({ payload: result, msg: "product exist" });
+    return res.sendSuccessWithPayload(result);
   } catch (error) {
-    return res.status(400).json({ error: error.message });
+    return res.sendBadRequest(error.message);
   }
 };
 
@@ -93,7 +84,7 @@ const cartsDeleteProduct = async (req, res) => {
       throw new Error(`The product id: ${pid} is not valid`);
     }
 
-    const cart = await cartManager.getCartById(id);
+    const cart = await cartsService.getCartById(id);
     if (!cart) {
       throw new Error(`There is not registered cart with id: ${id}`);
     }
@@ -106,10 +97,10 @@ const cartsDeleteProduct = async (req, res) => {
       );
     }
 
-    await cartManager.deleteProductOfCart(id, pid);
-    return res.status(200).json({ msg: "Product has been Deleted" });
+    await cartsService.deleteProductOfCart(id, pid);
+    return res.sendSuccess("Product has been Deleted");
   } catch (error) {
-    return res.status(400).json({ error: error.message });
+    return res.sendBadRequest(error.message);
   }
 };
 
@@ -130,13 +121,11 @@ const cartsUpdateAllProducts = async (req, res) => {
       }
     });
 
-    await cartManager.updateAllProducts(id, products);
-    const result = await cartManager.getCartById(id);
-    return res
-      .status(200)
-      .json({ msg: "Products Updated Succesfully", payload: result });
+    await cartsService.updateAllProducts(id, products);
+    const result = await cartsService.getCartById(id);
+    return res.sendSuccessWithPayload(result);
   } catch (error) {
-    return res.status(400).json({ error: error.message });
+    return res.sendBadRequest(error.message);
   }
 };
 
@@ -157,13 +146,11 @@ const cartsUpdateQuantity = async (req, res) => {
       throw new Error("quantity must be type Number");
     }
 
-    await cartManager.updateQuantityOfProduct(id, pid, quantity);
-    const result = await cartManager.getCartById(id);
-    return res
-      .status(200)
-      .json({ msg: "Product Updated Successfully", payload: result });
+    await cartsService.updateQuantityOfProduct(id, pid, quantity);
+    const result = await cartsService.getCartById(id);
+    return res.sendSuccessWithPayload(result);
   } catch (error) {
-    return res.status(400).json({ error: error.message });
+    return res.sendBadRequest(error.message);
   }
 };
 
@@ -171,22 +158,20 @@ const cartsDeleteAllProducts = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const cart = await cartManager.getCartById(id);
+    const cart = await cartsService.getCartById(id);
     if (!cart) {
       throw new Error(`There is not registered cart with id: ${id}`);
     }
 
-    if(cart.products.length == 0){
-      throw new Error(`the cart with id: ${id} has no products`)
+    if (cart.products.length == 0) {
+      throw new Error(`the cart with id: ${id} has no products`);
     }
-    await cartManager.deleteAllProducts(id);
-    return res.status(200).json({
-      msg: `All products in the cart with the id: ${id} have been removed`,
-    });
+    await cartsService.deleteAllProducts(id);
+    return res.sendSuccess(
+      `All products in the cart with the id: ${id} have been removed`
+    );
   } catch (error) {
-    return res.status(400).json({
-      error: error.message,
-    });
+    return res.sendBadRequest(error.message);
   }
 };
 export {
