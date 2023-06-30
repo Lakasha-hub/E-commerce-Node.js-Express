@@ -16,6 +16,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: "The email is required",
     },
+    age: {
+      type: Number,
+      required: "age is required",
+    },
+    cart: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Carts",
+    },
     password: {
       type: String,
       required: "The password is required",

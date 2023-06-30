@@ -3,17 +3,15 @@ import handlebars from "express-handlebars";
 import dotenv from "dotenv";
 import { Server } from "socket.io";
 import mongoose from "mongoose";
-import session from "express-session";
-import MongoStore from "connect-mongo";
-import passport from "passport";
+import cookieParser from "cookie-parser";
 
 import initializePassportStrategies from "./config/passport.config.js";
 import __dirname from "./utils.js";
 
-import productsRouter from "./routes/products.router.js";
-import cartsRouter from "./routes/carts.router.js";
-import sessionsRouter from "./routes/sessions.router.js";
-import viewsRouter from "./routes/views.router.js";
+import ProductsRouter from "./routes/products.router.js"
+import CartsRouter from "./routes/carts.router.js";
+import SessionsRouter from "./routes/sessions.router.js";
+import ViewsRouter from "./routes/views.router.js";
 
 import productsHandler from "./listeners/products.handler.js";
 import registerChatHandler from "./listeners/messages.handler.js";
@@ -34,19 +32,6 @@ const connection = mongoose.connect(process.env.DB_CONNECTION);
 //Connect Server to io (Server Socket)
 const io = new Server(server);
 
-//Sessions config
-app.use(
-  session({
-    store: new MongoStore({
-      mongoUrl: process.env.DB_CONNECTION,
-      ttl: 120,
-    }),
-    secret: "SecretKey",
-    resave: false,
-    saveUninitialized: false,
-  })
-);
-
 //Handlebars config
 app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);
@@ -57,6 +42,9 @@ app.use(Express.json());
 app.use(Express.urlencoded({ extended: true }));
 app.use(Express.static(`${__dirname}/public`));
 
+//Set cookie parser
+app.use(cookieParser());
+
 //Middleware to add socket.io
 app.use((req, res, next) => {
   req.io = io;
@@ -64,14 +52,21 @@ app.use((req, res, next) => {
 });
 
 //Initialize Passport Strategies
-app.use(passport.initialize());
 initializePassportStrategies();
 
+//Initialize Instances of Router
+const sessionsRouter = new SessionsRouter();
+const productsRouter = new ProductsRouter();
+const cartsRouter = new CartsRouter();
+const viewsRouter = new ViewsRouter();
+
+console.log()
+
 //Routes
-app.use("/api/products", productsRouter);
-app.use("/api/carts", cartsRouter);
-app.use("/api/sessions", sessionsRouter);
-app.use("/", viewsRouter);
+app.use("/api/sessions", sessionsRouter.getRouter());
+app.use("/api/products", productsRouter.getRouter());
+app.use("/api/carts", cartsRouter.getRouter());
+app.use("/", viewsRouter.getRouter());
 
 //Socket config
 io.on("connection", async (socket) => {

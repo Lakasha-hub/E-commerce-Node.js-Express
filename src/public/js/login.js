@@ -13,10 +13,16 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    fetch(`/api/sessions/login/?email=${email}&&password=${password}`)
+    fetch(`/api/sessions/login`, {
+      method: "POST",
+      body: JSON.stringify({ email: email, password: password }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
       .then(async (response) => {
         const responseData = await response.json();
-        if (responseData.error) throw new Error(responseData.error);
+        if (response.status !== 200) throw new Error(responseData.error);
         return responseData;
       })
       .then((data) => {

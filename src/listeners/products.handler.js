@@ -1,10 +1,8 @@
-import ProductsManager from "../dao/mongo/manager/products.manager.js";
-
-const productManager = new ProductsManager();
+import { productsService } from "../dao/mongo/manager/index.js"
 
 const productsHandler = (io, socket) => {
   const getProductsUpdated = async () => {
-    const result = await productManager.getProducts();
+    const result = await productsService.getProducts();
     io.emit("GetProductsUpdated", result);
   };
 

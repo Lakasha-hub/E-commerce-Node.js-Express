@@ -12,11 +12,22 @@ fetch("/api/products/")
 const btn = document.querySelector(".btn-danger");
 if (btn) {
   btn.addEventListener("click", () => {
-    fetch("/api/sessions/logout")
-      .then((response) => response.json())
-      .then((data) => {
-        window.location.replace("/login");
-      })
-      .catch((error) => console.log(error));
+    return Swal.fire({
+      title: "Want to log out?",
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch("/api/sessions/logout")
+          .then((response) => {
+            if (response.error) throw new Error(response.error);
+            return response;
+          })
+          .then((data) => {
+            window.location.replace("/login");
+          })
+          .catch((error) => console.log(error));
+      }
+    });
   });
 }

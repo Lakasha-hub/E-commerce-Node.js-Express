@@ -1,14 +1,12 @@
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-import bcrypt from "bcrypt";
 
-export const createHash = async (password) => {
-  const salts = await bcrypt.genSalt(10);
-  return bcrypt.hash(password, salts);
-};
-
-export const validatePassword = (password, hashedPassword) => {
-  return bcrypt.compare(password, hashedPassword);
+export const cookieExtractor = (req) => {
+  let token = null;
+  if (req && req.cookies) {
+    token = req.cookies["authToken"];
+  }
+  return token;
 };
 
 const __filename = fileURLToPath(import.meta.url);

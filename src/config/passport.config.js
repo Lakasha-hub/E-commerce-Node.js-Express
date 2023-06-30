@@ -1,12 +1,13 @@
 import passport from "passport";
 import local from "passport-local";
 import GithubStrategy from "passport-github2";
+import { Strategy, ExtractJwt } from "passport-jwt";
 
-import UsersManager from "../dao/mongo/manager/users.manager.js";
-import { createHash, validatePassword } from "../utils.js";
+import { usersService } from "../dao/mongo/manager/index.js";
+import { cookieExtractor } from "../utils.js";
+import { createHash, validatePassword } from "../services/auth.service.js";
 
 const LocalStrategy = local.Strategy;
-const userManager = new UsersManager();
 
 const initializePassportStrategies = () => {
   passport.use(
@@ -15,22 +16,26 @@ const initializePassportStrategies = () => {
       { passReqToCallback: true, usernameField: "email" },
       async (req, email, password, done) => {
         try {
-          const { first_name, last_name } = req.body;
+          const { first_name, last_name, age } = req.body;
 
-          const user_exists = await userManager.getUserBy({ email });
+          const user_exists = await usersService.getUserBy({ email });
           if (user_exists)
             return done(null, false, { message: "User is already registered" });
 
+          if (isNaN(age))
+            return done(null, false, { message: "Age must be a number" });
+
           const hashedPassword = await createHash(password);
 
-          const result = await userManager.createUser({
+          const result = await usersService.createUser({
             first_name,
             last_name,
             email,
+            age,
             password: hashedPassword,
           });
 
-          return done(null, result);
+          return done(null, result, { message: "User created succesfully" });
         } catch (error) {
           return done(error);
         }
@@ -51,10 +56,10 @@ const initializePassportStrategies = () => {
               email: "...",
               role: "ADMIN_ROLE",
             };
-            return done(null, user);
+            return done(null, user, { message: "OK" });
           }
 
-          let user = await userManager.getUserBy({ email: email });
+          let user = await usersService.getUserBy({ email: email });
           if (!user)
             return done(null, false, {
               message: "The email or password is not correct",
@@ -72,13 +77,13 @@ const initializePassportStrategies = () => {
           user = {
             id: user._id,
             name: `${user.first_name} ${user.last_name}`,
+            age: user.age,
             email: user.email,
             role: user.role,
           };
-
-          return done(null, user);
+          return done(null, user, { message: "OK" });
         } catch (error) {
-          return done(error);
+          done(error);
         }
       }
     )
@@ -95,19 +100,20 @@ const initializePassportStrategies = () => {
       async (accessToken, refreshToken, profile, done) => {
         try {
           const { name, email } = profile._json;
-          let user = await userManager.getUserBy({ email: email });
+          let user = await usersService.getUserBy({ email: email });
           if (!user) {
             const newUser = {
               first_name: name,
               last_name: "  ",
               email: email,
+              age: 0,
               password: " ",
               role: "USER_ROLE",
             };
-            user = await userManager.createUser(newUser);
-            return done(null, user);
+            user = await usersService.createUser(newUser);
+            return done(null, user, { message: "User created succesfully" });
           }
-          return done(null, user);
+          return done(null, user, { message: "User created succesfully" });
         } catch (error) {
           return done(error);
         }
@@ -115,22 +121,19 @@ const initializePassportStrategies = () => {
     )
   );
 
-  passport.serializeUser(function (user, done) {
-    return done(null, user.id);
-  });
-
-  passport.deserializeUser(async function (id, done) {
-    if (user.id === 0) {
-      return done(null, {
-        id: 0,
-        name: "Admin",
-        email: "...",
-        role: "ADMIN_ROLE",
-      });
-    }
-    const result = await userManager.getUserBy({ _id: id });
-    return done(null, result);
-  });
+  passport.use(
+    "jwt",
+    new Strategy(
+      {
+        jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
+        secretOrKey: process.env.JWT_KEY,
+      },
+      async (payload, done) => {
+        if (!payload) return done(null, false, { message: "Unauthorized" });
+        return done(null, payload, { message: "OK" });
+      }
+    )
+  );
 };
 
 export default initializePassportStrategies;
