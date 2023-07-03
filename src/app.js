@@ -22,11 +22,12 @@ const app = Express();
 dotenv.config();
 const PORT = process.env.PORT;
 
-//Server Express
+//Initialize Server Express
 const server = app.listen(PORT, () => {
   console.log(`Server running on: http://localhost:${PORT}`);
 });
 
+//Database Connection
 const connection = mongoose.connect(process.env.DB_CONNECTION);
 
 //Connect Server to io (Server Socket)
@@ -59,8 +60,6 @@ const sessionsRouter = new SessionsRouter();
 const productsRouter = new ProductsRouter();
 const cartsRouter = new CartsRouter();
 const viewsRouter = new ViewsRouter();
-
-console.log()
 
 //Routes
 app.use("/api/sessions", sessionsRouter.getRouter());

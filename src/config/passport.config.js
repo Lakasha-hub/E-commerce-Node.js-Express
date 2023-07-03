@@ -7,6 +7,7 @@ import { usersService } from "../dao/mongo/manager/index.js";
 import { cookieExtractor } from "../utils.js";
 import { createHash, validatePassword } from "../services/auth.service.js";
 
+//Create instance of Local Strategy
 const LocalStrategy = local.Strategy;
 
 const initializePassportStrategies = () => {
@@ -104,7 +105,7 @@ const initializePassportStrategies = () => {
           if (!user) {
             const newUser = {
               first_name: name,
-              last_name: "  ",
+              last_name: " ",
               email: email,
               age: 0,
               password: " ",
@@ -121,6 +122,7 @@ const initializePassportStrategies = () => {
     )
   );
 
+  //Strategy "jwt" returns the user according to its token
   passport.use(
     "jwt",
     new Strategy(
