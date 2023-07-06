@@ -39,7 +39,7 @@ const userLoginGithub = async (req, res) => {
       httpOnly: true,
       sameSite: "lax",
     })
-    .sendSuccess("Login OK");
+    .redirect("/products");
 };
 
 const currentUser = async (req, res) => {

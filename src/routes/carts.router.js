@@ -15,20 +15,45 @@ import {
 
 export default class CartsRouter extends BaseRouter {
   init() {
-    this.get("/", cartsGet);
+    this.get("/", ["USER_ROLE", "ADMIN_ROLE"], cartsGet);
 
-    this.post("/", cartsPost);
+    this.post("/", ["USER_ROLE", "ADMIN_ROLE"], cartsPost);
 
-    this.get("/:id", [verifyMongoID], cartsGetById);
+    this.get("/:id", ["USER_ROLE", "ADMIN_ROLE"], verifyMongoID, cartsGetById);
 
-    this.put("/:id", [verifyMongoID], cartsUpdateAllProducts);
+    this.put(
+      "/:id",
+      ["USER_ROLE", "ADMIN_ROLE"],
+      verifyMongoID,
+      cartsUpdateAllProducts
+    );
 
-    this.delete("/:id", [verifyMongoID], cartsDeleteAllProducts);
+    this.delete(
+      "/:id",
+      ["USER_ROLE", "ADMIN_ROLE"],
+      verifyMongoID,
+      cartsDeleteAllProducts
+    );
 
-    this.post("/:id/products/:pid", [verifyMongoID], cartsPostProduct);
+    this.post(
+      "/:id/products/:pid",
+      ["USER_ROLE", "ADMIN_ROLE"],
+      verifyMongoID,
+      cartsPostProduct
+    );
 
-    this.put("/:id/products/:pid", [verifyMongoID], cartsUpdateQuantity);
+    this.put(
+      "/:id/products/:pid",
+      ["USER_ROLE", "ADMIN_ROLE"],
+      verifyMongoID,
+      cartsUpdateQuantity
+    );
 
-    this.delete("/:id/products/:pid", [verifyMongoID], cartsDeleteProduct);
+    this.delete(
+      "/:id/products/:pid",
+      ["USER_ROLE", "ADMIN_ROLE"],
+      verifyMongoID,
+      cartsDeleteProduct
+    );
   }
 }

@@ -5,6 +5,6 @@ fetch("/api/products/")
   .then((res) => res.json())
   .then((data) => {
     products = data.payload;
-    createViewOfProducts(products);
+    createViewOfProducts(products.payload);
   })
   .catch((error) => console.log(error));

@@ -1,35 +1,73 @@
 import { productsService } from "../dao/mongo/manager/index.js";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const PORT = process.env.PORT;
 
 const productsGet = async (req, res) => {
-  const {
-    limit = 10,
-    page = 1,
-    sort,
-    sortUpdated,
-    query,
-    queryUpdated,
-  } = req.query;
+  try {
+    const {
+      limit = 10,
+      page = 1,
+      sort,
+      sortUpdated,
+      query,
+      queryUpdated,
+    } = req.query;
 
-  const baseUrl = `http://localhost:${process.env.PORT}/api/products/`;
-  let prevLink;
-  let nextLink;
+    const baseUrl = `http://localhost:${PORT}/api/products/`;
+    let prevLink;
+    let nextLink;
 
-  if (!query) {
-    const result = await productsService.getProducts(
-      {},
-      { limit: limit, page: page, sort: sortUpdated, lean: true }
-    );
+    if (!query) {
+      const result = await productsService.getProducts(
+        {},
+        { limit: limit, page: page, sort: sortUpdated, lean: true }
+      );
+
+      result.hasPrevPage
+        ? (prevLink = `${baseUrl}?limit=${limit}&page=${
+            parseInt(page) - 1
+          }&sort=${sort}`)
+        : (prevLink = null);
+
+      result.hasNextPage
+        ? (nextLink = `${baseUrl}?limit=${limit}&page=${
+            parseInt(page) + 1
+          }&sort=${sort}`)
+        : (nextLink = null);
+
+      return res.sendSuccessWithPayload({
+        payload: result.docs,
+        totalDocs: result.totalDocs,
+        prevPage: result.prevPage,
+        nextPage: result.nextPage,
+        page: result.page,
+        hasPrevPage: result.hasPrevPage,
+        hasNextPage: result.hasNextPage,
+        prevLink,
+        nextLink,
+      });
+    }
+
+    const result = await productsService.getProducts(queryUpdated, {
+      limit: limit,
+      page: page,
+      sort: sortUpdated,
+      lean: true,
+    });
 
     result.hasPrevPage
       ? (prevLink = `${baseUrl}?limit=${limit}&page=${
           parseInt(page) - 1
-        }&sort=${sort}`)
+        }&sort=${sort}&query=${query}`)
       : (prevLink = null);
 
     result.hasNextPage
       ? (nextLink = `${baseUrl}?limit=${limit}&page=${
           parseInt(page) + 1
-        }&sort=${sort}`)
+        }&sort=${sort}&query=${query}`)
       : (nextLink = null);
 
     return res.sendSuccessWithPayload({
@@ -43,38 +81,10 @@ const productsGet = async (req, res) => {
       prevLink,
       nextLink,
     });
+  } catch (error) {
+    console.log(error);
+    return res.sendBadRequest(error.message);
   }
-
-  const result = await productsService.getProducts(queryUpdated, {
-    limit: limit,
-    page: page,
-    sort: sortUpdated,
-    lean: true,
-  });
-
-  result.hasPrevPage
-    ? (prevLink = `${baseUrl}?limit=${limit}&page=${
-        parseInt(page) - 1
-      }&sort=${sort}&query=${query}`)
-    : (prevLink = null);
-
-  result.hasNextPage
-    ? (nextLink = `${baseUrl}?limit=${limit}&page=${
-        parseInt(page) + 1
-      }&sort=${sort}&query=${query}`)
-    : (nextLink = null);
-
-  return res.sendSuccessWithPayload({
-    payload: result.docs,
-    totalDocs: result.totalDocs,
-    prevPage: result.prevPage,
-    nextPage: result.nextPage,
-    page: result.page,
-    hasPrevPage: result.hasPrevPage,
-    hasNextPage: result.hasNextPage,
-    prevLink,
-    nextLink,
-  });
 };
 
 const productsPost = async (req, res) => {
@@ -152,9 +162,9 @@ const productsDelete = async (req, res) => {
     const productsToView = await productsService.getProducts();
     req.io.emit("GetProductsUpdated", productsToView);
 
-    return res.sendSuccess("The product has been removed")
+    return res.sendSuccess("The product has been removed");
   } catch (error) {
-    return res.sendBadRequest(error.message)
+    return res.sendBadRequest(error.message);
   }
 };
 

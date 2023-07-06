@@ -97,7 +97,7 @@ export default class BaseRouter {
         return res.sendUnauthorized(req.error);
       } //req.error => error from jwt strategy
 
-      if (policies.includes(user.role.toUpperCase()))
+      if (!policies.includes(user.role.toUpperCase()))
         return res.sendForbidden("Access Denied");
 
       next();
@@ -110,7 +110,6 @@ export default class BaseRouter {
       try {
         await callback.apply(this, params);
       } catch (error) {
-        req, res, next;
         params[1].sendInternalError(error);
       }
     });

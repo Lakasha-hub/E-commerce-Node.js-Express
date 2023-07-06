@@ -15,14 +15,34 @@ import {
 
 export default class ProductsRouter extends BaseRouter {
   init() {
-    this.get("/", [validateGetQueryParams], productsGet);
+    this.get(
+      "/",
+      ["USER_ROLE", "ADMIN_ROLE"],
+      validateGetQueryParams,
+      productsGet
+    );
 
-    this.post("/", [validateProductCamps, verifyCodeDuplicated], productsPost);
+    this.post(
+      "/",
+      ["USER_ROLE", "ADMIN_ROLE"],
+      validateProductCamps, verifyCodeDuplicated,
+      productsPost
+    );
 
-    this.get("/:id", [verifyMongoID], productsGetById);
+    this.get(
+      "/:id",
+      ["USER_ROLE", "ADMIN_ROLE"],
+      verifyMongoID,
+      productsGetById
+    );
 
-    this.put("/:id", [verifyMongoID], productsPut);
+    this.put("/:id", ["USER_ROLE", "ADMIN_ROLE"], verifyMongoID, productsPut);
 
-    this.delete("/:id", [verifyMongoID], productsDelete);
+    this.delete(
+      "/:id",
+      ["USER_ROLE", "ADMIN_ROLE"],
+      verifyMongoID,
+      productsDelete
+    );
   }
 }
