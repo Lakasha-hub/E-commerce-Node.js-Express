@@ -1,8 +1,8 @@
-import { productService } from "../dao/mongo/manager/index.js";
+import { productsService } from "../dao/mongo/manager/index.js";
 
 const validateGetQueryParams = async (req, res, next) => {
   const { limit = 10, page = 1, sort, query } = req.query;
-  const documentsCount = await productService.countDocuments();
+  const documentsCount = await productsService.countDocuments();
 
   if (limit > documentsCount) {
     return res.sendBadRequest(

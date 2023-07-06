@@ -32,6 +32,7 @@ export default class SessionsRouter extends BaseRouter {
 
     this.get(
       "/logout",
+      ["USER_ROLE", "ADMIN_ROLE"],
       passportCall("jwt", { strategyType: "jwt" }),
       userLogout
     );

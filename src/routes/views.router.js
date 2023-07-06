@@ -2,33 +2,32 @@ import BaseRouter from "./router.js";
 
 export default class ViewsRouter extends BaseRouter {
   init() {
-    
-    this.get("/home", (req, res) => {
+    this.get("/home", ["USER_ROLE", "ADMIN_ROLE"], (req, res) => {
       res.render("home", {
         title: "Home",
       });
     });
 
-    this.get("/realTimeProducts", (req, res) => {
+    this.get("/realTimeProducts", ["USER_ROLE", "ADMIN_ROLE"], (req, res) => {
       res.render("realTimeProducts", {
         title: "Real Time Products",
       });
     });
 
-    this.get("/chat", (req, res) => {
+    this.get("/chat", ["USER_ROLE", "ADMIN_ROLE"], (req, res) => {
       res.render("chat", {
         title: "Chat",
       });
     });
 
-    this.get("/products", (req, res) => {
+    this.get("/products", ["USER_ROLE", "ADMIN_ROLE"], (req, res) => {
       res.render("products", {
         title: "Products",
         user: req.user,
       });
     });
 
-    this.get("/carts/:id", (req, res) => {
+    this.get("/carts/:id", ["USER_ROLE", "ADMIN_ROLE"], (req, res) => {
       const id = req.params.id;
       res.render("cart", {
         title: "Cart",
@@ -36,19 +35,19 @@ export default class ViewsRouter extends BaseRouter {
       });
     });
 
-    this.get("/register", (req, res) => {
+    this.get("/register", ["NO_AUTH"], (req, res) => {
       res.render("register", {
         title: "Register",
       });
     });
 
-    this.get("/login", (req, res) => {
+    this.get("/login", ["NO_AUTH"], (req, res) => {
       res.render("login", {
         title: "Log In",
       });
     });
 
-    this.get("/restorePassword", (req, res) => {
+    this.get("/restorePassword", ["NO_AUTH"], (req, res) => {
       res.render("restorePassword", {
         title: "Restore Password",
       });
