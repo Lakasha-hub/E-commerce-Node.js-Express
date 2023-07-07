@@ -2,8 +2,10 @@ import passport from "passport";
 import local from "passport-local";
 import GithubStrategy from "passport-github2";
 import { Strategy, ExtractJwt } from "passport-jwt";
+import dotenv from "dotenv";
+dotenv.config();
 
-import { usersService } from "../dao/mongo/manager/index.js";
+import { cartsService, usersService } from "../dao/mongo/manager/index.js";
 import { cookieExtractor } from "../utils.js";
 import { createHash, validatePassword } from "../services/auth.service.js";
 
@@ -26,6 +28,8 @@ const initializePassportStrategies = () => {
           if (isNaN(age))
             return done(null, false, { message: "Age must be a number" });
 
+          const cart = await cartsService.createCart();
+
           const hashedPassword = await createHash(password);
 
           const result = await usersService.createUser({
@@ -33,6 +37,7 @@ const initializePassportStrategies = () => {
             last_name,
             email,
             age,
+            cart,
             password: hashedPassword,
           });
 
@@ -50,12 +55,17 @@ const initializePassportStrategies = () => {
       { usernameField: "email" },
       async (email, password, done) => {
         try {
-          if (email == "adminCoder@coder.com" && password == "adminCod3r123") {
+          if (
+            email === process.env.ADMIN_EMAIL &&
+            password === process.env.ADMIN_PASSWORD
+          ) {
+            const cart = await cartsService.createCart();
             const user = {
               id: 0,
               name: "Admin",
               email: "...",
               role: "ADMIN_ROLE",
+              cart,
             };
             return done(null, user, { message: "OK" });
           }
@@ -81,6 +91,7 @@ const initializePassportStrategies = () => {
             age: user.age,
             email: user.email,
             role: user.role,
+            cart: user.cart,
           };
           return done(null, user, { message: "OK" });
         } catch (error) {
@@ -94,20 +105,22 @@ const initializePassportStrategies = () => {
     "github",
     new GithubStrategy(
       {
-        clientID: "Iv1.9c2094d7067aef1e",
-        clientSecret: "59f5c5dc3905d8e7359c24f6dd8f09790f451fe6",
-        callbackURL: `http://localhost:8080/api/sessions/githubcallback`,
+        clientID: process.env.CLIENT_ID_GITHUB,
+        clientSecret: process.env.CLIENT_SECRET_GITHUB,
+        callbackURL: `http://localhost:${process.env.PORT}/api/sessions/githubcallback`,
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
           const { name, email } = profile._json;
           let user = await usersService.getUserBy({ email: email });
           if (!user) {
+            const cart = await cartsService.createCart();
             const newUser = {
               first_name: name,
               last_name: " ",
               email: email,
               age: 0,
+              cart,
               password: " ",
               role: "USER_ROLE",
             };

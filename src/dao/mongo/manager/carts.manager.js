@@ -9,8 +9,8 @@ export default class CartsManager {
     return cartModel.findById(id).lean();
   };
 
-  createCart = (defaultCart) => {
-    return cartModel.create(defaultCart);
+  createCart = () => {
+    return cartModel.create();
   };
 
   addProductToCart = (id, product) => {
