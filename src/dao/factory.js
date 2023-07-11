@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-
+import dotenv from "dotenv";
+dotenv.config();
 const persistence = "MONGO";
 
 export default class PersistenceFactory {

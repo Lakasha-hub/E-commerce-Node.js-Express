@@ -4,14 +4,14 @@ export default class UsersRepository {
   }
 
   getUserBy = (filter) => {
-    return this.dao(filter);
+    return this.dao.getUserBy(filter);
   };
 
   createUser = (user) => {
     return this.dao.createUser(user);
   };
 
-  updateUser = (id, params) => {
+  updateUserById = (id, params) => {
     return this.dao.updateUserById(id, params);
   };
 }

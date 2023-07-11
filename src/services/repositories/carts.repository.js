@@ -15,19 +15,19 @@ export default class CartsRepository {
     return this.dao.createCart();
   };
 
-  addOneProductToCart = (id, product) => {
+  addProductToCart = (id, product) => {
     return this.dao.addProductToCart(id, product);
   };
 
-  updateOneProductOfCart = (id, product) => {
+  updateProductOfCart = (id, product) => {
     return this.dao.updateProductOfCart(id, product);
   };
 
-  getOneProductOfCart = (id, pid) => {
+  getProductOfCart = (id, pid) => {
     return this.dao.getProductOfCart(id, pid);
   };
 
-  deleteOneProductOfCart = (id, pid) => {
+  deleteProductOfCart = (id, pid) => {
     return this.dao.deleteProductOfCart(id, pid);
   };
 
@@ -35,7 +35,7 @@ export default class CartsRepository {
     return this.dao.updateQuantityOfProduct(id, pid, quantity);
   };
 
-  updateAllProductsOfCart = (id, productsUpdated) => {
+  updateAllProducts = (id, productsUpdated) => {
     return this.dao.updateAllProducts(id, productsUpdated);
   };
 
