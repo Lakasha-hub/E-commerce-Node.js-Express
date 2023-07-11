@@ -7,7 +7,7 @@ export default class ProductsRepository {
     return this.dao.getProducts(query, options);
   };
 
-  getOneProductBy = (param) => {
+  getProductBy = (param) => {
     return this.dao.getProductBy(param);
   };
 
@@ -19,15 +19,15 @@ export default class ProductsRepository {
     return this.dao.createProduct(product);
   };
 
-  updateProductById = (id, properties) => {
+  updateProduct = (id, properties) => {
     return this.dao.updateProduct(id, properties);
   };
 
-  deleteProductById = (id) => {
+  deleteProduct = (id) => {
     return this.dao.deleteProduct(id);
   };
 
-  countEstimatedDocuments = () => {
+  countDocuments = () => {
     return this.dao.countDocuments();
   };
 }

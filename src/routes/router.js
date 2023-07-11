@@ -110,6 +110,7 @@ export default class BaseRouter {
       try {
         await callback.apply(this, params);
       } catch (error) {
+        console.log(error);
         params[1].sendInternalError(error);
       }
     });
