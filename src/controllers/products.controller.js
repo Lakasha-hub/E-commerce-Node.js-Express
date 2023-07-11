@@ -1,4 +1,4 @@
-import { productsService } from "../dao/mongo/manager/index.js";
+import { productsService } from "../services/repositories/index.js";
 import dotenv from "dotenv";
 
 dotenv.config();

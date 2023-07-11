@@ -5,7 +5,7 @@ import { Strategy, ExtractJwt } from "passport-jwt";
 import dotenv from "dotenv";
 dotenv.config();
 
-import { cartsService, usersService } from "../dao/mongo/manager/index.js";
+import { cartsService, usersService } from "../services/repositories/index.js";
 import { cookieExtractor } from "../utils.js";
 import { createHash, validatePassword } from "../services/auth.service.js";
 

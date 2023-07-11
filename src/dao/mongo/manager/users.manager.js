@@ -9,7 +9,7 @@ export default class UsersManager {
     return userModel.create(user);
   };
 
-  updateUserByID = (id, params) => {
+  updateUserById = (id, params) => {
     return userModel.findByIdAndUpdate(id, params);
   };
 }

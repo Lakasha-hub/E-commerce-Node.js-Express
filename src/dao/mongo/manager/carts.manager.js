@@ -37,17 +37,17 @@ export default class CartsManager {
     });
   };
 
-  updateAllProducts = (id, productsUpdated) => {
-    return cartModel.findByIdAndUpdate(id, {
-      $set: { products: productsUpdated },
-    });
-  };
-
   updateQuantityOfProduct = (id, pid, quantity) => {
     return cartModel.findOneAndUpdate(
       { _id: id, "products.product": pid },
       { $set: { "products.$.quantity": quantity } }
     );
+  };
+
+  updateAllProducts = (id, productsUpdated) => {
+    return cartModel.findByIdAndUpdate(id, {
+      $set: { products: productsUpdated },
+    });
   };
 
   deleteAllProducts = (id) => {

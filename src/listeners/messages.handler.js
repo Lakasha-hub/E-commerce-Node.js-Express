@@ -1,4 +1,4 @@
-import { messagesService } from "../dao/mongo/manager/index.js";
+import { messagesService } from "../services/repositories/index.js";
 
 const registerChatHandler = (io, socket) => {
   const getMessages = async () => {
@@ -17,7 +17,7 @@ const registerChatHandler = (io, socket) => {
   };
   socket.on("newParticipant", newParticipant);
   socket.on("createMessage", saveMessage);
-  socket.on("getMessages", getMessages)
+  socket.on("getMessages", getMessages);
 };
 
 export default registerChatHandler;

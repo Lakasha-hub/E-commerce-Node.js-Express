@@ -2,7 +2,7 @@ import Express from "express";
 import handlebars from "express-handlebars";
 import dotenv from "dotenv";
 import { Server } from "socket.io";
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 
 import initializePassportStrategies from "./config/passport.config.js";
@@ -28,7 +28,7 @@ const server = app.listen(PORT, () => {
 });
 
 //Database Connection
-const connection = mongoose.connect(process.env.DB_CONNECTION);
+// const connection = mongoose.connect(process.env.DB_CONNECTION);
 
 //Connect Server to io (Server Socket)
 const io = new Server(server);
