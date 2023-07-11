@@ -1,4 +1,4 @@
-import { productsService } from "../dao/mongo/manager/index.js";
+import { productsService } from "../services/repositories/index.js";
 
 const verifyCodeDuplicated = async (req, res, next) => {
   const { code } = req.body;

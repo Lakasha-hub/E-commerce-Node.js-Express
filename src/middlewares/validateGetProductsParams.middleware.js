@@ -1,4 +1,4 @@
-import { productsService } from "../dao/mongo/manager/index.js";
+import { productsService } from "../services/repositories/index.js";
 
 const validateGetQueryParams = async (req, res, next) => {
   const { limit = 10, page = 1, sort, query } = req.query;

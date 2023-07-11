@@ -1,4 +1,4 @@
-import { cartsService, productsService } from "../dao/mongo/manager/index.js";
+import { cartsService, productsService } from "../services/repositories/index.js";
 import { isValidObjectId } from "mongoose";
 
 const cartsGet = async (req, res) => {

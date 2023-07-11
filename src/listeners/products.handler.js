@@ -1,4 +1,4 @@
-import { productsService } from "../dao/mongo/manager/index.js"
+import { productsService } from "../services/repositories/index.js";
 
 const productsHandler = (io, socket) => {
   const getProductsUpdated = async () => {

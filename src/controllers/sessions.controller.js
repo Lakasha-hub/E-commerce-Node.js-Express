@@ -1,4 +1,4 @@
-import { usersService } from "../dao/mongo/manager/index.js";
+import { usersService } from "../services/repositories/index.js";
 import { createHash, generateToken } from "../services/auth.service.js";
 
 const userRegister = async (req, res) => {
