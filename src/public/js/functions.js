@@ -16,15 +16,16 @@ const createRowOfProducts = (products) => {
     cardBody.innerHTML = `<h5>${element.title}</h5>
       <p class="card-text">Description:${element.description}</p>
       <p class="card-text">Price:${element.price}</p>
-      <p class="card-text">Code:${element.code}</p>
-      <p class="card-text">Stock:${element.stock}</p>
-      <p class="card-text">Category:${element.category}</p>
-      <p class="card-text">Status:${element.status}</p>
-      <p class="card-text">Thumbnails:${element.thumbnails}</p>
-      <p class="card-text">Id:${element._id}</p>
       <button type="button" class="btn btn-primary">Add To Cart</button>
       `;
 
+      /**<p class="card-text">Stock:${element.stock}</p>
+      <p class="card-text">Code:${element.code}</p>
+      <p class="card-text">Category:${element.category}</p>
+      <p class="card-text">Status:${element.status}</p>
+      <p class="card-text">Thumbnails:${element.thumbnails}</p>
+      <p class="card-text">Id:${element._id}</p> */
+      
     card.appendChild(cardBody);
     column.appendChild(card);
     rowBody.appendChild(column);

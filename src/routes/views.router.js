@@ -14,7 +14,7 @@ export default class ViewsRouter extends BaseRouter {
       });
     });
 
-    this.get("/chat", ["USER_ROLE", "ADMIN_ROLE"], (req, res) => {
+    this.get("/chat", ["USER_ROLE"], (req, res) => {
       res.render("chat", {
         title: "Chat",
       });

@@ -23,7 +23,7 @@ export default class CartsRouter extends BaseRouter {
 
     this.put(
       "/:id",
-      ["USER_ROLE", "ADMIN_ROLE"],
+      ["USER_ROLE"],
       verifyMongoID,
       cartsUpdateAllProducts
     );
@@ -37,14 +37,14 @@ export default class CartsRouter extends BaseRouter {
 
     this.post(
       "/:id/products/:pid",
-      ["USER_ROLE", "ADMIN_ROLE"],
+      ["USER_ROLE"],
       verifyMongoID,
       cartsPostProduct
     );
 
     this.put(
       "/:id/products/:pid",
-      ["USER_ROLE", "ADMIN_ROLE"],
+      ["USER_ROLE"],
       verifyMongoID,
       cartsUpdateQuantity
     );
