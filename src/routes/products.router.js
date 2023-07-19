@@ -24,7 +24,7 @@ export default class ProductsRouter extends BaseRouter {
 
     this.post(
       "/",
-      ["USER_ROLE", "ADMIN_ROLE"],
+      ["ADMIN_ROLE"],
       validateProductCamps, verifyCodeDuplicated,
       productsPost
     );
@@ -36,11 +36,11 @@ export default class ProductsRouter extends BaseRouter {
       productsGetById
     );
 
-    this.put("/:id", ["USER_ROLE", "ADMIN_ROLE"], verifyMongoID, productsPut);
+    this.put("/:id", ["ADMIN_ROLE"], verifyMongoID, productsPut);
 
     this.delete(
       "/:id",
-      ["USER_ROLE", "ADMIN_ROLE"],
+      ["ADMIN_ROLE"],
       verifyMongoID,
       productsDelete
     );

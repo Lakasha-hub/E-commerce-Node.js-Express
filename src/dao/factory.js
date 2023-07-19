@@ -1,7 +1,9 @@
 import mongoose from "mongoose";
-import dotenv from "dotenv";
-dotenv.config();
-const persistence = "MONGO";
+import "dotenv/config";
+import { options } from "../config/server.config.js";
+
+const persistence = options.dao;
+console.log(`Persistence in use: ${persistence}`);
 
 export default class PersistenceFactory {
   static async getPersistence() {

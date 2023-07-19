@@ -2,8 +2,7 @@ import passport from "passport";
 import local from "passport-local";
 import GithubStrategy from "passport-github2";
 import { Strategy, ExtractJwt } from "passport-jwt";
-import dotenv from "dotenv";
-dotenv.config();
+import "dotenv/config";
 
 import { cartsService, usersService } from "../services/repositories/index.js";
 import { cookieExtractor } from "../utils.js";
@@ -59,18 +58,18 @@ const initializePassportStrategies = () => {
             email === process.env.ADMIN_EMAIL &&
             password === process.env.ADMIN_PASSWORD
           ) {
-            const cart = await cartsService.createCart();
-            const user = {
-              id: 0,
-              name: "Admin",
+            const adminUser = {
+              _id: 0,
+              first_name: "Admin",
+              last_name: "Mode",
+              age: 0,
               email: "...",
               role: "ADMIN_ROLE",
-              cart,
-            };
-            return done(null, user, { message: "OK" });
+            }
+            return done(null, adminUser, { message: "OK" });
           }
 
-          let user = await usersService.getUserBy({ email: email });
+          const user = await usersService.getUserBy({ email: email });
           if (!user)
             return done(null, false, {
               message: "The email or password is not correct",
@@ -84,15 +83,7 @@ const initializePassportStrategies = () => {
             return done(null, false, {
               message: "The email or password is not correct",
             });
-
-          user = {
-            id: user._id,
-            name: `${user.first_name} ${user.last_name}`,
-            age: user.age,
-            email: user.email,
-            role: user.role,
-            cart: user.cart,
-          };
+          
           return done(null, user, { message: "OK" });
         } catch (error) {
           done(error);
@@ -112,22 +103,22 @@ const initializePassportStrategies = () => {
       async (accessToken, refreshToken, profile, done) => {
         try {
           const { name, email } = profile._json;
-          let user = await usersService.getUserBy({ email: email });
+          const user = await usersService.getUserBy({ email: email });
           if (!user) {
             const cart = await cartsService.createCart();
             const newUser = {
               first_name: name,
-              last_name: " ",
+              last_name: "",
               email: email,
               age: 0,
               cart,
-              password: " ",
+              password: "",
               role: "USER_ROLE",
             };
-            user = await usersService.createUser(newUser);
-            return done(null, user, { message: "User created succesfully" });
+            const userResult = await usersService.createUser(newUser);
+            return done(null, userResult, { message: "User created succesfully" });
           }
-          return done(null, user, { message: "User created succesfully" });
+          return done(null, user, { message: "OK" });
         } catch (error) {
           return done(error);
         }

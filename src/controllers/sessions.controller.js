@@ -1,18 +1,14 @@
 import { usersService } from "../services/repositories/index.js";
 import { createHash, generateToken } from "../services/auth.service.js";
+import UserToken from "../dtos/user/user.token.js";
 
 const userRegister = async (req, res) => {
   return res.sendCreated("User successfully created");
 };
 
 const userLogin = async (req, res) => {
-  const user = {
-    id: req.user.id,
-    name: req.user.name,
-    email: req.user.email,
-    age: req.user.age,
-    role: req.user.role,
-  };
+  //Send token with user information
+  const {...user} = new UserToken(req.user);
   const accessToken = generateToken(user);
   res
     .cookie("authToken", accessToken, {
@@ -24,14 +20,8 @@ const userLogin = async (req, res) => {
 };
 
 const userLoginGithub = async (req, res) => {
-  const user = {
-    id: req.user.id,
-    name: req.user.first_name,
-    email: req.user.email,
-    age: req.user.age,
-    role: req.user.role,
-  };
-
+  //Send token with Github User information
+  const {...user} = new UserToken(req.user);
   const accessToken = generateToken(user);
   res
     .cookie("authToken", accessToken, {
@@ -43,7 +33,9 @@ const userLoginGithub = async (req, res) => {
 };
 
 const currentUser = async (req, res) => {
-  res.sendSuccessWithPayload(req.user);
+  //Send token with user information
+  const {...user} = new UserToken(req.user);
+  res.sendSuccessWithPayload(user);
 };
 
 const userRestorePassword = async (req, res) => {
