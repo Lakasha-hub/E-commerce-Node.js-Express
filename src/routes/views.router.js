@@ -27,11 +27,10 @@ export default class ViewsRouter extends BaseRouter {
       });
     });
 
-    this.get("/carts/:id", ["USER_ROLE", "ADMIN_ROLE"], (req, res) => {
-      const id = req.params.id;
+    this.get("/cart/:id", ["USER_ROLE", "ADMIN_ROLE"], (req, res) => {
       res.render("cart", {
         title: "Cart",
-        id,
+        user: req.user,
       });
     });
 

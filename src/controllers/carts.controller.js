@@ -1,23 +1,23 @@
-import { cartsService, productsService } from "../services/repositories/index.js";
+import {
+  cartsService,
+  productsService,
+} from "../services/repositories/index.js";
 import { isValidObjectId } from "mongoose";
 
 const cartsGet = async (req, res) => {
-  const result = await cartsService.getCarts();
+  const result = await cartsService.getAll();
   return res.sendSuccessWithPayload(result);
 };
 
 const cartsPost = async (req, res) => {
-  const defaultCart = {
-    products: [],
-  };
-  const result = await cartsService.createCart(defaultCart);
+  const result = await cartsService.create();
   return res.sendCreatedWithPayload(result);
 };
 
 const cartsGetById = async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await cartsService.getCartById(id);
+    const result = await cartsService.getById(id);
     if (!result) {
       throw new Error(`There is no registered cart with id: ${id}`);
     }
@@ -45,12 +45,12 @@ const cartsPostProduct = async (req, res) => {
       throw new Error(`The product id: ${pid} is not valid`);
     }
 
-    const product_exists = await productsService.getProductById(pid);
+    const product_exists = await productsService.getById(pid);
     if (!product_exists) {
       throw new Error(`There is not registered product with id: ${pid}`);
     }
 
-    const cart = await cartsService.getCartById(id);
+    const cart = await cartsService.getById(id);
     if (!cart) {
       throw new Error(`There is not registered cart with id: ${id}`);
     }
@@ -58,16 +58,16 @@ const cartsPostProduct = async (req, res) => {
     const productExistsInCart = cart.products.find((p) => p.product == pid);
 
     if (!productExistsInCart) {
-      await cartsService.addProductToCart(id, {
+      await cartsService.addProduct(id, {
         product: pid,
         quantity,
       });
-      const result = await cartsService.getCartById(id);
+      const result = await cartsService.getById(id);
       return res.sendSuccessWithPayload(result);
     }
 
     await cartsService.updateProductOfCart(id, { product: pid, quantity });
-    const result = await cartsService.getCartById(id);
+    const result = await cartsService.getById(id);
 
     return res.sendSuccessWithPayload(result);
   } catch (error) {
@@ -84,7 +84,7 @@ const cartsDeleteProduct = async (req, res) => {
       throw new Error(`The product id: ${pid} is not valid`);
     }
 
-    const cart = await cartsService.getCartById(id);
+    const cart = await cartsService.getById(id);
     if (!cart) {
       throw new Error(`There is not registered cart with id: ${id}`);
     }
@@ -97,68 +97,76 @@ const cartsDeleteProduct = async (req, res) => {
       );
     }
 
-    await cartsService.deleteProductOfCart(id, pid);
+    await cartsService.deleteProduct(id, pid);
     return res.sendSuccess("Product has been Deleted");
   } catch (error) {
     return res.sendBadRequest(error.message);
   }
 };
 
-const cartsUpdateAllProducts = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const products = req.body;
-
-    products.forEach((p) => {
-      if (!isValidObjectId(p.product)) {
-        throw new Error(`${p.product} is not a valid product id`);
-      }
-      if (!p.quantity) {
-        p.quantity = 1;
-      }
-      if (typeof p.quantity !== "number") {
-        throw new Error("quantity must be type Number");
-      }
-    });
-
-    await cartsService.updateAllProducts(id, products);
-    const result = await cartsService.getCartById(id);
-    return res.sendSuccessWithPayload(result);
-  } catch (error) {
-    return res.sendBadRequest(error.message);
-  }
+const cartsPurchase = async (req, res) => {
+  //Get Cart Id
+  const { id } = req.params;
+  const cart = await cartsService.getById(id);
+  console.log(cart);
+  res.sendSuccess();
 };
 
-const cartsUpdateQuantity = async (req, res) => {
-  try {
-    const { id, pid } = req.params;
-    const { quantity } = req.body;
+// const cartsUpdateAllProducts = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const products = req.body;
 
-    if (!isValidObjectId(pid)) {
-      throw new Error(`${pid} is not a valid product id`);
-    }
+//     products.forEach((p) => {
+//       if (!isValidObjectId(p.product)) {
+//         throw new Error(`${p.product} is not a valid product id`);
+//       }
+//       if (!p.quantity) {
+//         p.quantity = 1;
+//       }
+//       if (typeof p.quantity !== "number") {
+//         throw new Error("quantity must be type Number");
+//       }
+//     });
 
-    if (!quantity) {
-      throw new Error("quantity is required");
-    }
+//     await cartsService.updateAllProducts(id, products);
+//     const result = await cartsService.getCartById(id);
+//     return res.sendSuccessWithPayload(result);
+//   } catch (error) {
+//     return res.sendBadRequest(error.message);
+//   }
+// };
 
-    if (typeof quantity !== "number") {
-      throw new Error("quantity must be type Number");
-    }
+// const cartsUpdateQuantity = async (req, res) => {
+//   try {
+//     const { id, pid } = req.params;
+//     const { quantity } = req.body;
 
-    await cartsService.updateQuantityOfProduct(id, pid, quantity);
-    const result = await cartsService.getCartById(id);
-    return res.sendSuccessWithPayload(result);
-  } catch (error) {
-    return res.sendBadRequest(error.message);
-  }
-};
+//     if (!isValidObjectId(pid)) {
+//       throw new Error(`${pid} is not a valid product id`);
+//     }
+
+//     if (!quantity) {
+//       throw new Error("quantity is required");
+//     }
+
+//     if (typeof quantity !== "number") {
+//       throw new Error("quantity must be type Number");
+//     }
+
+//     await cartsService.updateProduct(id, pid, quantity);
+//     const result = await cartsService.getCartById(id);
+//     return res.sendSuccessWithPayload(result);
+//   } catch (error) {
+//     return res.sendBadRequest(error.message);
+//   }
+// };
 
 const cartsDeleteAllProducts = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const cart = await cartsService.getCartById(id);
+    const cart = await cartsService.getById(id);
     if (!cart) {
       throw new Error(`There is not registered cart with id: ${id}`);
     }
@@ -166,7 +174,7 @@ const cartsDeleteAllProducts = async (req, res) => {
     if (cart.products.length == 0) {
       throw new Error(`the cart with id: ${id} has no products`);
     }
-    await cartsService.deleteAllProducts(id);
+    await cartsService.clear(id);
     return res.sendSuccess(
       `All products in the cart with the id: ${id} have been removed`
     );
@@ -180,7 +188,8 @@ export {
   cartsGetById,
   cartsPostProduct,
   cartsDeleteProduct,
-  cartsUpdateQuantity,
   cartsDeleteAllProducts,
-  cartsUpdateAllProducts,
+  cartsPurchase,
+  // cartsUpdateQuantity,
+  // cartsUpdateAllProducts,
 };

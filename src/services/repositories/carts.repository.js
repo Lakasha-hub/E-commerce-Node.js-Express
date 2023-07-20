@@ -3,43 +3,35 @@ export default class CartsRepository {
     this.dao = dao;
   }
 
-  getCarts = () => {
+  getAll = () => {
     return this.dao.getCarts();
   };
 
-  getCartById = (id) => {
+  getById = (id) => {
     return this.dao.getCartById(id);
   };
 
-  createCart = () => {
-    return this.dao.createCart();
+  create = () => {
+    return this.dao.createCart([]);
   };
 
-  addProductToCart = (id, product) => {
+  addProduct = (id, product) => {
     return this.dao.addProductToCart(id, product);
   };
-
-  updateProductOfCart = (id, product) => {
-    return this.dao.updateProductOfCart(id, product);
-  };
-
-  getProductOfCart = (id, pid) => {
+  
+  getProduct = (id, pid) => {
     return this.dao.getProductOfCart(id, pid);
   };
 
-  deleteProductOfCart = (id, pid) => {
+  updateProduct = (id, product) => {
+    return this.dao.updateProductOfCart(id, product);
+  };
+
+  deleteProduct = (id, pid) => {
     return this.dao.deleteProductOfCart(id, pid);
   };
 
-  updateQuantityOfProduct = (id, pid, quantity) => {
-    return this.dao.updateQuantityOfProduct(id, pid, quantity);
-  };
-
-  updateAllProducts = (id, productsUpdated) => {
-    return this.dao.updateAllProducts(id, productsUpdated);
-  };
-
-  deleteAllProducts = (id) => {
+  clear = (id) => {
     return this.dao.deleteAllProducts(id);
   };
 }

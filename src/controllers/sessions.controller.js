@@ -1,6 +1,7 @@
 import { usersService } from "../services/repositories/index.js";
 import { createHash, generateToken } from "../services/auth.service.js";
 import UserToken from "../dtos/user/user.token.js";
+import { cookieExtractor } from "../utils.js";
 
 const userRegister = async (req, res) => {
   return res.sendCreated("User successfully created");
@@ -8,7 +9,7 @@ const userRegister = async (req, res) => {
 
 const userLogin = async (req, res) => {
   //Send token with user information
-  const {...user} = new UserToken(req.user);
+  const { ...user } = new UserToken(req.user);
   const accessToken = generateToken(user);
   res
     .cookie("authToken", accessToken, {
@@ -21,7 +22,7 @@ const userLogin = async (req, res) => {
 
 const userLoginGithub = async (req, res) => {
   //Send token with Github User information
-  const {...user} = new UserToken(req.user);
+  const { ...user } = new UserToken(req.user);
   const accessToken = generateToken(user);
   res
     .cookie("authToken", accessToken, {
@@ -34,19 +35,18 @@ const userLoginGithub = async (req, res) => {
 
 const currentUser = async (req, res) => {
   //Send token with user information
-  const {...user} = new UserToken(req.user);
-  res.sendSuccessWithPayload(user);
+  res.sendSuccessWithPayload(req.user);
 };
 
 const userRestorePassword = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    let user = await usersService.getUserBy({ email: email });
+    let user = await usersService.getBy({ email: email });
     if (!user) throw new Error("There is no registered user with this email");
 
     const newHashedPassword = await createHash(password);
-    user = await usersService.updateUserByID(user._id, {
+    user = await usersService.updateById(user._id, {
       password: newHashedPassword,
     });
 

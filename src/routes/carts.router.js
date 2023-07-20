@@ -9,8 +9,9 @@ import {
   cartsGetById,
   cartsPost,
   cartsPostProduct,
-  cartsUpdateAllProducts,
-  cartsUpdateQuantity,
+  cartsPurchase,
+  // cartsUpdateAllProducts,
+  // cartsUpdateQuantity,
 } from "../controllers/carts.controller.js";
 
 export default class CartsRouter extends BaseRouter {
@@ -21,12 +22,14 @@ export default class CartsRouter extends BaseRouter {
 
     this.get("/:id", ["USER_ROLE", "ADMIN_ROLE"], verifyMongoID, cartsGetById);
 
-    this.put(
-      "/:id",
-      ["USER_ROLE"],
-      verifyMongoID,
-      cartsUpdateAllProducts
-    );
+    this.post("/:id/purchase", ["USER_ROLE"], cartsPurchase)
+
+    // this.put(
+    //   "/:id",
+    //   ["USER_ROLE"],
+    //   verifyMongoID,
+    //   cartsUpdateAllProducts
+    // );
 
     this.delete(
       "/:id",
@@ -42,12 +45,12 @@ export default class CartsRouter extends BaseRouter {
       cartsPostProduct
     );
 
-    this.put(
-      "/:id/products/:pid",
-      ["USER_ROLE"],
-      verifyMongoID,
-      cartsUpdateQuantity
-    );
+    // this.put(
+    //   "/:id/products/:pid",
+    //   ["USER_ROLE"],
+    //   verifyMongoID,
+    //   cartsUpdateQuantity
+    // );
 
     this.delete(
       "/:id/products/:pid",
