@@ -1,17 +1,40 @@
-import { createRowOfProducts } from "./functions.js";
+import { addProductToCart, createRowOfProducts } from "./functions.js";
 
-let products;
+/** Display products */
 fetch("/api/products")
   .then((res) => res.json())
   .then((data) => {
-    products = data.payload;
+    const products = data.payload;
     createRowOfProducts(products.payload);
+
+    /** Create listeners to products */
+    fetch("/api/sessions/current")
+      .then((res) => res.json())
+      .then((data) => {
+        const cartId = data.payload.cart;
+        addProductToCart(cartId);
+      });
   })
   .catch((error) => console.log(error));
 
-const btn = document.querySelector(".btn-danger");
-if (btn) {
-  btn.addEventListener("click", () => {
+/** Welcome message */
+fetch("/api/sessions/current")
+  .then((response) => response.json())
+  .then((data) => {
+    return Swal.fire({
+      title: `Welcome ${data.payload.name}, check these products`,
+      showCancelButton: false,
+      showConfirmButton: false,
+      position: "top",
+      timer: 1500,
+    });
+  })
+  .catch((error) => console.log(error));
+
+/**Log out */
+const btnLogOut = document.querySelector("#logout");
+if (btnLogOut) {
+  btnLogOut.addEventListener("click", () => {
     return Swal.fire({
       title: "Want to log out?",
       showCancelButton: true,

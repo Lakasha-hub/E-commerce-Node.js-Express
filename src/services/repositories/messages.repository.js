@@ -3,11 +3,11 @@ export default class MessagesRepository {
     this.dao = dao;
   }
 
-  getMessages = () => {
+  getAll = () => {
     return this.dao.getMessages();
   };
 
-  createMessage = (msg) => {
+  create = (msg) => {
     return this.dao.createMessage(msg);
   };
 }

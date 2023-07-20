@@ -2,26 +2,83 @@
   <link rel="stylesheet" href="/css/products.css" />
 </head>
 
-<div>
-  <nav class="navbar bg-body-tertiary">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">
-        <img
-          src="/img/ninja-programming.png"
-          alt="Logo"
-          width="30"
-          height="24"
-          class="d-inline-block align-text-top"
-        />
-        Hello
-        {{user.name}}, check these products
-      </a>
-      <button type="button" class="btn btn-danger">Log Out</button>
-    </div>
-  </nav>
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">
+      <img
+        src="/img/ninja-programming.png"
+        alt="Logo"
+        width="30"
+        height="24"
+        class="d-inline-block align-text-top"
+      />
+      E-Commerce
+    </a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
-  <div class="row row-cols-1 row-cols-md-4 g-4">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 w-100">
+
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Home</a>
+        </li>
+
+        <li class="nav-item flex-fill">
+          <a class="nav-link active" href="#">Link</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="/cart/{{user.cart}}"><img
+              src="/img/cart.png"
+              alt="Logo"
+              width="30"
+              height="30"
+            /></a>
+        </li>
+
+        <li class="nav-item dropstart">
+          <a
+            class="nav-link dropstart-toggle"
+            href="#"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <img src="/img/user.png" alt="Logo" width="30" height="30" />
+          </a>
+
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">View Profile</a></li>
+            <li><hr class="dropdown-divider" /></li>
+            <li><a class="dropdown-item" id="logout" href="#">Log Out</a></li>
+          </ul>
+        </li>
+      </ul>
+
+      {{! <form class="d-flex" role="search">
+        <input
+          class="form-control me-2"
+          type="search"
+          placeholder="Search"
+          aria-label="Search"
+        />
+        <button class="btn btn-outline-success" type="submit">Search</button> 
+      </form>}}
+    </div>
   </div>
+</nav>
+
+<div class="row row-cols-1 row-cols-md-4 g-4">
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

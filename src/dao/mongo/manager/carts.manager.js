@@ -10,7 +10,7 @@ export default class CartsManager {
   };
 
   createCart = () => {
-    return cartModel.create();
+    return cartModel.create({products: []});
   };
 
   addProductToCart = (id, product) => {
@@ -20,7 +20,7 @@ export default class CartsManager {
   updateProductOfCart = (id, product) => {
     return cartModel.findOneAndUpdate(
       { _id: id, "products.product": product.product },
-      { $inc: { "products.$.quantity": product.quantity } }
+      { $set: { "products.$.quantity": product.quantity } }
     );
   };
 
@@ -37,12 +37,12 @@ export default class CartsManager {
     });
   };
 
-  updateQuantityOfProduct = (id, pid, quantity) => {
-    return cartModel.findOneAndUpdate(
-      { _id: id, "products.product": pid },
-      { $set: { "products.$.quantity": quantity } }
-    );
-  };
+  // updateQuantityOfProduct = (id, pid, quantity) => {
+  //   return cartModel.findOneAndUpdate(
+  //     { _id: id, "products.product": pid },
+  //     { $set: { "products.$.quantity": quantity } }
+  //   );
+  // };
 
   updateAllProducts = (id, productsUpdated) => {
     return cartModel.findByIdAndUpdate(id, {

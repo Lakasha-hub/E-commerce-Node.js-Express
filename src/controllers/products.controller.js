@@ -19,7 +19,7 @@ const productsGet = async (req, res) => {
     let nextLink;
 
     if (!query) {
-      const result = await productsService.getProducts(
+      const result = await productsService.getAll(
         {},
         { limit: limit, page: page, sort: sortUpdated, lean: true }
       );
@@ -49,7 +49,7 @@ const productsGet = async (req, res) => {
       });
     }
 
-    const result = await productsService.getProducts(queryUpdated, {
+    const result = await productsService.getAll(queryUpdated, {
       limit: limit,
       page: page,
       sort: sortUpdated,
@@ -98,9 +98,9 @@ const productsPost = async (req, res) => {
       category,
       thumbnails,
     };
-    newProduct = await productsService.createProduct(newProduct);
+    newProduct = await productsService.create(newProduct);
 
-    const productsToView = await productsService.getProducts();
+    const productsToView = await productsService.getAll();
     req.io.emit("GetProductsUpdated", productsToView);
 
     return res.sendCreated("New product created");
@@ -112,7 +112,7 @@ const productsPost = async (req, res) => {
 const productsGetById = async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await productsService.getProductById(id);
+    const result = await productsService.getById(id);
     if (!result) {
       throw new Error(`There is not registered product with id: ${id}`);
     }
@@ -127,7 +127,7 @@ const productsPut = async (req, res) => {
     const { id } = req.params;
     const { code, ...properties } = req.body;
 
-    const product_exists = await productsService.getProducts({ code: code });
+    const product_exists = await productsService.getAll({ code: code });
     product_exists.forEach((p) => {
       if (p._id != id) {
         throw new Error(
@@ -136,10 +136,10 @@ const productsPut = async (req, res) => {
       }
     });
 
-    await productsService.updateProduct(id, properties);
-    const result = await productsService.getProductById(id);
+    await productsService.updateById(id, properties);
+    const result = await productsService.getById(id);
 
-    const productsToView = await productsService.getProducts();
+    const productsToView = await productsService.getAll();
     req.io.emit("GetProductsUpdated", productsToView);
 
     res.sendSuccessWithPayload(result);
@@ -151,13 +151,13 @@ const productsPut = async (req, res) => {
 const productsDelete = async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await productsService.getProductById(id);
+    const result = await productsService.getById(id);
     if (!result) {
       throw new Error(`There is no registered product with id: ${id}`);
     }
 
-    await productsService.deleteProduct(id);
-    const productsToView = await productsService.getProducts();
+    await productsService.deleteById(id);
+    const productsToView = await productsService.getAll();
     req.io.emit("GetProductsUpdated", productsToView);
 
     return res.sendSuccess("The product has been removed");

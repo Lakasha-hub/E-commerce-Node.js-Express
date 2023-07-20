@@ -4,20 +4,22 @@ const collection = "Carts";
 
 const cartSchema = new mongoose.Schema(
   {
-    products: [
-      {
-        quantity: {
-          type: Number,
-          default: 1,
+    products: {
+      type: [
+        {
+          quantity: {
+            type: Number,
+            default: 1,
+          },
+          product: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Products",
+            required: "The Product id is required",
+          },
         },
-        product: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Products",
-          required: "The Product id is required",
-        },
-      },
-    ],
-    default: [],
+      ],
+      default: [],
+    },
   },
   { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } }
 );

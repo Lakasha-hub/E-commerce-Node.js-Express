@@ -15,22 +15,22 @@ export default class PersistenceFactory {
     switch (persistence) {
       case "MONGO":
         mongoose.connect(process.env.DB_CONNECTION);
-        const { default: usersManagerDAO } = await import(
+        const { default: UsersManager } = await import(
           "./mongo/manager/users.manager.js"
         );
-        const { default: productsManagerDAO } = await import(
+        const { default: ProductsManager } = await import(
           "./mongo/manager/products.manager.js"
         );
-        const { default: cartsManagerDAO } = await import(
+        const { default: CartsManager } = await import(
           "./mongo/manager/carts.manager.js"
         );
-        const { default: messagesManagerDAO } = await import(
+        const { default: MessagesManager } = await import(
           "./mongo/manager/messages.manager.js"
         );
-        usersDAO = new usersManagerDAO();
-        productsDAO = new productsManagerDAO();
-        cartsDAO = new cartsManagerDAO();
-        messagesDAO = new messagesManagerDAO();
+        usersDAO = new UsersManager();
+        productsDAO = new ProductsManager();
+        cartsDAO = new CartsManager();
+        messagesDAO = new MessagesManager();
         break;
     }
 

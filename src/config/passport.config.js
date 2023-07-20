@@ -20,18 +20,18 @@ const initializePassportStrategies = () => {
         try {
           const { first_name, last_name, age } = req.body;
 
-          const user_exists = await usersService.getUserBy({ email });
+          const user_exists = await usersService.getBy({ email });
           if (user_exists)
             return done(null, false, { message: "User is already registered" });
 
           if (isNaN(age))
             return done(null, false, { message: "Age must be a number" });
 
-          const cart = await cartsService.createCart();
+          const cart = await cartsService.create();
 
           const hashedPassword = await createHash(password);
 
-          const result = await usersService.createUser({
+          const result = await usersService.create({
             first_name,
             last_name,
             email,
@@ -65,11 +65,11 @@ const initializePassportStrategies = () => {
               age: 0,
               email: "...",
               role: "ADMIN_ROLE",
-            }
+            };
             return done(null, adminUser, { message: "OK" });
           }
 
-          const user = await usersService.getUserBy({ email: email });
+          const user = await usersService.getBy({ email: email });
           if (!user)
             return done(null, false, {
               message: "The email or password is not correct",
@@ -83,7 +83,7 @@ const initializePassportStrategies = () => {
             return done(null, false, {
               message: "The email or password is not correct",
             });
-          
+
           return done(null, user, { message: "OK" });
         } catch (error) {
           done(error);
@@ -103,9 +103,9 @@ const initializePassportStrategies = () => {
       async (accessToken, refreshToken, profile, done) => {
         try {
           const { name, email } = profile._json;
-          const user = await usersService.getUserBy({ email: email });
+          const user = await usersService.getBy({ email: email });
           if (!user) {
-            const cart = await cartsService.createCart();
+            const cart = await cartsService.create();
             const newUser = {
               first_name: name,
               last_name: "",
@@ -115,8 +115,10 @@ const initializePassportStrategies = () => {
               password: "",
               role: "USER_ROLE",
             };
-            const userResult = await usersService.createUser(newUser);
-            return done(null, userResult, { message: "User created succesfully" });
+            const userResult = await usersService.create(newUser);
+            return done(null, userResult, {
+              message: "User created succesfully",
+            });
           }
           return done(null, user, { message: "OK" });
         } catch (error) {
