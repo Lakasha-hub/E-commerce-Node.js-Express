@@ -1,35 +1,55 @@
-import { Router } from "express";
+import BaseRouter from "./router.js";
 
-const router = Router();
+export default class ViewsRouter extends BaseRouter {
+  init() {
+    this.get("/home", ["USER_ROLE", "ADMIN_ROLE"], (req, res) => {
+      res.render("home", {
+        title: "Home",
+      });
+    });
 
-router.get("/home", (req, res) => {
-  res.render("home", {
-    title: "Home",
-  });
-});
+    this.get("/realTimeProducts", ["USER_ROLE", "ADMIN_ROLE"], (req, res) => {
+      res.render("realTimeProducts", {
+        title: "Real Time Products",
+      });
+    });
 
-router.get("/realTimeProducts", async (req, res) => {
-  res.render("realTimeProducts", {
-    title: "Real Time Products",
-  });
-});
+    this.get("/chat", ["USER_ROLE"], (req, res) => {
+      res.render("chat", {
+        title: "Chat",
+      });
+    });
 
-router.get("/chat", async (req, res) => {
-  res.render("chat", {
-    title: "Chat",
-  });
-});
+    this.get("/products", ["USER_ROLE", "ADMIN_ROLE"], (req, res) => {
+      res.render("products", {
+        title: "Products",
+        user: req.user,
+      });
+    });
 
-router.get("/products", async (req, res) => {
-  res.render("products", {
-    title: "Products",
-  });
-});
+    this.get("/cart/:id", ["USER_ROLE", "ADMIN_ROLE"], (req, res) => {
+      res.render("cart", {
+        title: "Cart",
+        user: req.user,
+      });
+    });
 
-router.get("/carts/:id", async (req, res) => {
-  res.render("cart", {
-    title: "Cart",
-  });
-});
+    this.get("/register", ["NO_AUTH"], (req, res) => {
+      res.render("register", {
+        title: "Register",
+      });
+    });
 
-export default router;
+    this.get("/login", ["NO_AUTH"], (req, res) => {
+      res.render("login", {
+        title: "Log In",
+      });
+    });
+
+    this.get("/restorePassword", ["NO_AUTH"], (req, res) => {
+      res.render("restorePassword", {
+        title: "Restore Password",
+      });
+    });
+  }
+}
