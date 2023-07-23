@@ -19,9 +19,9 @@ export default class CartsRepository {
     return this.dao.addProductToCart(id, product);
   };
   
-  getProduct = (id, pid) => {
-    return this.dao.getProductOfCart(id, pid);
-  };
+  // getProduct = (id, pid) => {
+  //   return this.dao.getProductOfCart(id, pid);
+  // };
 
   updateProduct = (id, product) => {
     return this.dao.updateProductOfCart(id, product);

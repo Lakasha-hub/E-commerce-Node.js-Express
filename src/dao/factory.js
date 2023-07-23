@@ -11,6 +11,7 @@ export default class PersistenceFactory {
     let productsDAO;
     let cartsDAO;
     let messagesDAO;
+    let ticketsDAO;
 
     switch (persistence) {
       case "MONGO":
@@ -27,10 +28,15 @@ export default class PersistenceFactory {
         const { default: MessagesManager } = await import(
           "./mongo/manager/messages.manager.js"
         );
+        const { default: TicketManager } = await import(
+          "./mongo/manager/tickets.manager.js"
+        );
+
         usersDAO = new UsersManager();
         productsDAO = new ProductsManager();
         cartsDAO = new CartsManager();
         messagesDAO = new MessagesManager();
+        ticketsDAO = new TicketManager();
         break;
     }
 
@@ -39,6 +45,7 @@ export default class PersistenceFactory {
       productsDAO,
       cartsDAO,
       messagesDAO,
+      ticketsDAO,
     };
   }
 }

@@ -93,30 +93,29 @@ const createViewOfMessages = (messages) => {
 const createRowOfProductsCarts = (products) => {
   //Father Element
   const rowBody = document.querySelector("#rowProducts");
+  rowBody.innerHTML = "";
 
   //For Each Product => create Card
   products.forEach((element) => {
-    const column = document.createElement("div");
-    column.classList.add("col-3");
     const card = document.createElement("div");
     card.classList.add("card");
-    card.classList.add("h-100");
+    card.classList.add("mb-2");
+    card.classList.add("cardProduct");
     const cardBody = document.createElement("div");
-    cardBody.classList.add("card-body");
+    card.classList.add("card-body");
 
     //Add Card information
-    cardBody.innerHTML = `<h5>${element.product.title}</h5>
-      <p class="card-text">Price:${element.product.price}</p>
-      <p class="card-text">Stock:${element.product.stock}</p>
+    cardBody.innerHTML = `<h5 class="card-title">${element.product.title}</h5>
+      <p class="card-text">Price per unit:${element.product.price}</p>
+      <p class="card-text">Units:<span id="quantity">${element.quantity}</span></p>
+      <button class="btn btn-dark decrementBtn" id="${element.product._id}">-</button>
+      <button class="btn btn-dark incrementBtn" id="${element.product._id}">+</button>
+      <p class="card-subtitle mt-2 text-body-secondary"><span id="stock">${element.product.stock}</span> available</p>
       `;
 
     card.appendChild(cardBody);
-    column.appendChild(card);
-    rowBody.appendChild(column);
+    rowBody.appendChild(card);
   });
-
-  //Add to Home Page
-  document.body.appendChild(rowBody);
 };
 
 const addProductToCart = (cartId) => {
@@ -130,6 +129,16 @@ const addProductToCart = (cartId) => {
         headers: {
           "Content-Type": "application/json",
         },
+      });
+      Swal.fire({
+        title: "Product Added correctly",
+        position: "top-end",
+        timer: 1500,
+        background: "#2ccd3c",
+        color: "#fff",
+        width: "20rem",
+        showCancelButton: false,
+        showConfirmButton: false,
       });
     });
   });
