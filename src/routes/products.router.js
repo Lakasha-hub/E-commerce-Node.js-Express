@@ -1,9 +1,10 @@
-import { Router } from "express";
+import BaseRouter from "./router.js";
 
 import { validateGetQueryParams } from "../middlewares/validateGetProductsParams.middleware.js";
 import { verifyCodeDuplicated } from "../middlewares/verifyCodeDuplicated.middleware.js";
 import { verifyMongoID } from "../middlewares/verifyMongoID.middleware.js";
 import { validateProductCamps } from "../middlewares/validateProductCamps.middleware.js";
+
 import {
   productsPost,
   productsGet,
@@ -12,41 +13,36 @@ import {
   productsDelete,
 } from "../controllers/products.controller.js";
 
-//Create instance of Router
-const router = Router();
+export default class ProductsRouter extends BaseRouter {
+  init() {
+    this.get(
+      "/",
+      ["USER_ROLE", "ADMIN_ROLE"],
+      validateGetQueryParams,
+      productsGet
+    );
 
-router.get("/", [validateGetQueryParams], productsGet);
+    this.post(
+      "/",
+      ["ADMIN_ROLE"],
+      validateProductCamps, verifyCodeDuplicated,
+      productsPost
+    );
 
-router.post("/", [validateProductCamps, verifyCodeDuplicated], productsPost);
+    this.get(
+      "/:id",
+      ["USER_ROLE", "ADMIN_ROLE"],
+      verifyMongoID,
+      productsGetById
+    );
 
-router.get("/:id", [verifyMongoID], productsGetById);
+    this.put("/:id", ["ADMIN_ROLE"], verifyMongoID, productsPut);
 
-router.put("/:id", [verifyMongoID], productsPut);
-
-router.delete("/:id", [verifyMongoID], productsDelete)
-
-// router.delete("/:pid", async (req, res) => {
-//   //Get Product ID for params
-//   const { pid } = req.params;
-
-//   //Call method deleteProduct
-//   const product = await productManager.deleteProduct(pid);
-
-//   //if catch error respond 400
-//   if (typeof product == "string") {
-//     return res.status(400).json({
-//       msg: product, //error.message
-//     });
-//   }
-
-//   //Send Products Updated to realTimeProducts with socket in req.io
-//   const productsToView = await productManager.getProducts();
-//   req.io.emit("GetProductsUpdated", productsToView);
-
-//   return res.status(200).json({
-//     msg: "The product has been removed",
-//     product, //Product Deleted
-//   });
-// });
-
-export default router;
+    this.delete(
+      "/:id",
+      ["ADMIN_ROLE"],
+      verifyMongoID,
+      productsDelete
+    );
+  }
+}

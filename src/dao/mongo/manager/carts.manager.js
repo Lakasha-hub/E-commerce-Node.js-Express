@@ -9,8 +9,8 @@ export default class CartsManager {
     return cartModel.findById(id).lean();
   };
 
-  createCart = (defaultCart) => {
-    return cartModel.create(defaultCart);
+  createCart = () => {
+    return cartModel.create({ products: [] });
   };
 
   addProductToCart = (id, product) => {
@@ -20,16 +20,16 @@ export default class CartsManager {
   updateProductOfCart = (id, product) => {
     return cartModel.findOneAndUpdate(
       { _id: id, "products.product": product.product },
-      { $inc: { "products.$.quantity": product.quantity } }
+      { $set: { "products.$.quantity": product.quantity } }
     );
   };
 
-  getProductOfCart = (id, pid) => {
-    return cartModel.findOne({
-      _id: id,
-      products: { $elemMatch: { pid: pid } },
-    });
-  };
+  // getProductOfCart = (id, pid) => {
+  //   return cartModel.findOne({
+  //     _id: id,
+  //     products: { $elemMatch: { product : pid} },
+  //   });
+  // };
 
   deleteProductOfCart = (id, pid) => {
     return cartModel.findByIdAndUpdate(id, {
@@ -37,17 +37,17 @@ export default class CartsManager {
     });
   };
 
+  // updateQuantityOfProduct = (id, pid, quantity) => {
+  //   return cartModel.findOneAndUpdate(
+  //     { _id: id, "products.product": pid },
+  //     { $set: { "products.$.quantity": quantity } }
+  //   );
+  // };
+
   updateAllProducts = (id, productsUpdated) => {
     return cartModel.findByIdAndUpdate(id, {
       $set: { products: productsUpdated },
     });
-  };
-
-  updateQuantityOfProduct = (id, pid, quantity) => {
-    return cartModel.findOneAndUpdate(
-      { _id: id, "products.product": pid },
-      { $set: { "products.$.quantity": quantity } }
-    );
   };
 
   deleteAllProducts = (id) => {

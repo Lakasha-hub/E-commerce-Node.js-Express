@@ -1,30 +1,28 @@
 import Express from "express";
 import handlebars from "express-handlebars";
-import dotenv from "dotenv";
+import "dotenv/config";
 import { Server } from "socket.io";
-import mongoose from "mongoose";
+import cookieParser from "cookie-parser";
 
-import __dirname from "./utils.js";
+import initializePassportStrategies from "./config/passport.config.js";
+import { __dirname } from "./utils.js";
 
-import productsRouter from "./routes/products.router.js";
-import cartsRouter from "./routes/carts.router.js";
-import viewsRouter from "./routes/views.router.js";
+import ProductsRouter from "./routes/products.router.js";
+import CartsRouter from "./routes/carts.router.js";
+import SessionsRouter from "./routes/sessions.router.js";
+import ViewsRouter from "./routes/views.router.js";
 
 import productsHandler from "./listeners/products.handler.js";
 import registerChatHandler from "./listeners/messages.handler.js";
 
 //Create instance of express
 const app = Express();
-//Config dotenv to read enviroment variables(PORT)
-dotenv.config();
-const PORT = process.env.PORT;
 
-//Server Express
+//Initialize Server Express
+const PORT = process.env.PORT;
 const server = app.listen(PORT, () => {
   console.log(`Server running on: http://localhost:${PORT}`);
 });
-
-const connection = mongoose.connect(process.env.DB_CONNECTION);
 
 //Connect Server to io (Server Socket)
 const io = new Server(server);
@@ -39,19 +37,33 @@ app.use(Express.json());
 app.use(Express.urlencoded({ extended: true }));
 app.use(Express.static(`${__dirname}/public`));
 
+//Set cookie parser
+app.use(cookieParser());
+
 //Middleware to add socket.io
 app.use((req, res, next) => {
   req.io = io;
   next();
 });
 
-//Routes
-app.use("/api/products", productsRouter);
-app.use("/api/carts", cartsRouter);
-app.use("/", viewsRouter);
-
+//Socket config
 io.on("connection", async (socket) => {
   console.log("New Client Connected");
   registerChatHandler(io, socket);
   productsHandler(io, socket);
 });
+
+//Initialize Passport Strategies
+initializePassportStrategies();
+
+//Initialize Instances of Router
+const sessionsRouter = new SessionsRouter();
+const productsRouter = new ProductsRouter();
+const cartsRouter = new CartsRouter();
+const viewsRouter = new ViewsRouter();
+
+//Routes
+app.use("/api/sessions", sessionsRouter.getRouter());
+app.use("/api/products", productsRouter.getRouter());
+app.use("/api/carts", cartsRouter.getRouter());
+app.use("/", viewsRouter.getRouter());

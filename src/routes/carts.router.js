@@ -1,6 +1,7 @@
-import { Router } from "express";
+import BaseRouter from "./router.js";
 
 import { verifyMongoID } from "../middlewares/verifyMongoID.middleware.js";
+
 import {
   cartsDeleteAllProducts,
   cartsDeleteProduct,
@@ -8,27 +9,54 @@ import {
   cartsGetById,
   cartsPost,
   cartsPostProduct,
-  cartsUpdateAllProducts,
+  cartsPurchase,
   cartsUpdateQuantity,
+  // cartsUpdateAllProducts,
 } from "../controllers/carts.controller.js";
 
-//Create instance of Router
-const router = Router();
+export default class CartsRouter extends BaseRouter {
+  init() {
+    this.get("/", ["USER_ROLE", "ADMIN_ROLE"], cartsGet);
 
-router.get("/", cartsGet);
+    this.post("/", ["USER_ROLE", "ADMIN_ROLE"], cartsPost);
 
-router.post("/", cartsPost);
+    this.get("/:id", ["USER_ROLE", "ADMIN_ROLE"], verifyMongoID, cartsGetById);
 
-router.get("/:id", [verifyMongoID], cartsGetById);
+    this.post("/:id/purchase", ["USER_ROLE"], cartsPurchase)
 
-router.put("/:id", [verifyMongoID], cartsUpdateAllProducts);
+    // this.put(
+    //   "/:id",
+    //   ["USER_ROLE"],
+    //   verifyMongoID,
+    //   cartsUpdateAllProducts
+    // );
 
-router.delete("/:id", [verifyMongoID], cartsDeleteAllProducts);
+    this.delete(
+      "/:id",
+      ["USER_ROLE", "ADMIN_ROLE"],
+      verifyMongoID,
+      cartsDeleteAllProducts
+    );
 
-router.post("/:id/products/:pid", [verifyMongoID], cartsPostProduct);
+    this.post(
+      "/:id/products/:pid",
+      ["USER_ROLE"],
+      verifyMongoID,
+      cartsPostProduct
+    );
 
-router.put("/:id/products/:pid", [verifyMongoID], cartsUpdateQuantity);
+    this.put(
+      "/:id/products/:pid",
+      ["USER_ROLE"],
+      verifyMongoID,
+      cartsUpdateQuantity
+    );
 
-router.delete("/:id/products/:pid", [verifyMongoID], cartsDeleteProduct);
-
-export default router;
+    this.delete(
+      "/:id/products/:pid",
+      ["USER_ROLE", "ADMIN_ROLE"],
+      verifyMongoID,
+      cartsDeleteProduct
+    );
+  }
+}

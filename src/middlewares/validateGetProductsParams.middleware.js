@@ -1,26 +1,25 @@
-import ProductsManager from "../dao/mongo/manager/products.manager.js";
-const productManager = new ProductsManager();
+import { productsService } from "../services/repositories/index.js";
 
 const validateGetQueryParams = async (req, res, next) => {
   const { limit = 10, page = 1, sort, query } = req.query;
-  const documentsCount = await productManager.countDocuments();
+  const documentsCount = await productsService.countDocuments();
 
   if (limit > documentsCount) {
-    return res
-      .status(400)
-      .json({ error: `limit is greater than the total amount of documents` });
+    return res.sendBadRequest(
+      `limit is greater than the total amount of documents`
+    );
   }
 
   [limit, page].forEach((p) => {
     if (p <= 0 || (isNaN(p) && p !== undefined)) {
-      return res.status(400).json({ error: `${p} is not a valid number` });
+      return res.sendBadRequest(`${p} is not a valid number`);
     }
   });
 
   if (query) {
     const filter = query.split(":");
-    const key = filter[0];
-    let value = filter[1];
+    const key = filter[0].trim();
+    let value = filter[1].trim();
     if (typeof parseInt(value) === "number" && !isNaN(parseInt(value)))
       value = parseInt(value);
     req.query.queryUpdated = { [key]: value };
@@ -32,7 +31,7 @@ const validateGetQueryParams = async (req, res, next) => {
   }
 
   if (sort !== "asc" && sort !== "desc") {
-    return res.status(400).json({ error: `sort is not valid` });
+    return res.sendBadRequest(`sort is not valid`);
   }
 
   req.query.sortUpdated = { price: sort };
