@@ -12,7 +12,7 @@
         height="24"
         class="d-inline-block align-text-top"
       />
-      {{user.name}}
+      Cart
     </a>
     <button
       class="navbar-toggler"
@@ -29,13 +29,17 @@
 
       <ul class="navbar-nav me-auto mb-2 mb-lg-0 w-100">
 
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
+        <li class="nav-item flex-fill">
+          <a
+            class="nav-link active"
+            aria-current="page"
+            href="/products"
+          >Home</a>
         </li>
 
-        <li class="nav-item flex-fill">
+        {{! <li class="nav-item flex-fill">
           <a class="nav-link active" href="#">Link</a>
-        </li>
+        </li> }}
 
         <li class="nav-item dropstart">
           <a
@@ -60,26 +64,24 @@
 </nav>
 
 <div class="container">
+  <h3>Products</h3>
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card-deck text-dark" id="rowProducts">
+      </div>
+    </div>
 
-  <div class="d-flex justify-content-start">
-    {{! Products }}
-    <div class="row row-cols-1 row-cols-md-2 g-2" id="rowProducts">
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Summary</h5>
+          <p>Total: <span id="totalAmount"></span></p>
+          <p>Products: <span id="quantitySummary"></span></p>
+          <button class="btn btn-primary" id="purchaseBtn">Purchase</button>
+        </div>
+      </div>
     </div>
   </div>
-
-  {{!-- <div class="d-flex justify-content-end">
-    {{! Ticket }}
-    <div class="card" style="width: 28rem;">
-      <div class="card-body">
-        <h5 class="card-title">Ticket</h5>
-        <p class="card-text">With supporting text below as a natural lead-in to
-          additional content.</p>
-        <a href="#" class="btn btn-primary">Purchase</a>
-      </div> --}}
-
-    </div>
-  </div>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

@@ -10,8 +10,8 @@ import {
   cartsPost,
   cartsPostProduct,
   cartsPurchase,
+  cartsUpdateQuantity,
   // cartsUpdateAllProducts,
-  // cartsUpdateQuantity,
 } from "../controllers/carts.controller.js";
 
 export default class CartsRouter extends BaseRouter {
@@ -45,12 +45,12 @@ export default class CartsRouter extends BaseRouter {
       cartsPostProduct
     );
 
-    // this.put(
-    //   "/:id/products/:pid",
-    //   ["USER_ROLE"],
-    //   verifyMongoID,
-    //   cartsUpdateQuantity
-    // );
+    this.put(
+      "/:id/products/:pid",
+      ["USER_ROLE"],
+      verifyMongoID,
+      cartsUpdateQuantity
+    );
 
     this.delete(
       "/:id/products/:pid",

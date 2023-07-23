@@ -1,8 +1,10 @@
 import {
   cartsService,
   productsService,
+  ticketsService,
 } from "../services/repositories/index.js";
 import { isValidObjectId } from "mongoose";
+import { generateCodeRandom } from "../utils.js";
 
 const cartsGet = async (req, res) => {
   const result = await cartsService.getAll();
@@ -32,12 +34,16 @@ const cartsPostProduct = async (req, res) => {
     const { id, pid } = req.params;
     let { quantity } = req.body;
 
-    if (!quantity) {
-      quantity = 1;
-    }
-
     if (typeof quantity !== "number") {
       throw new Error("quantity must be type Number");
+    }
+
+    if (quantity <= 0) {
+      throw new Error("quantity must be 1 or more");
+    }
+
+    if (!quantity) {
+      quantity = 1;
     }
 
     const verifyPid = isValidObjectId(pid);
@@ -55,7 +61,9 @@ const cartsPostProduct = async (req, res) => {
       throw new Error(`There is not registered cart with id: ${id}`);
     }
 
-    const productExistsInCart = cart.products.find((p) => p.product == pid);
+    const productExistsInCart = cart.products.find(
+      (p) => p.product._id.toString() === pid
+    );
 
     if (!productExistsInCart) {
       await cartsService.addProduct(id, {
@@ -66,9 +74,11 @@ const cartsPostProduct = async (req, res) => {
       return res.sendSuccessWithPayload(result);
     }
 
-    await cartsService.updateProductOfCart(id, { product: pid, quantity });
+    await cartsService.updateProduct(id, {
+      product: pid,
+      quantity: productExistsInCart.quantity + quantity,
+    });
     const result = await cartsService.getById(id);
-
     return res.sendSuccessWithPayload(result);
   } catch (error) {
     return res.sendBadRequest(error.message);
@@ -105,11 +115,42 @@ const cartsDeleteProduct = async (req, res) => {
 };
 
 const cartsPurchase = async (req, res) => {
-  //Get Cart Id
-  const { id } = req.params;
-  const cart = await cartsService.getById(id);
-  console.log(cart);
-  res.sendSuccess();
+  try {
+    //Get Cart Id
+    const { id } = req.params;
+    const { email } = req.user;
+    const cart = await cartsService.getById(id);
+
+    let amount = 0;
+    cart.products.forEach((product) => {
+      if (product.quantity > product.product.stock) {
+        throw new Error("Insuficient Stock");
+      }
+      amount += product.quantity * product.product.price;
+    });
+
+    let code;
+    let flag = true;
+    while (flag) {
+      code = generateCodeRandom(20);
+      const codeExists = await ticketsService.getBy({ code });
+      if (!codeExists) {
+        flag = false;
+      }
+    }
+
+    const ticket = await ticketsService.create({
+      code,
+      amount: amount.toFixed(2),
+      purchaser: email,
+    });
+    await cartsService.clear(id);
+
+    return res.sendSuccessWithPayload(ticket);
+  } catch (error) {
+    console.log(error);
+    return res.sendBadRequest(error.message);
+  }
 };
 
 // const cartsUpdateAllProducts = async (req, res) => {
@@ -137,30 +178,47 @@ const cartsPurchase = async (req, res) => {
 //   }
 // };
 
-// const cartsUpdateQuantity = async (req, res) => {
-//   try {
-//     const { id, pid } = req.params;
-//     const { quantity } = req.body;
+const cartsUpdateQuantity = async (req, res) => {
+  try {
+    const { id, pid } = req.params;
+    const { quantity, operation } = req.body;
 
-//     if (!isValidObjectId(pid)) {
-//       throw new Error(`${pid} is not a valid product id`);
-//     }
+    if (!isValidObjectId(pid)) {
+      throw new Error(`${pid} is not a valid product id`);
+    }
 
-//     if (!quantity) {
-//       throw new Error("quantity is required");
-//     }
+    if (typeof quantity !== "number") {
+      throw new Error("quantity must be type Number");
+    }
 
-//     if (typeof quantity !== "number") {
-//       throw new Error("quantity must be type Number");
-//     }
+    if (quantity <= 0) throw new Error("quantity must be 1 or more");
 
-//     await cartsService.updateProduct(id, pid, quantity);
-//     const result = await cartsService.getCartById(id);
-//     return res.sendSuccessWithPayload(result);
-//   } catch (error) {
-//     return res.sendBadRequest(error.message);
-//   }
-// };
+    const cart = await cartsService.getById(id);
+    const productDb = cart.products.find(
+      (p) => p.product._id.toString() === pid
+    );
+
+    if (operation == "sum") {
+      productDb.quantity = productDb.quantity + quantity;
+    } else if (operation == "rest") {
+      productDb.quantity = productDb.quantity - quantity;
+    }
+
+    if (productDb.quantity === 0) {
+      await cartsService.deleteProduct(id, pid);
+      return res.sendSuccess("Product deleted");
+    }
+
+    if (productDb.quantity > productDb.product.stock)
+      throw new Error("Insuficient stock");
+
+    await cartsService.updateProduct(id, productDb);
+    return res.sendSuccess("Product updated");
+  } catch (error) {
+    console.log(error);
+    return res.sendBadRequest(error.message);
+  }
+};
 
 const cartsDeleteAllProducts = async (req, res) => {
   try {
@@ -190,6 +248,6 @@ export {
   cartsDeleteProduct,
   cartsDeleteAllProducts,
   cartsPurchase,
-  // cartsUpdateQuantity,
+  cartsUpdateQuantity,
   // cartsUpdateAllProducts,
 };

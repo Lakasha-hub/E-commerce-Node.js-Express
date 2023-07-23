@@ -1,5 +1,8 @@
-
-
 .navbar {
   margin-bottom: 20px;
+}
+
+#rowProducts {
+  max-height: 400px;
+  overflow-y: auto;
 }

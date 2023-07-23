@@ -10,7 +10,7 @@ export default class CartsManager {
   };
 
   createCart = () => {
-    return cartModel.create({products: []});
+    return cartModel.create({ products: [] });
   };
 
   addProductToCart = (id, product) => {
@@ -24,12 +24,12 @@ export default class CartsManager {
     );
   };
 
-  getProductOfCart = (id, pid) => {
-    return cartModel.findOne({
-      _id: id,
-      products: { $elemMatch: { pid: pid } },
-    });
-  };
+  // getProductOfCart = (id, pid) => {
+  //   return cartModel.findOne({
+  //     _id: id,
+  //     products: { $elemMatch: { product : pid} },
+  //   });
+  // };
 
   deleteProductOfCart = (id, pid) => {
     return cartModel.findByIdAndUpdate(id, {
