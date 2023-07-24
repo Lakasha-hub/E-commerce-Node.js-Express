@@ -1,14 +1,17 @@
 document.addEventListener("DOMContentLoaded", () => {
   const btn = document.querySelector(".btn-primary");
-  btn.addEventListener("click", function btnListener() {
-    const email = document.querySelector("#inputEmail4").value;
-    const password = document.querySelector("#inputPassword4").value;
+  btn.addEventListener("click", function btnListener(event) {
+    event.preventDefault();
+    const email = document.querySelector("#email").value;
+    const password = document.querySelector("#password").value;
 
     if (!email.trim() || !password.trim()) {
       return Swal.fire({
         position: "top-end",
-        title: "Complete all camps",
         showConfirmButton: false,
+        title: `Complete all camps`,
+        color: "#fff",
+        background: "#555",
         timer: 2000,
       });
     }
@@ -33,8 +36,10 @@ document.addEventListener("DOMContentLoaded", () => {
           btn.removeEventListener("click", btnListener);
         return Swal.fire({
           position: "top-end",
-          title: `${error}`,
           showConfirmButton: false,
+          title: `${error}`,
+          color: "#fff",
+          background: "#555",
           timer: 2000,
         });
       });

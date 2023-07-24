@@ -1,55 +1,50 @@
-html,
-body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
+.card {
+  background-color: #242424;
 }
 
-.container {
-  min-height: 100%;
+.form-control {
+  background-color: #555;
+  color: #fff;
 }
 
-/* .container {
-  margin-left: auto;
-  margin-right: auto;
-} */
-h1 {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20%;
-  margin-bottom: 20px;
+.form-control:focus {
+  background-color: #555;
+  color: #fff;
+  outline: none; 
+  border-color: #555; 
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); 
 }
 
-#FirstLabels {
-  justify-content: center;
-  margin-bottom: 20px;
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
 }
 
-#SecondLabels {
-  justify-content: center;
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
 }
 
-.containerBtn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.btn-dark {
+  background-color: #343a40;
+  border-color: #343a40;
+}
+
+.btn-dark:hover {
+  background-color: #1d2124;
+  border-color: #1d2124;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+.btn-secondary:hover {
+  background-color: #545b62;
+  border-color: #545b62;
+}
+
+.btn-primary{
   margin-top: 20px;
-}
-
-p {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20px;
-}
-
-a {
-  text-decoration: none;
-}
-
-.btn-light {
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }

@@ -46,6 +46,13 @@ export default class ViewsRouter extends BaseRouter {
       });
     });
 
+    this.get("/profile", ["USER_ROLE", "ADMIN_ROLE"], (req, res) => {
+      res.render("profile", {
+        title: "Profile",
+        user: req.user,
+      });
+    });
+
     this.get("/restorePassword", ["NO_AUTH"], (req, res) => {
       res.render("restorePassword", {
         title: "Restore Password",
