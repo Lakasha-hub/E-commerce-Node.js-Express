@@ -1,0 +1,16 @@
+.card {
+  background-color: #262626;
+  color: #fff;
+}
+
+.list-group-item {
+  background-color: #262626;
+}
+
+.item {
+  list-style-type: none;
+}
+
+.item a {
+  text-decoration: none;
+}

@@ -1,4 +1,4 @@
-import { addProductToCart, createRowOfProducts } from "./functions.js";
+import { addProductToCart, createRowOfProducts, btnLogoutListener } from "./functions.js";
 
 /** Display products */
 fetch("/api/products")
@@ -31,26 +31,4 @@ fetch("/api/sessions/current")
   })
   .catch((error) => console.log(error));
 
-/**Log out */
-const btnLogOut = document.querySelector("#logout");
-if (btnLogOut) {
-  btnLogOut.addEventListener("click", () => {
-    return Swal.fire({
-      title: "Want to log out?",
-      showCancelButton: true,
-      confirmButtonText: "Yes",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        fetch("/api/sessions/logout")
-          .then((response) => {
-            if (response.error) throw new Error(response.error);
-            return response;
-          })
-          .then((data) => {
-            window.location.replace("/login");
-          })
-          .catch((error) => console.log(error));
-      }
-    });
-  });
-}
+btnLogoutListener();
