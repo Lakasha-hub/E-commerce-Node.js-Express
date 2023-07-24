@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+<<<<<<< HEAD
   const btn = document.querySelector("#btnRegister");
   btn.addEventListener("click", (event) => {
     event.preventDefault();
@@ -7,6 +8,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const age = document.querySelector("#age").value;
     const email = document.querySelector("#email").value;
     const password = document.querySelector("#password").value;
+=======
+  const btn = document.querySelector(".btn-primary");
+  btn.addEventListener("click", () => {
+    const first_name = document.querySelector("#first_name").value;
+    const last_name = document.querySelector("#last_name").value;
+    const age = document.querySelector("#age").value;
+    const email = document.querySelector("#inputEmail4").value;
+    const password = document.querySelector("#inputPassword4").value;
+>>>>>>> 452099c85866f764a3463ff278240186caab9e9c
 
     if (
       !first_name.trim() ||
@@ -44,6 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return responseData;
       })
       .then((data) => {
+<<<<<<< HEAD
         Swal.fire({
           position: "top-end",
           showConfirmButton: false,
@@ -56,14 +67,22 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => {
           window.location.replace("/login");
         }, 2000);
+=======
+        window.location.replace("/login");
+>>>>>>> 452099c85866f764a3463ff278240186caab9e9c
       })
       .catch((error) => {
         return Swal.fire({
           position: "top-end",
+<<<<<<< HEAD
           showConfirmButton: false,
           title: `${error}`,
           color: "#fff",
           background: "#555",
+=======
+          title: `${error}`,
+          showConfirmButton: false,
+>>>>>>> 452099c85866f764a3463ff278240186caab9e9c
           timer: 2000,
         });
       });
