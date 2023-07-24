@@ -108,11 +108,11 @@ const initializePassportStrategies = () => {
             const cart = await cartsService.create();
             const newUser = {
               first_name: name,
-              last_name: "",
+              last_name: " ",
               email: email,
               age: 0,
               cart,
-              password: "",
+              password: " ",
               role: "USER_ROLE",
             };
             const userResult = await usersService.create(newUser);

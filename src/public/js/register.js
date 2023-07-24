@@ -1,11 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const btn = document.querySelector(".btn-primary");
-  btn.addEventListener("click", () => {
+  const btn = document.querySelector("#btnRegister");
+  btn.addEventListener("click", (event) => {
+    event.preventDefault();
     const first_name = document.querySelector("#first_name").value;
     const last_name = document.querySelector("#last_name").value;
     const age = document.querySelector("#age").value;
-    const email = document.querySelector("#inputEmail4").value;
-    const password = document.querySelector("#inputPassword4").value;
+    const email = document.querySelector("#email").value;
+    const password = document.querySelector("#password").value;
 
     if (
       !first_name.trim() ||
@@ -43,13 +44,26 @@ document.addEventListener("DOMContentLoaded", () => {
         return responseData;
       })
       .then((data) => {
-        window.location.replace("/login");
+        Swal.fire({
+          position: "top-end",
+          showConfirmButton: false,
+          title: "Register Completed",
+          text: "we redirect you to log in",
+          color: "#fff",
+          background: "#555",
+          timer: 2000,
+        });
+        setTimeout(() => {
+          window.location.replace("/login");
+        }, 2000);
       })
       .catch((error) => {
         return Swal.fire({
           position: "top-end",
-          title: `${error}`,
           showConfirmButton: false,
+          title: `${error}`,
+          color: "#fff",
+          background: "#555",
           timer: 2000,
         });
       });
