@@ -12,9 +12,18 @@ import {
   productsPut,
   productsDelete,
 } from "../controllers/products.controller.js";
+import { generateProduct } from "../mocks/product.mock.js";
 
 export default class ProductsRouter extends BaseRouter {
   init() {
+    this.get("/mockingproducts", ["USER_ROLE", "ADMIN_ROLE"], (req, res) => {
+      let mockingProducts = [];
+      for (let i = 0; i < 100; i++) {
+        mockingProducts.push(generateProduct());
+      }
+      res.sendSuccessWithPayload(mockingProducts);
+    });
+    
     this.get(
       "/",
       ["USER_ROLE", "ADMIN_ROLE"],
@@ -25,7 +34,8 @@ export default class ProductsRouter extends BaseRouter {
     this.post(
       "/",
       ["ADMIN_ROLE"],
-      validateProductCamps, verifyCodeDuplicated,
+      validateProductCamps,
+      verifyCodeDuplicated,
       productsPost
     );
 
@@ -38,11 +48,7 @@ export default class ProductsRouter extends BaseRouter {
 
     this.put("/:id", ["ADMIN_ROLE"], verifyMongoID, productsPut);
 
-    this.delete(
-      "/:id",
-      ["ADMIN_ROLE"],
-      verifyMongoID,
-      productsDelete
-    );
+    this.delete("/:id", ["ADMIN_ROLE"], verifyMongoID, productsDelete);
+
   }
 }
