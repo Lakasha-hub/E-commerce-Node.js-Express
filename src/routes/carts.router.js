@@ -22,21 +22,14 @@ export default class CartsRouter extends BaseRouter {
 
     this.get("/:id", ["USER_ROLE", "ADMIN_ROLE"], verifyMongoID, cartsGetById);
 
-    this.post("/:id/purchase", ["USER_ROLE"], cartsPurchase)
-
-    // this.put(
-    //   "/:id",
-    //   ["USER_ROLE"],
-    //   verifyMongoID,
-    //   cartsUpdateAllProducts
-    // );
-
     this.delete(
       "/:id",
       ["USER_ROLE", "ADMIN_ROLE"],
       verifyMongoID,
       cartsDeleteAllProducts
     );
+
+    this.post("/:id/purchase", ["USER_ROLE"], cartsPurchase);
 
     this.post(
       "/:id/products/:pid",

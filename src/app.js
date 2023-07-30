@@ -14,6 +14,7 @@ import ViewsRouter from "./routes/views.router.js";
 
 import productsHandler from "./listeners/products.handler.js";
 import registerChatHandler from "./listeners/messages.handler.js";
+import errorHandler from "./middlewares/errorHandler.js";
 
 //Create instance of express
 const app = Express();
@@ -67,3 +68,5 @@ app.use("/api/sessions", sessionsRouter.getRouter());
 app.use("/api/products", productsRouter.getRouter());
 app.use("/api/carts", cartsRouter.getRouter());
 app.use("/", viewsRouter.getRouter());
+
+app.use(errorHandler)
