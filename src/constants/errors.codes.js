@@ -1,0 +1,12 @@
+const error_codes = {
+  INCOMPLETE_VALUES: 1,
+  INVALID_TYPES: 2,
+  INVALID_VALUES: 3,
+  NOT_FOUND: 4,
+  DUPLICATED: 5,
+  INSUFICIENT_STOCK: 6,
+  WITHOUT_PRODUCTS: 7,
+  UNAUTHORIZED: 8,
+};
+
+export default error_codes;
