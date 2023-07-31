@@ -18,27 +18,10 @@ const createRowOfProducts = (products) => {
       <p class="card-text">Price:${element.price}</p>
       <button type="button" class="btn btn-primary" id="${element._id}">Add To Cart</button>
       `;
-<<<<<<< HEAD
-=======
-
-    /**<p class="card-text">Stock:${element.stock}</p>
-      <p class="card-text">Code:${element.code}</p>
-      <p class="card-text">Category:${element.category}</p>
-      <p class="card-text">Status:${element.status}</p>
-      <p class="card-text">Thumbnails:${element.thumbnails}</p>
-      <p class="card-text">Id:${element._id}</p> */
-
->>>>>>> 452099c85866f764a3463ff278240186caab9e9c
     card.appendChild(cardBody);
     column.appendChild(card);
     rowBody.appendChild(column);
   });
-<<<<<<< HEAD
-=======
-
-  //Add to Home Page
-  document.body.appendChild(rowBody);
->>>>>>> 452099c85866f764a3463ff278240186caab9e9c
 };
 
 const createViewOfProducts = (products) => {
@@ -71,12 +54,6 @@ const createViewOfProducts = (products) => {
     column.appendChild(card);
     rowBody.appendChild(column);
   });
-<<<<<<< HEAD
-=======
-
-  //Add to Home Page
-  document.body.appendChild(rowBody);
->>>>>>> 452099c85866f764a3463ff278240186caab9e9c
 };
 
 const createViewOfMessages = (messages) => {
@@ -95,22 +72,12 @@ const createViewOfMessages = (messages) => {
     card.appendChild(cardBody);
     messagesBody.appendChild(card);
   });
-<<<<<<< HEAD
-=======
-
-  document.body.appendChild(messagesBody);
->>>>>>> 452099c85866f764a3463ff278240186caab9e9c
 };
 
 const createRowOfProductsCarts = (products) => {
   //Father Element
-<<<<<<< HEAD
   const rowProducts = document.querySelector("#rowProducts");
   rowProducts.innerHTML = "";
-=======
-  const rowBody = document.querySelector("#rowProducts");
-  rowBody.innerHTML = "";
->>>>>>> 452099c85866f764a3463ff278240186caab9e9c
 
   //For Each Product => create Card
   products.forEach((element) => {
@@ -131,7 +98,6 @@ const createRowOfProductsCarts = (products) => {
       `;
 
     card.appendChild(cardBody);
-<<<<<<< HEAD
     rowProducts.appendChild(card);
   });
 };
@@ -141,6 +107,7 @@ const createSummary = (cartId, products) => {
 
   const col = document.createElement("div");
   col.classList.add("col-md-4");
+  col.setAttribute("id", "summary");
   const card = document.createElement("div");
   card.classList.add("card");
   const cardBody = document.createElement("div");
@@ -209,9 +176,6 @@ const createSummary = (cartId, products) => {
           .catch((error) => console.log(error));
       }
     });
-=======
-    rowBody.appendChild(card);
->>>>>>> 452099c85866f764a3463ff278240186caab9e9c
   });
 };
 
@@ -240,7 +204,6 @@ const addProductToCart = (cartId) => {
     });
   });
 };
-<<<<<<< HEAD
 
 const btnLogoutListener = () => {
   const btnLogOut = document.querySelector("#logout");
@@ -278,18 +241,13 @@ const chargeWithoutProducts = () => {
 
   document.body.appendChild(alertDiv);
 };
-=======
->>>>>>> 452099c85866f764a3463ff278240186caab9e9c
 export {
   createRowOfProducts,
   createViewOfProducts,
   createViewOfMessages,
   createRowOfProductsCarts,
   addProductToCart,
-<<<<<<< HEAD
   btnLogoutListener,
   chargeWithoutProducts,
   createSummary,
-=======
->>>>>>> 452099c85866f764a3463ff278240186caab9e9c
 };
