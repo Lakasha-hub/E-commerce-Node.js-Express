@@ -27,13 +27,6 @@ export default class ViewsRouter extends BaseRouter {
       });
     });
 
-    this.get("/cart/:id", ["USER_ROLE", "ADMIN_ROLE"], (req, res) => {
-      res.render("cart", {
-        title: "Cart",
-        user: req.user,
-      });
-    });
-
     this.get("/register", ["NO_AUTH"], (req, res) => {
       res.render("register", {
         title: "Register",
@@ -56,6 +49,13 @@ export default class ViewsRouter extends BaseRouter {
     this.get("/restorePassword", ["NO_AUTH"], (req, res) => {
       res.render("restorePassword", {
         title: "Restore Password",
+      });
+    });
+
+    this.get("/cart/:id", ["USER_ROLE", "ADMIN_ROLE"], (req, res) => {
+      res.render("cart", {
+        title: "Cart",
+        user: req.user,
       });
     });
   }

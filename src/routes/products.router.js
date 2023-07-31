@@ -1,9 +1,6 @@
 import BaseRouter from "./router.js";
 
-import { validateGetQueryParams } from "../middlewares/validateGetProductsParams.middleware.js";
-import { verifyCodeDuplicated } from "../middlewares/verifyCodeDuplicated.middleware.js";
 import { verifyMongoID } from "../middlewares/verifyMongoID.middleware.js";
-import { validateProductCamps } from "../middlewares/validateProductCamps.middleware.js";
 
 import {
   productsPost,
@@ -23,19 +20,12 @@ export default class ProductsRouter extends BaseRouter {
       }
       res.sendSuccessWithPayload(mockingProducts);
     });
-    
-    this.get(
-      "/",
-      ["USER_ROLE", "ADMIN_ROLE"],
-      validateGetQueryParams,
-      productsGet
-    );
+
+    this.get("/", ["USER_ROLE", "ADMIN_ROLE"], productsGet);
 
     this.post(
       "/",
       ["ADMIN_ROLE"],
-      validateProductCamps,
-      verifyCodeDuplicated,
       productsPost
     );
 
@@ -49,6 +39,5 @@ export default class ProductsRouter extends BaseRouter {
     this.put("/:id", ["ADMIN_ROLE"], verifyMongoID, productsPut);
 
     this.delete("/:id", ["ADMIN_ROLE"], verifyMongoID, productsDelete);
-
   }
 }

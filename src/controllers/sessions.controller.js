@@ -1,7 +1,9 @@
 import { usersService } from "../services/repositories/index.js";
 import { createHash, generateToken } from "../services/auth.service.js";
 import UserToken from "../dtos/user/user.token.js";
-import { cookieExtractor } from "../utils.js";
+
+import ErrorService from "../services/error.service.js";
+import { ErrorManager } from "../constants/index.js";
 
 const userRegister = async (req, res) => {
   return res.sendCreated("User successfully created");
@@ -42,8 +44,16 @@ const userRestorePassword = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    let user = await usersService.getBy({ email: email });
-    if (!user) throw new Error("There is no registered user with this email");
+    let user = await usersService.getBy({ email });
+    if (!user) {
+      ErrorService.create({
+        name: "Error verifying that the user exists",
+        cause: ErrorManager.users.notFound(email),
+        code: ErrorManager.codes.NOT_FOUND,
+        message: "There is no registered user with this email",
+        status: 404,
+      });
+    }
 
     const newHashedPassword = await createHash(password);
     user = await usersService.updateById(user._id, {
@@ -52,7 +62,7 @@ const userRestorePassword = async (req, res) => {
 
     return res.sendSuccessWithPayload(user);
   } catch (error) {
-    return res.sendBadRequest(error);
+    return res.sendError(error);
   }
 };
 

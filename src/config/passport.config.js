@@ -8,6 +8,9 @@ import { cartsService, usersService } from "../services/repositories/index.js";
 import { cookieExtractor } from "../utils.js";
 import { createHash, validatePassword } from "../services/auth.service.js";
 
+import ErrorService from "../services/error.service.js";
+import { ErrorManager } from "../constants/index.js";
+
 //Create instance of Local Strategy
 const LocalStrategy = local.Strategy;
 
@@ -20,12 +23,48 @@ const initializePassportStrategies = () => {
         try {
           const { first_name, last_name, age } = req.body;
 
-          const user_exists = await usersService.getBy({ email });
-          if (user_exists)
-            return done(null, false, { message: "User is already registered" });
+          if (!first_name || !last_name || !age || !email || !password) {
+            ErrorService.create({
+              name: "Error registering a new user",
+              cause: ErrorManager.users.incompleteValues({
+                first_name,
+                last_name,
+                age,
+                email,
+                password,
+              }),
+              code: ErrorManager.codes.INCOMPLETE_VALUES,
+              message: "There are incomplete fields",
+              status: 400,
+            });
+          }
 
-          if (isNaN(age))
-            return done(null, false, { message: "Age must be a number" });
+          if (isNaN(age)) {
+            ErrorService.create({
+              name: "Error registering a new user",
+              cause: ErrorManager.users.invalidTypes({
+                first_name,
+                last_name,
+                age,
+                email,
+                password,
+              }),
+              code: ErrorManager.codes.INVALID_TYPES,
+              message: "There are fields with wrong data types",
+              status: 400,
+            });
+          }
+
+          const user_exists = await usersService.getBy({ email });
+          if (user_exists) {
+            ErrorService.create({
+              name: "Error registering a new user",
+              cause: ErrorManager.users.duplicated(email),
+              code: ErrorManager.codes.DUPLICATED,
+              message: "User is already registered",
+              status: 409,
+            });
+          }
 
           const cart = await cartsService.create();
 
@@ -70,19 +109,29 @@ const initializePassportStrategies = () => {
           }
 
           const user = await usersService.getBy({ email: email });
-          if (!user)
-            return done(null, false, {
+          if (!user) {
+            ErrorService.create({
+              name: "Error when initializing user session",
+              cause: ErrorManager.users.notFound(email),
+              code: ErrorManager.codes.NOT_FOUND,
               message: "The email or password is not correct",
+              status: 401,
             });
+          }
 
           const isValidPassword = await validatePassword(
             password,
             user.password
           );
-          if (!isValidPassword)
-            return done(null, false, {
+          if (!isValidPassword) {
+            ErrorService.create({
+              name: "Error when initializing user session",
+              cause: ErrorManager.users.notFound(email),
+              code: ErrorManager.codes.NOT_FOUND,
               message: "The email or password is not correct",
+              status: 401,
             });
+          }
 
           return done(null, user, { message: "OK" });
         } catch (error) {

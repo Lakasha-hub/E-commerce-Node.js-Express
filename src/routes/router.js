@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { passportCall } from "../services/auth.service.js";
+import { error } from "console";
 
 export default class BaseRouter {
   constructor() {
@@ -55,30 +56,27 @@ export default class BaseRouter {
 
   /**Generate Standardized Responses */
   customResponses = (req, res, next) => {
-    res.sendSuccess = (msg) => res.status(200).json({ status: "success", msg });
+    res.sendSuccess = (msg) => res.status(200).json({ msg });
 
-    res.sendSuccessWithPayload = (payload) =>
-      res.status(200).json({ status: "success", payload });
+    res.sendSuccessWithPayload = (payload) => res.status(200).json({ payload });
 
-    res.sendCreated = (msg) => res.status(201).json({ status: "success", msg });
+    res.sendCreated = (msg) => res.status(201).json({ msg });
 
-    res.sendCreatedWithPayload = (payload) =>
-      res.status(201).json({ status: "success", payload });
+    res.sendCreatedWithPayload = (payload) => res.status(201).json({ payload });
 
-    res.sendBadRequest = (error) =>
-      res.status(400).json({ status: "error", error });
+    res.sendBadRequest = (error) => res.status(400).json({ error });
 
-    res.sendUnauthorized = (error) =>
-      res.status(401).json({ status: "error", error });
+    res.sendUnauthorized = (error) => res.status(401).json({ error });
 
-    res.sendForbidden = (error) =>
-      res.status(403).json({ status: "error", error });
+    res.sendForbidden = (error) => res.status(403).json({ error });
 
-    res.sendNotFound = (error) =>
-      res.status(404).json({ status: "error", error });
+    res.sendNotFound = (error) => res.status(404).json({ error });
 
-    res.sendInternalError = (error) =>
-      res.status(500).json({ status: "error", error });
+    res.sendInternalError = (error) => res.status(500).json({ error });
+
+    res.sendError = (error) => {
+      res.status(error.status).json({ error: error.message });
+    };
     next();
   };
 
