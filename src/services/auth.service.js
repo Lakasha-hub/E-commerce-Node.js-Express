@@ -17,7 +17,7 @@ export const passportCall = (strategy, options = {}) => {
     passport.authenticate(strategy, (error, user, info) => {
       if (error) return next(error);
       if (!options.strategyType) {
-        console.log(`Route ${req.url} doesnt have defined a strategy`);
+        req.logger.error(`Route ${req.url} doesnt have defined a strategy`);
         return res.sendInternalError(
           `Route ${req.url} doesnt have defined a strategy`
         );

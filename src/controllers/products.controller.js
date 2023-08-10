@@ -141,7 +141,6 @@ const productsGet = async (req, res) => {
       nextLink,
     });
   } catch (error) {
-    console.log(error);
     return res.sendError(error);
   }
 };

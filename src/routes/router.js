@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { passportCall } from "../services/auth.service.js";
-import { error } from "console";
 
 export default class BaseRouter {
   constructor() {
@@ -91,7 +90,7 @@ export default class BaseRouter {
       if (policies[0] === "NO_AUTH" && !user) return next();
 
       if (!user) {
-        console.log(req.error);
+        req.logger.info(req.error);
         return res.sendUnauthorized(req.error);
       } //req.error => error from jwt strategy
 
@@ -108,7 +107,7 @@ export default class BaseRouter {
       try {
         await callback.apply(this, params);
       } catch (error) {
-        console.log(error);
+        req.logger.fatal(error);
         params[1].sendInternalError(error);
       }
     });

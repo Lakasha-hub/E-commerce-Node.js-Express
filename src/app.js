@@ -5,6 +5,7 @@ import { Server } from "socket.io";
 import cookieParser from "cookie-parser";
 
 import initializePassportStrategies from "./config/passport.config.js";
+import { attachLoggers } from "./middlewares/logger.midleware.js";
 import { __dirname } from "./utils.js";
 
 import ProductsRouter from "./routes/products.router.js";
@@ -41,15 +42,18 @@ app.use(Express.static(`${__dirname}/public`));
 //Set cookie parser
 app.use(cookieParser());
 
+//Add logger service
+app.use(attachLoggers);
+
 //Middleware to add socket.io
 app.use((req, res, next) => {
   req.io = io;
+  req.logger.info("Socket connected");
   next();
 });
 
 //Socket config
 io.on("connection", async (socket) => {
-  console.log("New Client Connected");
   registerChatHandler(io, socket);
   productsHandler(io, socket);
 });
@@ -69,4 +73,5 @@ app.use("/api/products", productsRouter.getRouter());
 app.use("/api/carts", cartsRouter.getRouter());
 app.use("/", viewsRouter.getRouter());
 
-app.use(errorHandler)
+//Error Handler
+app.use(errorHandler);

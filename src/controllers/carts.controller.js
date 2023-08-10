@@ -216,7 +216,6 @@ const cartsPurchase = async (req, res) => {
 
     return res.sendSuccessWithPayload(ticket);
   } catch (error) {
-    console.log(error);
     return res.sendError(error);
   }
 };
@@ -306,7 +305,6 @@ const cartsUpdateQuantity = async (req, res) => {
     await cartsService.updateProduct(id, productDb);
     return res.sendSuccess("Product updated");
   } catch (error) {
-    console.log(error);
     return res.sendError(error);
   }
 };
