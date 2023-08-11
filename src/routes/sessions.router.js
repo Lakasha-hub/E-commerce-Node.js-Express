@@ -14,6 +14,16 @@ import {
 
 export default class SessionsRouter extends BaseRouter {
   init() {
+    this.get("/loggerTest", ["PUBLIC"], (req, res) => {
+      req.logger.fatal("msg Fatal");
+      req.logger.error("msg Error");
+      req.logger.warning("msg Warning");
+      req.logger.info("msg Info");
+      req.logger.http("msg Http");
+      req.logger.debug("msg debug");
+      res.sendStatus(200);
+    });
+
     this.post(
       "/register",
       ["NO_AUTH"],

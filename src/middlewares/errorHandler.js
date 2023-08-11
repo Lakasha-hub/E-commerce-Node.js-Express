@@ -1,4 +1,6 @@
 export default (error, req, res, next) => {
-  req.logger.fatal(error);
-  res.sendError(error);
+  console.log(error);
+  res.sendStatus(500);
+  // req.logger.fatal(error);
+  // res.sendError(error);
 };
