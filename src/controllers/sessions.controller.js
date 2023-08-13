@@ -3,7 +3,8 @@ import { createHash, generateToken } from "../services/auth.service.js";
 import UserToken from "../dtos/user/user.token.js";
 
 import ErrorService from "../services/error.service.js";
-import { ErrorManager } from "../constants/index.js";
+import { ErrorManager } from "../constants/errors/index.js";
+import environmentOptions from "../constants/server/environment.options.js";
 
 const userRegister = async (req, res) => {
   return res.sendCreated("User successfully created");
@@ -14,7 +15,7 @@ const userLogin = async (req, res) => {
   const { ...user } = new UserToken(req.user);
   const accessToken = generateToken(user);
   res
-    .cookie("authToken", accessToken, {
+    .cookie(environmentOptions.jwt.TOKEN_NAME, accessToken, {
       maxAge: 1000 * 60 * 60 * 24,
       httpOnly: true,
       sameSite: "lax",
@@ -27,7 +28,7 @@ const userLoginGithub = async (req, res) => {
   const { ...user } = new UserToken(req.user);
   const accessToken = generateToken(user);
   res
-    .cookie("authToken", accessToken, {
+    .cookie(environmentOptions.jwt.TOKEN_NAME, accessToken, {
       maxAge: 1000 * 60 * 60 * 24,
       httpOnly: true,
       sameSite: "lax",
@@ -67,7 +68,9 @@ const userRestorePassword = async (req, res) => {
 };
 
 const userLogout = async (req, res) => {
-  res.clearCookie("authToken").sendSuccess("Log Out OK");
+  res
+    .clearCookie(environmentOptions.jwt.TOKEN_NAME)
+    .sendSuccess("Log Out OK");
 };
 
 export {

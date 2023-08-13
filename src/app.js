@@ -1,11 +1,11 @@
 import Express from "express";
 import handlebars from "express-handlebars";
-import "dotenv/config";
 import { Server } from "socket.io";
 import cookieParser from "cookie-parser";
 
 import initializePassportStrategies from "./config/passport.config.js";
 import { attachLoggers } from "./middlewares/logger.midleware.js";
+import environmentOptions from "./constants/server/environment.options.js";
 import { __dirname } from "./utils.js";
 
 import ProductsRouter from "./routes/products.router.js";
@@ -21,7 +21,7 @@ import errorHandler from "./middlewares/errorHandler.js";
 const app = Express();
 
 //Initialize Server Express
-const PORT = process.env.PORT;
+const PORT = environmentOptions.app.PORT;
 const server = app.listen(PORT, () => {
   console.log(`Server running on: http://localhost:${PORT}`);
 });

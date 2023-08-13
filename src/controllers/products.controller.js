@@ -1,11 +1,11 @@
-import "dotenv/config";
 import { productsService } from "../services/repositories/index.js";
+
+import { ErrorManager } from "../constants/errors/index.js";
+import environmentOptions from "../constants/server/environment.options.js";
+import ErrorService from "../services/error.service.js";
 import { generateCodeRandom } from "../utils.js";
 
-import { ErrorManager } from "../constants/index.js";
-import ErrorService from "../services/error.service.js";
-
-const PORT = process.env.PORT;
+const PORT = environmentOptions.app.PORT;
 
 const productsGet = async (req, res) => {
   try {

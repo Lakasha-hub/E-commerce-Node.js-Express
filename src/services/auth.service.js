@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import passport from "passport";
 import jwt from "jsonwebtoken";
-import "dotenv/config";
+import environmentOptions from "../constants/server/environment.options.js";
 
 export const createHash = async (password) => {
   const salts = await bcrypt.genSalt(10);
@@ -44,7 +44,7 @@ export const passportCall = (strategy, options = {}) => {
   };
 };
 
-const jwtKey = process.env.JWT_KEY;
+const jwtKey = environmentOptions.jwt.SECRET_KEY;
 export const generateToken = (user) => {
   const token = jwt.sign(user, jwtKey, { expiresIn: "24h" });
   return token;

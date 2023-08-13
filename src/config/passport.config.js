@@ -2,14 +2,14 @@ import passport from "passport";
 import local from "passport-local";
 import GithubStrategy from "passport-github2";
 import { Strategy, ExtractJwt } from "passport-jwt";
-import "dotenv/config";
 
 import { cartsService, usersService } from "../services/repositories/index.js";
 import { cookieExtractor } from "../utils.js";
 import { createHash, validatePassword } from "../services/auth.service.js";
 
 import ErrorService from "../services/error.service.js";
-import { ErrorManager } from "../constants/index.js";
+import { ErrorManager } from "../constants/errors/index.js";
+import environmentOptions from "../constants/server/environment.options.js";
 
 //Create instance of Local Strategy
 const LocalStrategy = local.Strategy;
@@ -94,8 +94,8 @@ const initializePassportStrategies = () => {
       async (email, password, done) => {
         try {
           if (
-            email === process.env.ADMIN_EMAIL &&
-            password === process.env.ADMIN_PASSWORD
+            email === environmentOptions.app.ADMIN_EMAIL &&
+            password === environmentOptions.app.ADMIN_PASSWORD
           ) {
             const adminUser = {
               _id: 0,
@@ -145,9 +145,9 @@ const initializePassportStrategies = () => {
     "github",
     new GithubStrategy(
       {
-        clientID: process.env.CLIENT_ID_GITHUB,
-        clientSecret: process.env.CLIENT_SECRET_GITHUB,
-        callbackURL: `http://localhost:${process.env.PORT}/api/sessions/githubcallback`,
+        clientID: environmentOptions.github.CLIENT_ID,
+        clientSecret: environmentOptions.github.CLIENT_SECRET,
+        callbackURL: `http://localhost:${environmentOptions.app.PORT}/api/sessions/githubcallback`,
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
@@ -183,7 +183,7 @@ const initializePassportStrategies = () => {
     new Strategy(
       {
         jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
-        secretOrKey: process.env.JWT_KEY,
+        secretOrKey: environmentOptions.jwt.SECRET_KEY,
       },
       async (payload, done) => {
         if (!payload) return done(null, false, { message: "Unauthorized" });

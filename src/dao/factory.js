@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import "dotenv/config";
 import { options } from "../config/server.config.js";
+import environmentOptions from "../constants/server/environment.options.js";
 
 const persistence = options.dao;
 console.log(`Persistence in use: ${persistence}`);
@@ -15,7 +15,8 @@ export default class PersistenceFactory {
 
     switch (persistence) {
       case "MONGO":
-        mongoose.connect(process.env.DB_CONNECTION);
+        console.log(environmentOptions.mongo.URL_CONNECTION)
+        mongoose.connect(environmentOptions.mongo.URL_CONNECTION);
         const { default: UsersManager } = await import(
           "./mongo/manager/users.manager.js"
         );

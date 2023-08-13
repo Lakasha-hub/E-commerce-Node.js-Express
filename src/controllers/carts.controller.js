@@ -7,7 +7,7 @@ import { isValidObjectId } from "mongoose";
 import { generateCodeRandom } from "../utils.js";
 
 import ErrorService from "../services/error.service.js";
-import { ErrorManager } from "../constants/index.js";
+import { ErrorManager } from "../constants/errors/index.js";
 import { pid } from "process";
 
 const cartsGet = async (req, res) => {

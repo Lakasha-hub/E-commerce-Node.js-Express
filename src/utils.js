@@ -1,5 +1,6 @@
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import environmentOptions from "./constants/server/environment.options.js";
 
 export const generateCodeRandom = (codeLength) => {
   const characters =
@@ -15,7 +16,7 @@ export const generateCodeRandom = (codeLength) => {
 export const cookieExtractor = (req) => {
   let token = null;
   if (req && req.cookies) {
-    token = req.cookies["authToken"];
+    token = req.cookies[environmentOptions.jwt.TOKEN_NAME];
   }
   return token;
 };

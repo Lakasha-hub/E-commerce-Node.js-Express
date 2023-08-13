@@ -1,6 +1,6 @@
 import { isValidObjectId } from "mongoose";
 import ErrorService from "../services/error.service.js";
-import { ErrorManager } from "../constants/index.js";
+import { ErrorManager } from "../constants/errors/index.js";
 
 const verifyMongoID = (req, res, next) => {
   try {
