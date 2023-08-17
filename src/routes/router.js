@@ -107,7 +107,7 @@ export default class BaseRouter {
       try {
         await callback.apply(this, params);
       } catch (error) {
-        req.logger.fatal(error);
+        console.log(error);
         params[1].sendInternalError(error);
       }
     });

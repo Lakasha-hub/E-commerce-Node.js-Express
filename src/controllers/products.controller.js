@@ -3,7 +3,7 @@ import { productsService } from "../services/repositories/index.js";
 import { ErrorManager } from "../constants/errors/index.js";
 import environmentOptions from "../constants/server/environment.options.js";
 import ErrorService from "../services/error.service.js";
-import { generateCodeRandom } from "../utils.js";
+import { v4 as uuidv4 } from "uuid";
 
 const PORT = environmentOptions.app.PORT;
 
@@ -199,14 +199,11 @@ const productsPost = async (req, res) => {
     }
 
     let code;
-    let flag = true;
-    while (flag) {
-      code = generateCodeRandom(20);
-      const codeExists = await productsService.getBy({ code });
-      if (!codeExists) {
-        flag = false;
-      }
-    }
+    let codeExists;
+    do {
+      code = uuidv4();
+      codeExists = await productsService.getBy({ code });
+    } while (codeExists);
 
     newProduct.code = code;
     newProduct = await productsService.create(newProduct);

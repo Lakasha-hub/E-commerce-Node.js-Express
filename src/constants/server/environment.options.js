@@ -15,4 +15,8 @@ export default {
     CLIENT_SECRET: process.env.CLIENT_SECRET_GITHUB,
     CLIENT_ID: process.env.CLIENT_ID_GITHUB,
   },
+  mailer: {
+    USER: process.env.MAILER_USER,
+    PASSWORD: process.env.MAILER_PASSWORD,
+  },
 };

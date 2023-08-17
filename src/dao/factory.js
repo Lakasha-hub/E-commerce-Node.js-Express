@@ -15,7 +15,6 @@ export default class PersistenceFactory {
 
     switch (persistence) {
       case "MONGO":
-        console.log(environmentOptions.mongo.URL_CONNECTION)
         mongoose.connect(environmentOptions.mongo.URL_CONNECTION);
         const { default: UsersManager } = await import(
           "./mongo/manager/users.manager.js"

@@ -1,17 +1,8 @@
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import environmentOptions from "./constants/server/environment.options.js";
-
-export const generateCodeRandom = (codeLength) => {
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let randomCode = "";
-  for (let i = 0; i < codeLength; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    randomCode += characters.charAt(randomIndex);
-  }
-  return randomCode;
-};
+import fs from "fs";
+import Handlebars from "handlebars";
 
 export const cookieExtractor = (req) => {
   let token = null;
@@ -19,6 +10,16 @@ export const cookieExtractor = (req) => {
     token = req.cookies[environmentOptions.jwt.TOKEN_NAME];
   }
   return token;
+};
+
+export const generateMailTemplate = async (template, payload) => {
+  const content = await fs.promises.readFile(
+    `${__dirname}/templates/${template}.handlebars`
+  );
+  const preCompiledContent = Handlebars.compile(content.toString("utf-8"));
+  //Send content with context/payload (user, product, etc..)
+  const compiledContent = preCompiledContent(payload);
+  return compiledContent;
 };
 
 const __filename = fileURLToPath(import.meta.url);

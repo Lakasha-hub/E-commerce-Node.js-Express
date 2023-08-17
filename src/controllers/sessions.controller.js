@@ -1,13 +1,23 @@
 import { usersService } from "../services/repositories/index.js";
 import { createHash, generateToken } from "../services/auth.service.js";
 import UserToken from "../dtos/user/user.token.js";
+import UserMailing from "../dtos/user/user.mailing.js";
 
 import ErrorService from "../services/error.service.js";
 import { ErrorManager } from "../constants/errors/index.js";
 import environmentOptions from "../constants/server/environment.options.js";
+import MailingService from "../services/mailing.service.js";
+import mailsTemplates from "../constants/mails/mails.templates.js";
 
 const userRegister = async (req, res) => {
-  return res.sendCreated("User successfully created");
+  try {
+    const user = new UserMailing(req.user);
+    const mailingService = new MailingService();
+    await mailingService.sendMail(user.email, mailsTemplates.WELCOME, { user });
+    return res.sendCreated("User successfully created");
+  } catch (error) {
+    res.sendInternalError(error);
+  }
 };
 
 const userLogin = async (req, res) => {
@@ -68,9 +78,7 @@ const userRestorePassword = async (req, res) => {
 };
 
 const userLogout = async (req, res) => {
-  res
-    .clearCookie(environmentOptions.jwt.TOKEN_NAME)
-    .sendSuccess("Log Out OK");
+  res.clearCookie(environmentOptions.jwt.TOKEN_NAME).sendSuccess("Log Out OK");
 };
 
 export {
