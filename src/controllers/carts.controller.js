@@ -4,7 +4,7 @@ import {
   ticketsService,
 } from "../services/repositories/index.js";
 import { isValidObjectId } from "mongoose";
-import { generateCodeRandom } from "../utils.js";
+import { v4 as uuidv4 } from "uuid";
 
 import ErrorService from "../services/error.service.js";
 import { ErrorManager } from "../constants/errors/index.js";
@@ -198,14 +198,11 @@ const cartsPurchase = async (req, res) => {
     });
 
     let code;
-    let flag = true;
-    while (flag) {
-      code = generateCodeRandom(20);
-      const codeExists = await ticketsService.getBy({ code });
-      if (!codeExists) {
-        flag = false;
-      }
-    }
+    let codeExists;
+    do {
+      code = uuidv4();
+      codeExists = await ticketsService.getBy({ code });
+    } while (codeExists);
 
     const ticket = await ticketsService.create({
       code,

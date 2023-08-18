@@ -5,6 +5,10 @@ const collection = "Products";
 
 const productSchema = new mongoose.Schema(
   {
+    owner: {
+      type: String,
+      default: "admin",
+    },
     title: {
       type: String,
       required: "The title is required",

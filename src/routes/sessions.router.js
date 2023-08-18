@@ -14,16 +14,6 @@ import {
 
 export default class SessionsRouter extends BaseRouter {
   init() {
-    this.get("/loggerTest", ["PUBLIC"], (req, res) => {
-      req.logger.fatal("msg Fatal");
-      req.logger.error("msg Error");
-      req.logger.warning("msg Warning");
-      req.logger.info("msg Info");
-      req.logger.http("msg Http");
-      req.logger.debug("msg debug");
-      res.sendStatus(200);
-    });
-
     this.post(
       "/register",
       ["NO_AUTH"],
@@ -42,7 +32,7 @@ export default class SessionsRouter extends BaseRouter {
 
     this.get(
       "/logout",
-      ["USER_ROLE", "ADMIN_ROLE"],
+      ["USER_ROLE", "PREMIUN_ROLE", "ADMIN_ROLE"],
       passportCall("jwt", { strategyType: "jwt" }),
       userLogout
     );
@@ -62,7 +52,7 @@ export default class SessionsRouter extends BaseRouter {
 
     this.get(
       "/current",
-      ["USER_ROLE", "ADMIN_ROLE"],
+      ["USER_ROLE", "PREMIUN_ROLE", "ADMIN_ROLE"],
       passportCall("jwt", { strategyType: "jwt" }),
       currentUser
     );
