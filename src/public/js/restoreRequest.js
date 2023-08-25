@@ -2,14 +2,9 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("submit", (event) => {
     event.preventDefault();
 
-    const newPassword = document.querySelector("#newPassword").value;
-    const confirmPassword = document.querySelector("#confirmPassword").value;
-    const params = new Proxy(new URLSearchParams(window.location.search), {
-      get: (searchParams, prop) => searchParams.get(prop),
-    });
-    const token = params.tkn;
+    const email = document.querySelector("#email").value;
 
-    if (!newPassword.trim() || !confirmPassword.trim()) {
+    if (!email.trim()) {
       return Swal.fire({
         position: "top-end",
         title: "Complete all camps",
@@ -18,21 +13,10 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    if (newPassword !== confirmPassword) {
-      return Swal.fire({
-        position: "top-end",
-        title: "Passwords do not match",
-        showConfirmButton: false,
-        timer: 3000,
-      });
-    }
-
-    fetch(`/api/sessions/restorePassword`, {
+    fetch(`/api/sessions/restoreRequest`, {
       method: "POST",
       body: JSON.stringify({
-        newPassword,
-        confirmPassword,
-        token
+        email,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -45,14 +29,16 @@ document.addEventListener("DOMContentLoaded", () => {
       })
       .then((data) => {
         Swal.fire({
-          position: "top-end",
-          title: "Password successfully reset",
+          icon: "info",
+          title: "Password Reset",
+          color: "#fff",
+          background: "#202020",
+          html: `we sent an email to <b>${email}</b>, please check your inbox or spam box to proceed with your password change.`,
           showConfirmButton: false,
-          timer: 2000,
+          showCancelButton: false,
+          allowOutsideClick: false,
+          allowEscapeKey: false,
         });
-        setTimeout(() => {
-          window.location.replace("/login");
-        }, 2000);
       })
       .catch((error) => {
         return Swal.fire({

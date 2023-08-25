@@ -11,4 +11,14 @@ export default {
       },
     ],
   },
+  restorePassword: {
+    subject: "Restore Password",
+    attachments: [
+      {
+        filename: "logo.png",
+        path: `${__dirname}/public/img/ninja-programming.png`,
+        cid: "logo",
+      },
+    ],
+  },
 };

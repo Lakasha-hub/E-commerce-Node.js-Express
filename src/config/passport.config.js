@@ -112,7 +112,7 @@ const initializePassportStrategies = () => {
           if (!user) {
             ErrorService.create({
               name: "Error when initializing user session",
-              cause: ErrorManager.users.notFound(email),
+              cause: ErrorManager.users.notFound("email", email),
               code: ErrorManager.codes.NOT_FOUND,
               message: "The email or password is not correct",
               status: 401,
@@ -126,7 +126,7 @@ const initializePassportStrategies = () => {
           if (!isValidPassword) {
             ErrorService.create({
               name: "Error when initializing user session",
-              cause: ErrorManager.users.notFound(email),
+              cause: ErrorManager.users.notFound("email", email),
               code: ErrorManager.codes.NOT_FOUND,
               message: "The email or password is not correct",
               status: 401,

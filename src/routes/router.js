@@ -74,6 +74,10 @@ export default class BaseRouter {
     res.sendInternalError = (error) => res.status(500).json({ error });
 
     res.sendError = (error) => {
+      if (!error.status) {
+        console.log(error);
+        res.status(500).json(error.message);
+      }
       res.status(error.status).json({ error: error.message });
     };
     next();

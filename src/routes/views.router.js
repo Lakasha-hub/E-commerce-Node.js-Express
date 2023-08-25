@@ -1,78 +1,50 @@
 import BaseRouter from "./router.js";
 
+import {
+  getCart,
+  getChat,
+  getHome,
+  getLogin,
+  getProducts,
+  getProfile,
+  getRealTimeProducts,
+  getRegister,
+  getRestorePassword,
+  getRetoreRequest,
+} from "../controllers/views.controller.js";
+
 export default class ViewsRouter extends BaseRouter {
   init() {
-    this.get(
-      "/home",
-      ["USER_ROLE", "PREMIUN_ROLE", "ADMIN_ROLE"],
-      (req, res) => {
-        res.render("home", {
-          title: "Home",
-        });
-      }
-    );
+    this.get("/home", ["USER_ROLE", "PREMIUN_ROLE", "ADMIN_ROLE"], getHome);
 
     this.get(
       "/realTimeProducts",
       ["USER_ROLE", "PREMIUN_ROLE", "ADMIN_ROLE"],
-      (req, res) => {
-        res.render("realTimeProducts", {
-          title: "Real Time Products",
-        });
-      }
+      getRealTimeProducts
     );
 
-    this.get("/chat", ["USER_ROLE", "PREMIUN_ROLE"], (req, res) => {
-      res.render("chat", {
-        title: "Chat",
-      });
-    });
+    this.get("/chat", ["USER_ROLE", "PREMIUN_ROLE"], getChat);
 
     this.get(
       "/products",
       ["USER_ROLE", "PREMIUN_ROLE", "ADMIN_ROLE"],
-      (req, res) => {
-        res.render("products", {
-          title: "Products",
-          user: req.user,
-        });
-      }
+      getProducts
     );
 
-    this.get("/register", ["NO_AUTH"], (req, res) => {
-      res.render("register", {
-        title: "Register",
-      });
-    });
+    this.get("/register", ["NO_AUTH"], getRegister);
 
-    this.get("/login", ["NO_AUTH"], (req, res) => {
-      res.render("login", {
-        title: "Log In",
-      });
-    });
+    this.get("/login", ["NO_AUTH"], getLogin);
 
     this.get(
       "/profile",
       ["USER_ROLE", "PREMIUN_ROLE", "ADMIN_ROLE"],
-      (req, res) => {
-        res.render("profile", {
-          title: "Profile",
-          user: req.user,
-        });
-      }
+      getProfile
     );
 
-    this.get("/restorePassword", ["NO_AUTH"], (req, res) => {
-      res.render("restorePassword", {
-        title: "Restore Password",
-      });
-    });
+    this.get("/restoreRequest", ["PUBLIC"], getRetoreRequest);
 
-    this.get("/cart/:id", ["USER_ROLE", "ADMIN_ROLE"], (req, res) => {
-      res.render("cart", {
-        title: "Cart",
-        user: req.user,
-      });
-    });
+    this.get("/restorePassword", ["NO_AUTH"], getRestorePassword);
+
+    this.get("/cart/:id", ["USER_ROLE", "ADMIN_ROLE"], getCart);
   }
 }

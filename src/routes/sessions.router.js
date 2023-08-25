@@ -7,10 +7,9 @@ import {
   userLoginGithub,
   userLogout,
   userRegister,
+  userRestoreRequest,
   userRestorePassword,
 } from "../controllers/sessions.controller.js";
-
-// import { attempsLimitReached } from "../middlewares/attempsLimit.middleware.js";
 
 export default class SessionsRouter extends BaseRouter {
   init() {
@@ -28,7 +27,9 @@ export default class SessionsRouter extends BaseRouter {
       userLogin
     );
 
-    this.post("/restorePassword", ["NO_AUTH"], userRestorePassword);
+    this.post("/restoreRequest", ["NO_AUTH"], userRestoreRequest);
+
+    this.post("/restorePassword", ["PUBLIC"], userRestorePassword);
 
     this.get(
       "/logout",

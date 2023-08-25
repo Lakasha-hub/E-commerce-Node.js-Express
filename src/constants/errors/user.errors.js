@@ -8,6 +8,12 @@ const incompleteValues = (user) => {
     * password: must be a string and was received ${user.password}`;
 };
 
+const incompleteValue = (property, value) => {
+  return `One parameters were not provided:
+    Parameter:
+    * ${property}: was received ${value}`;
+};
+
 const invalidTypes = (user) => {
   return `One or more parameters were provided with an erroneous data type:
     Required type properties:
@@ -18,10 +24,10 @@ const invalidTypes = (user) => {
     * password: must be a string and was received ${typeof user.password}`;
 };
 
-const notFound = (email) => {
+const notFound = (property, value) => {
   return `No user was found with the parameter provided:
     Parameter provided:
-    * email: ${email}`;
+    * ${property}: ${value}`;
 };
 
 const duplicated = (email) => {
@@ -30,11 +36,25 @@ const duplicated = (email) => {
   * email: ${email}`;
 };
 
+const notMatch = (newPassword, confirmPassword) => {
+  return `The following parameters do not match:
+  Parameters sent:
+  * newPassword: ${newPassword}
+  * confirmPassword: ${confirmPassword}`;
+};
+
+const samePassword = () => {
+  return `The password was to be updated with a previous value.`;
+};
+
 const user_errors = {
   invalidTypes,
   incompleteValues,
+  incompleteValue,
   notFound,
   duplicated,
+  notMatch,
+  samePassword,
 };
 
 export default user_errors;
