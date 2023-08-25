@@ -85,7 +85,7 @@ const userRestoreRequest = async (req, res) => {
     }
 
     const userToken = new UserRestorePassword(user);
-    const restoreToken = generateToken({ userToken });
+    const restoreToken = generateToken({ userToken }, "1h");
     const mailingService = new MailingService();
     await mailingService.sendMail(email, mailsTemplates.RESTORE, {
       restoreToken,

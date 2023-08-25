@@ -45,7 +45,7 @@ export const passportCall = (strategy, options = {}) => {
 };
 
 const jwtKey = environmentOptions.jwt.SECRET_KEY;
-export const generateToken = (user) => {
-  const token = jwt.sign(user, jwtKey, { expiresIn: "24h" });
+export const generateToken = (user, expiresIn = "1d") => {
+  const token = jwt.sign(user, jwtKey, { expiresIn });
   return token;
 };

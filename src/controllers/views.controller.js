@@ -1,3 +1,6 @@
+import jwt from "jsonwebtoken";
+import environmentOptions from "../constants/server/environment.options.js";
+
 const getHome = (req, res) => {
   res.render("home", {
     title: "Home",
@@ -49,9 +52,18 @@ const getRetoreRequest = (req, res) => {
 };
 
 const getRestorePassword = (req, res) => {
-  res.render("restorePassword", {
-    title: "Restore Password",
-  });
+  try {
+    const { tkn } = req.query;
+
+    const isValidToken = jwt.verify(tkn, environmentOptions.jwt.SECRET_KEY);
+    res.render("restorePassword", {
+      title: "Restore Password",
+    });
+  } catch (error) {
+    res.render("invalidToken", {
+      title: "Invalid Token",
+    });
+  }
 };
 
 const getCart = (req, res) => {
