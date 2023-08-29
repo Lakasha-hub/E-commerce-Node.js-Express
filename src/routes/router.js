@@ -75,8 +75,7 @@ export default class BaseRouter {
 
     res.sendError = (error) => {
       if (!error.status) {
-        console.log(error);
-        res.status(500).json(error.message);
+        return res.status(500).json(error.message);
       }
       res.status(error.status).json({ error: error.message });
     };
@@ -87,18 +86,18 @@ export default class BaseRouter {
     return (req, res, next) => {
       if (policies[0] === "PUBLIC") return next();
 
-      const user = req.user;
-      if (policies[0] === "NO_AUTH" && user)
+      const tokenUser = req.user;
+      if (policies[0] === "NO_AUTH" && tokenUser)
         return res.sendUnauthorized("Unauthorized");
 
-      if (policies[0] === "NO_AUTH" && !user) return next();
+      if (policies[0] === "NO_AUTH" && !tokenUser) return next();
 
-      if (!user) {
+      if (!tokenUser) {
         req.logger.info(req.error);
         return res.sendUnauthorized(req.error);
       } //req.error => error from jwt strategy
 
-      if (!policies.includes(user.role.toUpperCase()))
+      if (!policies.includes(tokenUser.user.role.toUpperCase()))
         return res.sendForbidden("Access Denied");
 
       next();

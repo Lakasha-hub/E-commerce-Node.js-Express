@@ -33,7 +33,7 @@ export default class SessionsRouter extends BaseRouter {
 
     this.get(
       "/logout",
-      ["USER_ROLE", "PREMIUN_ROLE", "ADMIN_ROLE"],
+      ["USER_ROLE", "PREMIUM_ROLE", "ADMIN_ROLE"],
       passportCall("jwt", { strategyType: "jwt" }),
       userLogout
     );
@@ -53,7 +53,7 @@ export default class SessionsRouter extends BaseRouter {
 
     this.get(
       "/current",
-      ["USER_ROLE", "PREMIUN_ROLE", "ADMIN_ROLE"],
+      ["USER_ROLE", "PREMIUM_ROLE", "ADMIN_ROLE"],
       passportCall("jwt", { strategyType: "jwt" }),
       currentUser
     );

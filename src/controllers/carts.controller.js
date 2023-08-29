@@ -1,26 +1,26 @@
+import { v4 as uuidv4 } from "uuid";
+import { isValidObjectId } from "mongoose";
+
 import {
   cartsService,
   productsService,
   ticketsService,
 } from "../services/repositories/index.js";
-import { isValidObjectId } from "mongoose";
-import { v4 as uuidv4 } from "uuid";
 
 import ErrorService from "../services/error.service.js";
 import { ErrorManager } from "../constants/errors/index.js";
-import { pid } from "process";
 
-const cartsGet = async (req, res) => {
+const getCarts = async (req, res) => {
   const carts = await cartsService.getAll();
   return res.sendSuccessWithPayload(carts);
 };
 
-const cartsPost = async (req, res) => {
+const createCart = async (req, res) => {
   const newCart = await cartsService.create();
   return res.sendCreatedWithPayload(newCart);
 };
 
-const cartsGetById = async (req, res) => {
+const getCartById = async (req, res) => {
   try {
     const { id } = req.params;
     const cart = await cartsService.getById(id);
@@ -39,14 +39,14 @@ const cartsGetById = async (req, res) => {
   }
 };
 
-const cartsPostProduct = async (req, res) => {
+const addProduct = async (req, res) => {
   try {
     const { id, pid } = req.params;
     let { quantity = 1 } = req.body;
 
     if (!isValidObjectId(pid)) {
       ErrorService.create({
-        name: "Error when creating a product",
+        name: "Error when adding a product",
         cause: ErrorManager.carts.invalidMongoId(pid),
         code: ErrorManager.codes.INVALID_TYPES,
         message: `The product id: ${pid} is not valid`,
@@ -56,7 +56,7 @@ const cartsPostProduct = async (req, res) => {
 
     if (typeof quantity !== "number") {
       ErrorService.create({
-        name: "Error when creating a product",
+        name: "Error when adding a product",
         cause: ErrorManager.carts.invalidTypes(quantity),
         code: ErrorManager.codes.INVALID_TYPES,
         message: "The quantity parameter must be a number type",
@@ -66,7 +66,7 @@ const cartsPostProduct = async (req, res) => {
 
     if (quantity <= 0) {
       ErrorService.create({
-        name: "Error when creating a product",
+        name: "Error when adding a product",
         cause: ErrorManager.carts.invalidValues(quantity),
         code: ErrorManager.codes.INVALID_VALUES,
         message: "The quantity parameter must be 1 or more",
@@ -74,10 +74,10 @@ const cartsPostProduct = async (req, res) => {
       });
     }
 
-    const product_exists = await productsService.getById(pid);
-    if (!product_exists) {
+    const product = await productsService.getById(pid);
+    if (!product) {
       ErrorService.create({
-        name: "Error when requesting a product",
+        name: "Error when adding a product",
         cause: ErrorManager.products.notFound(pid),
         code: ErrorManager.codes.NOT_FOUND,
         message: `There is no registered product with id: ${pid}`,
@@ -88,11 +88,21 @@ const cartsPostProduct = async (req, res) => {
     const cart = await cartsService.getById(id);
     if (!cart) {
       ErrorService.create({
-        name: "Error requesting a cart",
+        name: "Error when adding a product",
         cause: ErrorManager.carts.notFoundCart(id),
         code: ErrorManager.codes.NOT_FOUND,
         message: `There is no registered cart with id: ${id}`,
         status: 404,
+      });
+    }
+
+    if (req.user.role === "PREMIUM_ROLE" && product.owner === req.user.id) {
+      ErrorService.create({
+        name: "Error when adding a product",
+        cause: ErrorManager.carts.notAuthorized(),
+        code: ErrorManager.codes.UNAUTHORIZED,
+        message: "you cannot acquire a product you own",
+        status: 400,
       });
     }
 
@@ -121,7 +131,7 @@ const cartsPostProduct = async (req, res) => {
   }
 };
 
-const cartsDeleteProduct = async (req, res) => {
+const deleteProduct = async (req, res) => {
   try {
     const { id, pid } = req.params;
 
@@ -166,7 +176,7 @@ const cartsDeleteProduct = async (req, res) => {
   }
 };
 
-const cartsPurchase = async (req, res) => {
+const purchase = async (req, res) => {
   try {
     //Get Cart Id
     const { id } = req.params;
@@ -217,7 +227,7 @@ const cartsPurchase = async (req, res) => {
   }
 };
 
-const cartsUpdateQuantity = async (req, res) => {
+const updateQuantityOfProduct = async (req, res) => {
   try {
     const { id, pid } = req.params;
     const { quantity, operation } = req.body;
@@ -306,7 +316,7 @@ const cartsUpdateQuantity = async (req, res) => {
   }
 };
 
-const cartsDeleteAllProducts = async (req, res) => {
+const clearCart = async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -340,12 +350,12 @@ const cartsDeleteAllProducts = async (req, res) => {
   }
 };
 export {
-  cartsGet,
-  cartsPost,
-  cartsGetById,
-  cartsPostProduct,
-  cartsDeleteProduct,
-  cartsDeleteAllProducts,
-  cartsPurchase,
-  cartsUpdateQuantity,
+  getCarts,
+  getCartById,
+  createCart,
+  addProduct,
+  deleteProduct,
+  clearCart,
+  purchase,
+  updateQuantityOfProduct,
 };

@@ -48,6 +48,19 @@ const invalidValuesPaginate = (paginateParams) => {
       * page: must be 1 or more and was received ${paginateParams.page}`;
 };
 
+const notAuthorized = (owner, client) => {
+  return `To alter the products you must be their owner:
+  Parameter received:
+  * owner id: ${owner}
+  * client id: ${client}`;
+};
+
+const invalidOwner = (owner) => {
+  return `Owner must be an object ID:
+  Parameter received:
+  * owner: ${owner}`;
+};
+
 const products_errors = {
   invalidTypesPaginate,
   invalidValuesPaginate,
@@ -55,6 +68,8 @@ const products_errors = {
   invalidTypes,
   duplicated,
   notFound,
+  notAuthorized,
+  invalidOwner,
 };
 
 export default products_errors;

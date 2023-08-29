@@ -40,6 +40,10 @@ const notFoundProduct = (id, pid) => {
     * product id: ${pid}`;
 };
 
+const notAuthorized = () => {
+  return `Cannot acquire a product of its own`;
+};
+
 const carts_errors = {
   invalidTypes,
   notFoundCart,
@@ -48,6 +52,7 @@ const carts_errors = {
   invalidMongoId,
   insuficientStock,
   cartWithoutProducts,
+  notAuthorized,
 };
 
 export default carts_errors;

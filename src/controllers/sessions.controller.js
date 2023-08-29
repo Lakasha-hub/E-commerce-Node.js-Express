@@ -2,6 +2,8 @@ import jwt from "jsonwebtoken";
 
 import { usersService } from "../services/repositories/index.js";
 import UserToken from "../dtos/user/user.token.js";
+import UserRestorePassword from "../dtos/user/user.restorePass.js";
+
 import {
   createHash,
   generateToken,
@@ -15,7 +17,6 @@ import mailsTemplates from "../constants/mails/mails.templates.js";
 import ErrorService from "../services/error.service.js";
 import { ErrorManager } from "../constants/errors/index.js";
 import environmentOptions from "../constants/server/environment.options.js";
-import UserRestorePassword from "../dtos/user/user.restorePass.js";
 
 const userRegister = async (req, res) => {
   try {
@@ -30,8 +31,8 @@ const userRegister = async (req, res) => {
 
 const userLogin = async (req, res) => {
   //Send token with user information
-  const { ...user } = new UserToken(req.user);
-  const accessToken = generateToken(user);
+  const user = new UserToken(req.user);
+  const accessToken = generateToken({ user });
   res
     .cookie(environmentOptions.jwt.TOKEN_NAME, accessToken, {
       maxAge: 1000 * 60 * 60 * 24,
@@ -43,8 +44,8 @@ const userLogin = async (req, res) => {
 
 const userLoginGithub = async (req, res) => {
   //Send token with Github User information
-  const { ...user } = new UserToken(req.user);
-  const accessToken = generateToken(user);
+  const user = new UserToken(req.user);
+  const accessToken = generateToken({ user });
   res
     .cookie(environmentOptions.jwt.TOKEN_NAME, accessToken, {
       maxAge: 1000 * 60 * 60 * 24,

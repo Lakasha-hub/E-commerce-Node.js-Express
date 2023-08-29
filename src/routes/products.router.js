@@ -3,13 +3,14 @@ import BaseRouter from "./router.js";
 import { verifyMongoID } from "../middlewares/verifyMongoID.middleware.js";
 
 import {
-  productsPost,
-  productsGet,
-  productsGetById,
-  productsPut,
-  productsDelete,
+  getProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct,
 } from "../controllers/products.controller.js";
-import { generateProduct } from "../mocks/product.mock.js";
+
+// import { generateProduct } from "../mocks/product.mock.js";
 
 export default class ProductsRouter extends BaseRouter {
   init() {
@@ -21,29 +22,29 @@ export default class ProductsRouter extends BaseRouter {
     //   res.sendSuccessWithPayload(mockingProducts);
     // });
 
-    this.get("/", ["USER_ROLE", "PREMIUN_ROLE", "ADMIN_ROLE"], productsGet);
+    this.get("/", ["USER_ROLE", "PREMIUM_ROLE", "ADMIN_ROLE"], getProducts);
 
-    this.post("/", ["PREMIUN_ROLE", "ADMIN_ROLE"], productsPost);
+    this.post("/", ["PREMIUM_ROLE", "ADMIN_ROLE"], createProduct);
 
     this.get(
       "/:id",
-      ["USER_ROLE", "PREMIUN_ROLE", "ADMIN_ROLE"],
+      ["USER_ROLE", "PREMIUM_ROLE", "ADMIN_ROLE"],
       verifyMongoID,
-      productsGetById
+      getProductById
     );
 
     this.put(
       "/:id",
-      ["PREMIUN_ROLE", "ADMIN_ROLE"],
+      ["PREMIUM_ROLE", "ADMIN_ROLE"],
       verifyMongoID,
-      productsPut
+      updateProduct
     );
 
     this.delete(
       "/:id",
-      ["PREMIUN_ROLE", "ADMIN_ROLE"],
+      ["PREMIUM_ROLE", "ADMIN_ROLE"],
       verifyMongoID,
-      productsDelete
+      deleteProduct
     );
   }
 }

@@ -3,58 +3,57 @@ import BaseRouter from "./router.js";
 import { verifyMongoID } from "../middlewares/verifyMongoID.middleware.js";
 
 import {
-  cartsDeleteAllProducts,
-  cartsDeleteProduct,
-  cartsGet,
-  cartsGetById,
-  cartsPost,
-  cartsPostProduct,
-  cartsPurchase,
-  cartsUpdateQuantity,
-  // cartsUpdateAllProducts,
+  getCarts,
+  getCartById,
+  createCart,
+  addProduct,
+  deleteProduct,
+  clearCart,
+  purchase,
+  updateQuantityOfProduct,
 } from "../controllers/carts.controller.js";
 
 export default class CartsRouter extends BaseRouter {
   init() {
-    this.get("/", ["USER_ROLE", "PREMIUN_ROLE", "ADMIN_ROLE"], cartsGet);
+    this.get("/", ["USER_ROLE", "PREMIUM_ROLE", "ADMIN_ROLE"], getCarts);
 
-    this.post("/", ["USER_ROLE", "PREMIUN_ROLE", "ADMIN_ROLE"], cartsPost);
+    this.post("/", ["USER_ROLE", "PREMIUM_ROLE", "ADMIN_ROLE"], createCart);
 
     this.get(
       "/:id",
-      ["USER_ROLE", "PREMIUN_ROLE", "ADMIN_ROLE"],
+      ["USER_ROLE", "PREMIUM_ROLE", "ADMIN_ROLE"],
       verifyMongoID,
-      cartsGetById
+      getCartById
     );
 
     this.delete(
       "/:id",
-      ["USER_ROLE", "PREMIUN_ROLE", "ADMIN_ROLE"],
+      ["USER_ROLE", "PREMIUM_ROLE", "ADMIN_ROLE"],
       verifyMongoID,
-      cartsDeleteAllProducts
+      clearCart
     );
 
-    this.post("/:id/purchase", ["USER_ROLE", "PREMIUN_ROLE"], cartsPurchase);
+    this.post("/:id/purchase", ["USER_ROLE", "PREMIUM_ROLE"], purchase);
 
     this.post(
       "/:id/products/:pid",
-      ["USER_ROLE", "PREMIUN_ROLE"],
+      ["USER_ROLE", "PREMIUM_ROLE"],
       verifyMongoID,
-      cartsPostProduct
+      addProduct
     );
 
     this.put(
       "/:id/products/:pid",
-      ["USER_ROLE", "PREMIUN_ROLE"],
+      ["USER_ROLE", "PREMIUM_ROLE"],
       verifyMongoID,
-      cartsUpdateQuantity
+      updateQuantityOfProduct
     );
 
     this.delete(
       "/:id/products/:pid",
-      ["USER_ROLE", "PREMIUN_ROLE", "ADMIN_ROLE"],
+      ["USER_ROLE", "PREMIUM_ROLE", "ADMIN_ROLE"],
       verifyMongoID,
-      cartsDeleteProduct
+      deleteProduct
     );
   }
 }

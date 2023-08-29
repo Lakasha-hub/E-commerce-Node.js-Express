@@ -30,8 +30,8 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
+      enum: ["USER_ROLE", "PREMIUM_ROLE", "ADMIN_ROLE"],
       default: "USER_ROLE",
-      enum: ["USER_ROLE", "PREMIUN_ROLE", "ADMIN_ROLE"],
     },
   },
   { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } }

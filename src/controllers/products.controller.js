@@ -1,13 +1,15 @@
+import { v4 as uuidv4 } from "uuid";
+import { isValidObjectId } from "mongoose";
+
 import { productsService } from "../services/repositories/index.js";
 
-import { ErrorManager } from "../constants/errors/index.js";
 import environmentOptions from "../constants/server/environment.options.js";
+import { ErrorManager } from "../constants/errors/index.js";
 import ErrorService from "../services/error.service.js";
-import { v4 as uuidv4 } from "uuid";
 
 const PORT = environmentOptions.app.PORT;
 
-const productsGet = async (req, res) => {
+const getProducts = async (req, res) => {
   try {
     let { limit = 10, page = 1, sort, query } = req.query;
 
@@ -145,11 +147,11 @@ const productsGet = async (req, res) => {
   }
 };
 
-const productsPost = async (req, res) => {
+const createProduct = async (req, res) => {
   try {
     const { title, description, price, stock, category, thumbnails } = req.body;
 
-    let newProduct = {
+    const newProduct = {
       title,
       description,
       price,
@@ -157,6 +159,32 @@ const productsPost = async (req, res) => {
       category,
       thumbnails,
     };
+
+    if (req.user.id !== 0) {
+      const isValidId = isValidObjectId(req.user.id);
+      if (!isValidId) {
+        ErrorService.create({
+          name: "Error when creating a product",
+          cause: ErrorManager.products.invalidOwner(owner),
+          code: ErrorManager.codes.INVALID_VALUES,
+          message: `The id: ${req.user.id} is not valid`,
+          status: 400,
+        });
+      }
+      newProduct.owner = req.user.id;
+    }
+
+    for (const propertie of Object.keys(newProduct)) {
+      if (!newProduct[propertie]) {
+        ErrorService.create({
+          name: "Error when creating a new product",
+          cause: ErrorManager.products.incompleteValues(newProduct),
+          code: ErrorManager.codes.INCOMPLETE_VALUES,
+          message: "There are incomplete fields",
+          status: 400,
+        });
+      }
+    }
 
     if (
       typeof title !== "string" ||
@@ -173,18 +201,6 @@ const productsPost = async (req, res) => {
         message: "There are fields with wrong data types",
         status: 400,
       });
-    }
-
-    for (const propertie of Object.keys(newProduct)) {
-      if (!newProduct[propertie]) {
-        ErrorService.create({
-          name: "Error when creating a new product",
-          cause: ErrorManager.products.incompleteValues(newProduct),
-          code: ErrorManager.codes.INCOMPLETE_VALUES,
-          message: "There are incomplete fields",
-          status: 400,
-        });
-      }
     }
 
     const product_exists = await productsService.getBy({ title });
@@ -206,7 +222,7 @@ const productsPost = async (req, res) => {
     } while (codeExists);
 
     newProduct.code = code;
-    newProduct = await productsService.create(newProduct);
+    await productsService.create(newProduct);
 
     const productsToView = await productsService.getAll();
     req.io.emit("GetProductsUpdated", productsToView);
@@ -217,7 +233,7 @@ const productsPost = async (req, res) => {
   }
 };
 
-const productsGetById = async (req, res) => {
+const getProductById = async (req, res) => {
   try {
     const { id } = req.params;
     const product = await productsService.getById(id);
@@ -236,19 +252,31 @@ const productsGetById = async (req, res) => {
   }
 };
 
-const productsPut = async (req, res) => {
+const updateProduct = async (req, res) => {
   try {
+    // product id
     const { id } = req.params;
+    // updated properties
     const { ...properties } = req.body;
 
-    const product_exists = await productsService.getById(id);
-    if (product_exists) {
+    const product = await productsService.getById(id);
+    if (!product) {
       ErrorService.create({
         name: "Error when updating a product",
-        cause: ErrorManager.products.duplicated(id),
-        code: ErrorManager.codes.DUPLICATED,
-        message: "Product already exists",
-        status: 409,
+        cause: ErrorManager.products.notFound(id),
+        code: ErrorManager.codes.NOT_FOUND,
+        message: `There is no registered product with id: ${id}`,
+        status: 404,
+      });
+    }
+
+    if (req.user.role === "PREMIUM_ROLE" && product.owner !== req.user.id) {
+      ErrorService.create({
+        name: "Error when creating a product",
+        cause: ErrorManager.products.notAuthorized(product.owner, req.user.id),
+        code: ErrorManager.codes.UNAUTHORIZED,
+        message: "You cannot alter the product because you do not own it",
+        status: 401,
       });
     }
 
@@ -264,17 +292,29 @@ const productsPut = async (req, res) => {
   }
 };
 
-const productsDelete = async (req, res) => {
+const deleteProduct = async (req, res) => {
   try {
+    // product id
     const { id } = req.params;
-    const product_exists = await productsService.getById(id);
-    if (!product_exists) {
+
+    const product = await productsService.getById(id);
+    if (!product) {
       ErrorService.create({
         name: "Error deleting a product",
         cause: ErrorManager.products.notFound(id),
         code: ErrorManager.codes.NOT_FOUND,
         message: `There is no registered product with id: ${id}`,
         status: 404,
+      });
+    }
+
+    if (req.user.role === "PREMIUM_ROLE" && product.owner !== req.user.id) {
+      ErrorService.create({
+        name: "Error when creating a product",
+        cause: ErrorManager.products.notAuthorized(product.owner, req.user.id),
+        code: ErrorManager.codes.UNAUTHORIZED,
+        message: "You cannot alter the product because you do not own it",
+        status: 401,
       });
     }
 
@@ -289,9 +329,9 @@ const productsDelete = async (req, res) => {
 };
 
 export {
-  productsGet,
-  productsPost,
-  productsGetById,
-  productsPut,
-  productsDelete,
+  getProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct,
 };

@@ -15,19 +15,19 @@ import {
 
 export default class ViewsRouter extends BaseRouter {
   init() {
-    this.get("/home", ["USER_ROLE", "PREMIUN_ROLE", "ADMIN_ROLE"], getHome);
+    this.get("/home", ["USER_ROLE", "PREMIUM_ROLE", "ADMIN_ROLE"], getHome);
 
     this.get(
       "/realTimeProducts",
-      ["USER_ROLE", "PREMIUN_ROLE", "ADMIN_ROLE"],
+      ["USER_ROLE", "PREMIUM_ROLE", "ADMIN_ROLE"],
       getRealTimeProducts
     );
 
-    this.get("/chat", ["USER_ROLE", "PREMIUN_ROLE"], getChat);
+    this.get("/chat", ["USER_ROLE", "PREMIUM_ROLE"], getChat);
 
     this.get(
       "/products",
-      ["USER_ROLE", "PREMIUN_ROLE", "ADMIN_ROLE"],
+      ["USER_ROLE", "PREMIUM_ROLE", "ADMIN_ROLE"],
       getProducts
     );
 
@@ -37,7 +37,7 @@ export default class ViewsRouter extends BaseRouter {
 
     this.get(
       "/profile",
-      ["USER_ROLE", "PREMIUN_ROLE", "ADMIN_ROLE"],
+      ["USER_ROLE", "PREMIUM_ROLE", "ADMIN_ROLE"],
       getProfile
     );
 

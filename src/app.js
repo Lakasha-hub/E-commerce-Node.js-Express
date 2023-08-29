@@ -12,6 +12,7 @@ import ProductsRouter from "./routes/products.router.js";
 import CartsRouter from "./routes/carts.router.js";
 import SessionsRouter from "./routes/sessions.router.js";
 import ViewsRouter from "./routes/views.router.js";
+import UsersRouter from "./routes/users.router.js";
 
 import productsHandler from "./listeners/products.handler.js";
 import registerChatHandler from "./listeners/messages.handler.js";
@@ -65,12 +66,14 @@ initializePassportStrategies();
 const sessionsRouter = new SessionsRouter();
 const productsRouter = new ProductsRouter();
 const cartsRouter = new CartsRouter();
+const usersRouter = new UsersRouter();
 const viewsRouter = new ViewsRouter();
 
 //Routes
 app.use("/api/sessions", sessionsRouter.getRouter());
 app.use("/api/products", productsRouter.getRouter());
 app.use("/api/carts", cartsRouter.getRouter());
+app.use("/api/users", usersRouter.getRouter());
 app.use("/", viewsRouter.getRouter());
 
 //Error Handler

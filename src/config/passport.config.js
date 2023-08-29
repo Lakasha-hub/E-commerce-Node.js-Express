@@ -21,7 +21,7 @@ const initializePassportStrategies = () => {
       { passReqToCallback: true, usernameField: "email" },
       async (req, email, password, done) => {
         try {
-          const { first_name, last_name, age } = req.body;
+          const { first_name, last_name, age, role } = req.body;
 
           if (!first_name || !last_name || !age || !email || !password) {
             ErrorService.create({
@@ -77,6 +77,7 @@ const initializePassportStrategies = () => {
             age,
             cart,
             password: hashedPassword,
+            role,
           });
 
           return done(null, result, { message: "User created succesfully" });
