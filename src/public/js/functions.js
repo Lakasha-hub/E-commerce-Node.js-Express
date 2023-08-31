@@ -194,9 +194,7 @@ const addProductToCart = (cartId) => {
       Swal.fire({
         title: "Product Added correctly",
         position: "top-end",
-        timer: 1500,
-        background: "#2ccd3c",
-        color: "#fff",
+        timer: 1000,
         width: "20rem",
         showCancelButton: false,
         showConfirmButton: false,

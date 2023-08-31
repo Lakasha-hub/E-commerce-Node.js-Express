@@ -20,9 +20,9 @@ import environmentOptions from "../constants/server/environment.options.js";
 
 const userRegister = async (req, res) => {
   try {
-    const user = new UserMailing(req.user);
+    const user = UserMailing.getFrom(req.user);
     const mailingService = new MailingService();
-    await mailingService.sendMail(user.email, mailsTemplates.WELCOME, { user });
+    await mailingService.sendMail(user.email, mailsTemplates.WELCOME, user );
     return res.sendCreated("User successfully created");
   } catch (error) {
     res.sendInternalError(error);
@@ -31,8 +31,8 @@ const userRegister = async (req, res) => {
 
 const userLogin = async (req, res) => {
   //Send token with user information
-  const user = new UserToken(req.user);
-  const accessToken = generateToken({ user });
+  const user = UserToken.getFrom(req.user);
+  const accessToken = generateToken(user);
   res
     .cookie(environmentOptions.jwt.TOKEN_NAME, accessToken, {
       maxAge: 1000 * 60 * 60 * 24,
@@ -44,8 +44,8 @@ const userLogin = async (req, res) => {
 
 const userLoginGithub = async (req, res) => {
   //Send token with Github User information
-  const user = new UserToken(req.user);
-  const accessToken = generateToken({ user });
+  const user = UserToken.getFrom(req.user);
+  const accessToken = generateToken(user);
   res
     .cookie(environmentOptions.jwt.TOKEN_NAME, accessToken, {
       maxAge: 1000 * 60 * 60 * 24,
@@ -85,8 +85,8 @@ const userRestoreRequest = async (req, res) => {
       });
     }
 
-    const userToken = new UserRestorePassword(user);
-    const restoreToken = generateToken({ userToken }, "1h");
+    const userToken = UserRestorePassword.getFrom(user);
+    const restoreToken = generateToken({ user: userToken }, "1h");
     const mailingService = new MailingService();
     await mailingService.sendMail(email, mailsTemplates.RESTORE, {
       restoreToken,
@@ -102,10 +102,7 @@ const userRestorePassword = async (req, res) => {
   try {
     const { token, newPassword, confirmPassword } = req.body;
 
-    const tokenUser = jwt.verify(
-      token,
-      environmentOptions.jwt.SECRET_KEY
-    ).userToken;
+    const tokenUser = jwt.verify(token, environmentOptions.jwt.SECRET_KEY).user;
 
     if (newPassword !== confirmPassword) {
       ErrorService.create({

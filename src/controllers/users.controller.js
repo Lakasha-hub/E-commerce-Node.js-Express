@@ -13,7 +13,7 @@ const changeRole = async (req, res) => {
         role: "PREMIUM_ROLE",
       });
 
-      const userTokenDTO = new UserToken(user);
+      const userTokenDTO = UserToken.getFrom(user);
       const token = generateToken({ user: userTokenDTO });
 
       return res
@@ -27,7 +27,7 @@ const changeRole = async (req, res) => {
     } else if (role === "PREMIUM_ROLE") {
       const user = await usersService.updateById(id, { role: "USER_ROLE" });
 
-      const userTokenDTO = new UserToken(user);
+      const userTokenDTO = UserToken.getFrom(user);
       const token = generateToken({ user: userTokenDTO });
 
       return res

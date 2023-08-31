@@ -1,5 +1,7 @@
 export default class UserRestorePassword {
-  constructor(user) {
-    this.id = user._id;
-  }
+  static getFrom = (user) => {
+    return {
+      id: user._id,
+    };
+  };
 }

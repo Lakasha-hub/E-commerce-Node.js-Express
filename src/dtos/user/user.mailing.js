@@ -1,9 +1,10 @@
 export default class UserMailing {
-    constructor(user) {
-      this.name = `${user.first_name} ${user.last_name}`;
-      this.email = user.email;
-      this.role = user.role;
-      this.cart = user.cart;
-    }
-  }
-  
+  static getFrom = (user) => {
+    return {
+      name: `${user.first_name} ${user.last_name}`,
+      email: user.email,
+      role: user.role,
+      cart: user.cart,
+    };
+  };
+}

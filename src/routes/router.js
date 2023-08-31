@@ -97,7 +97,7 @@ export default class BaseRouter {
         return res.sendUnauthorized(req.error);
       } //req.error => error from jwt strategy
 
-      if (!policies.includes(tokenUser.user.role.toUpperCase()))
+      if (!policies.includes(tokenUser.role.toUpperCase()))
         return res.sendForbidden("Access Denied");
 
       next();
