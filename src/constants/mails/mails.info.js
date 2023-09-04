@@ -21,4 +21,14 @@ export default {
       },
     ],
   },
+  purchase: {
+    subject: "Receipt of your last purchase in Ecommerce",
+    attachments: [
+      {
+        filename: "logo.png",
+        path: `${__dirname}/public/img/ninja-programming.png`,
+        cid: "logo",
+      },
+    ],
+  },
 };

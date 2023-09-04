@@ -10,6 +10,10 @@ import {
 import ErrorService from "../services/error.service.js";
 import { ErrorManager } from "../constants/errors/index.js";
 
+import MailingService from "../services/mailing.service.js";
+import TicketMailing from "../dtos/ticket/ticket.mailing.js";
+import mailsTemplates from "../constants/mails/mails.templates.js";
+
 const getCarts = async (req, res) => {
   const carts = await cartsService.getAll();
   return res.sendSuccessWithPayload(carts);
@@ -220,8 +224,15 @@ const purchase = async (req, res) => {
     });
     await cartsService.clear(id);
 
+    const ticketMailing = TicketMailing.getFrom(ticket);
+    const mailingService = new MailingService();
+    await mailingService.sendMail(email, mailsTemplates.PURCHASE, {
+      ticket: ticketMailing,
+    });
+
     return res.sendSuccessWithPayload(ticket);
   } catch (error) {
+    console.log(error);
     return res.sendError(error);
   }
 };

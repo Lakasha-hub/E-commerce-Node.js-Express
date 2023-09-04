@@ -1,0 +1,32 @@
+<div class="container">
+  <div class="header-container">
+    <div class="header-image">
+      <img src="cid:logo" alt="logo" style="max-width: 200px; height: auto;" />
+    </div>
+    <h1 class="header-title">Thank you for shopping on our website</h1>
+  </div>
+  <h3>Here is the receipt of your last purchase, you can see all your purchases
+    in your profile / purchases</h3>
+  <p>
+    <b>Unique purchase code: </b>
+    {{ticket.code}}
+    <br />
+    <b>Purchaser: </b>
+    {{ticket.email}}
+    <br />
+    <b>Date of purchase: </b>
+    {{ticket.date}}
+    <br />
+    <b>Total: </b>
+    {{ticket.amount}}$
+    <br />
+    <br />
+  </p>
+</div>
+
+<style>
+  .container { text-align: center; background-color: #202020; padding: 20px; }
+  .header-container { display: flex; align-items: center; padding: 10px; }
+  .header-image { max-width: 200px; height: auto; margin-right: 20px; }
+  .header-title { display: inline-block; margin: 0; color: white;}
+</style>
