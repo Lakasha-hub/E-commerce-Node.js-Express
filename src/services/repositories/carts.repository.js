@@ -18,13 +18,17 @@ export default class CartsRepository {
   addProduct = (id, product) => {
     return this.dao.addProductToCart(id, product);
   };
-  
+
   // getProduct = (id, pid) => {
   //   return this.dao.getProductOfCart(id, pid);
   // };
 
   updateProduct = (id, product) => {
     return this.dao.updateProductOfCart(id, product);
+  };
+
+  updateAllProducts = (id, products) => {
+    return this.dao.updateAllProducts(id, products);
   };
 
   deleteProduct = (id, pid) => {

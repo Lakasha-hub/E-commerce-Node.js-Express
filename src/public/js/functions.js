@@ -74,6 +74,7 @@ const createViewOfMessages = (messages) => {
   });
 };
 
+//list from products of cart
 const createRowOfProductsCarts = (products) => {
   //Father Element
   const rowProducts = document.querySelector("#rowProducts");
@@ -90,7 +91,7 @@ const createRowOfProductsCarts = (products) => {
 
     //Add Card information
     cardBody.innerHTML = `<h5 class="card-title">${element.product.title}</h5>
-      <p class="card-text">Price per unit:${element.product.price}</p>
+      <p class="card-text">Price per unit: <span id="price">${element.product.price}</span></p>
       <p class="card-text">Units:<span id="quantity">${element.quantity}</span></p>
       <button class="btn btn-dark decrementBtn" id="${element.product._id}">-</button>
       <button class="btn btn-dark incrementBtn" id="${element.product._id}">+</button>
@@ -99,10 +100,121 @@ const createRowOfProductsCarts = (products) => {
 
     card.appendChild(cardBody);
     rowProducts.appendChild(card);
+
+    const btnsIncrement = card.querySelector(".incrementBtn");
+    const btnsDecrement = card.querySelector(".decrementBtn");
+    const stockProduct = card.querySelector("#stock").innerHTML;
+
+    btnsIncrement.addEventListener("click", () => {
+      const quantityElement = card.querySelector("#quantity");
+      quantityElement.innerHTML = parseInt(quantityElement.innerHTML) + 1;
+      if (parseInt(quantityElement.innerHTML) === parseInt(stockProduct)) {
+        btnsIncrement.disabled = "disabled";
+      } else if (parseInt(quantityElement.innerHTML) < parseInt(stockProduct)) {
+        btnsIncrement.disabled = "";
+      }
+
+      if (parseInt(quantityElement.innerHTML) === 1) {
+        btnsDecrement.disabled = "disabled";
+      } else if (parseInt(quantityElement.innerHTML) > 1) {
+        btnsDecrement.disabled = "";
+      }
+      updateSummary();
+      saveProducts();
+    });
+    btnsDecrement.addEventListener("click", () => {
+      const quantityElement = card.querySelector("#quantity");
+      quantityElement.innerHTML = parseInt(quantityElement.innerHTML) - 1;
+      if (parseInt(quantityElement.innerHTML) === parseInt(stockProduct)) {
+        btnsIncrement.disabled = "disabled";
+      } else if (parseInt(quantityElement.innerHTML) < parseInt(stockProduct)) {
+        btnsIncrement.disabled = "";
+      }
+
+      if (parseInt(quantityElement.innerHTML) === 1) {
+        btnsDecrement.disabled = "disabled";
+      } else if (parseInt(quantityElement.innerHTML) > 1) {
+        btnsDecrement.disabled = "";
+      }
+      updateSummary();
+      saveProducts();
+    });
   });
 };
 
-const createSummary = (cartId, products) => {
+const saveProducts = () => {
+  localStorage.removeItem("p");
+  const cardsProducts = document.querySelectorAll(".cardProduct");
+  let filteredProducts = [];
+  cardsProducts.forEach((product) => {
+    const productId = product.querySelector(".incrementBtn").id;
+    const quantityProduct = product.querySelector("#quantity").innerHTML;
+    const finalProduct = {
+      quantity: parseInt(quantityProduct),
+      id: productId,
+    };
+    filteredProducts.push(finalProduct);
+  });
+
+  localStorage.setItem("p", JSON.stringify(filteredProducts));
+};
+
+const updateProducts = () => {
+  const cardsProducts = document.querySelectorAll(".cardProduct");
+  const productsFromStorage = JSON.parse(localStorage.getItem("p"));
+  cardsProducts.forEach((product) => {
+    const btnsIncrement = product.querySelector(".incrementBtn");
+    const btnsDecrement = product.querySelector(".decrementBtn");
+    const stockProduct = product.querySelector("#stock").innerHTML;
+    const productId = product.querySelector(".incrementBtn").id;
+    const quantityProduct = product.querySelector("#quantity");
+    const productStorage = productsFromStorage.find(
+      (p) => p.id.toString() === productId
+    );
+    quantityProduct.innerHTML = productStorage.quantity;
+    if (parseInt(quantityProduct.innerHTML) === parseInt(stockProduct)) {
+      btnsIncrement.disabled = "disabled";
+    }
+
+    if (parseInt(quantityProduct.innerHTML) === 1) {
+      btnsDecrement.disabled = "disabled";
+    }
+  });
+};
+
+const chargeProducts = (cartId) => {
+  const products = JSON.parse(localStorage.getItem("p"));
+    let filteredProducts = [];
+  products.forEach((product) => {
+    const productId = product.id;
+    const quantityProduct = product.quantity;
+    const finalProduct = {
+      quantity: parseInt(quantityProduct),
+      product: productId,
+    };
+    filteredProducts.push(finalProduct);
+  });
+  fetch(`/api/carts/${cartId}`, {
+    method: "PUT",
+    body: JSON.stringify({ products: filteredProducts }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      localStorage.removeItem("p");
+    })
+    .catch((error) => {
+      Swal.fire({
+        title: error.message,
+        showCancelButton: true,
+        showConfirmButton: false,
+      });
+    });
+};
+
+const createSummary = () => {
   const rowCart = document.querySelector(".row");
 
   const col = document.createElement("div");
@@ -121,46 +233,76 @@ const createSummary = (cartId, products) => {
   card.appendChild(cardBody);
   col.appendChild(card);
   rowCart.appendChild(col);
+};
 
+const updateSummary = () => {
+  const cardsProducts = document.querySelectorAll(".cardProduct");
   const amountCamp = document.querySelector("#totalAmount");
-  let amount = 0;
-  products.forEach((p) => {
-    amount += p.quantity * p.product.price;
-  });
-  amountCamp.innerHTML = amount.toFixed(2);
-
   const productsQuantityCamp = document.querySelector("#quantitySummary");
-  let quantity = 0;
-  products.forEach((p) => {
-    quantity += p.quantity;
+
+  let amount = 0;
+  let quantitySummary = 0;
+  cardsProducts.forEach((product) => {
+    const btnsIncrement = product.querySelector(".incrementBtn");
+    const btnsDecrement = product.querySelector(".decrementBtn");
+    const quantityProduct = product.querySelector("#quantity").innerHTML;
+    const stockProduct = product.querySelector("#stock").innerHTML;
+
+    quantitySummary += parseFloat(quantityProduct);
+
+    amount +=
+      parseFloat(product.querySelector("#price").innerHTML) * quantityProduct;
+
+    if (parseInt(quantityProduct) === parseInt(stockProduct)) {
+      btnsIncrement.disabled = "disabled";
+    }
+
+    if (parseInt(quantityProduct) === 1) {
+      btnsDecrement.disabled = "disabled";
+    }
   });
-  productsQuantityCamp.innerHTML = quantity;
 
-  const purchaseBtn = document.querySelector("#purchaseBtn");
-  purchaseBtn.addEventListener("click", () => {
-    Swal.fire({
-      title: "Do you want to finalize the purchase?",
-      showCancelButton: true,
-      confirmButtonText: "Purchase",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        fetch(`/api/carts/${cartId}/purchase`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+  amountCamp.innerHTML = amount.toFixed(2);
+  productsQuantityCamp.innerHTML = quantitySummary;
+};
+
+const purchase = (cartId) => {
+  Swal.fire({
+    title: "Do you want to finalize the purchase?",
+    showCancelButton: true,
+    confirmButtonText: "Purchase",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      fetch(`/api/carts/${cartId}/purchase`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => {
+          if (res.status === 400) {
+            throw new Error("Error while trying to checkout");
+          }
+          if (res.status === 404) {
+            throw new Error("Cart not exists");
+          }
+          if (res.status === 409) {
+            throw new Error("Some products are out of stock");
+          }
+          if (res.status === 500) {
+            throw new Error("Internal Error");
+          }
+          return res.json();
         })
-          .then((res) => res.json())
-
-          //Purchase Completed
-          .then((data) => {
-            return Swal.fire({
-              title: "Purchase Completed!",
-              showCancelButton: false,
-              imageHeigh: 300,
-              icon: "success",
-              showCloseButton: true,
-              html: `
+        //Purchase Completed
+        .then((data) => {
+          return Swal.fire({
+            title: "Purchase Completed!",
+            showCancelButton: false,
+            imageHeigh: 300,
+            icon: "success",
+            showCloseButton: true,
+            html: `
             <b>Purchaser</b>: ${data.payload.purchaser}
             <br>
             <b>Date of purchase</b>: ${data.payload.purchase_datetime}
@@ -169,13 +311,18 @@ const createSummary = (cartId, products) => {
             <br>
             <br>
             You can see details in your Profile - my purchases`,
-            }).then((result) => {
-              location.reload();
-            });
-          })
-          .catch((error) => console.log(error));
-      }
-    });
+          }).then((result) => {
+            location.reload();
+          });
+        })
+        .catch((error) => {
+          Swal.fire({
+            title: error.message,
+            showCancelButton: true,
+            showConfirmButton: false,
+          });
+        });
+    }
   });
 };
 
@@ -222,7 +369,13 @@ const btnLogoutListener = () => {
             .then((data) => {
               window.location.replace("/login");
             })
-            .catch((error) => console.log(error));
+            .catch((error) => {
+              Swal.fire({
+                title: error.message,
+                showCancelButton: true,
+                showConfirmButton: false,
+              });
+            });
         }
       });
     });
@@ -239,6 +392,11 @@ const chargeWithoutProducts = () => {
 
   document.body.appendChild(alertDiv);
 };
+
+const clearCookie = (cookieName) => {
+  document.cookie = `${cookieName}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+};
+
 export {
   createRowOfProducts,
   createViewOfProducts,
@@ -248,4 +406,10 @@ export {
   btnLogoutListener,
   chargeWithoutProducts,
   createSummary,
+  updateSummary,
+  updateProducts,
+  saveProducts,
+  purchase,
+  clearCookie,
+  chargeProducts,
 };

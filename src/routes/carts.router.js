@@ -11,6 +11,7 @@ import {
   clearCart,
   purchase,
   updateQuantityOfProduct,
+  updateProducts,
 } from "../controllers/carts.controller.js";
 
 export default class CartsRouter extends BaseRouter {
@@ -34,6 +35,13 @@ export default class CartsRouter extends BaseRouter {
     );
 
     this.post("/:id/purchase", ["USER_ROLE", "PREMIUM_ROLE"], purchase);
+
+    this.put(
+      "/:id",
+      ["USER_ROLE", "PREMIUM_ROLE"],
+      verifyMongoID,
+      updateProducts
+    );
 
     this.post(
       "/:id/products/:pid",

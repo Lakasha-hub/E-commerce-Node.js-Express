@@ -192,15 +192,14 @@ const purchase = async (req, res) => {
         status: 404,
       });
     }
-
     let amount = 0;
     cart.products.forEach((product) => {
       if (product.quantity > product.product.stock) {
         ErrorService.create({
           name: "Error in the purchase process",
-          cause: ErrorManager.carts.insuficientStock(pid),
+          cause: ErrorManager.carts.insuficientStock(product.product._id),
           code: ErrorManager.codes.INSUFICIENT_STOCK,
-          message: `Insufficient stock for the product with the id: ${pid}`,
+          message: `Insufficient stock for the product with the id: ${product.product._id}`,
           status: 409,
         });
       }
@@ -222,6 +221,85 @@ const purchase = async (req, res) => {
     await cartsService.clear(id);
 
     return res.sendSuccessWithPayload(ticket);
+  } catch (error) {
+    return res.sendError(error);
+  }
+};
+
+const updateProducts = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { products } = req.body;
+
+    const cart = await cartsService.getById(id);
+    if (!cart) {
+      ErrorService.create({
+        name: "Error updating a product in a cart",
+        cause: ErrorManager.carts.notFoundCart(id),
+        code: ErrorManager.codes.NOT_FOUND,
+        message: `There is no registered cart with id: ${id}`,
+        status: 404,
+      });
+    }
+
+    products.forEach(async (product) => {
+      if (typeof product.quantity !== "number") {
+        ErrorService.create({
+          name: "Error updating a product in a cart",
+          cause: ErrorManager.carts.invalidTypes(product.quantity),
+          code: ErrorManager.codes.INVALID_TYPES,
+          message: "The quantity parameter must be a number type",
+          status: 400,
+        });
+      }
+
+      if (product.quantity <= 0) {
+        ErrorService.create({
+          name: "Error updating a product in a cart",
+          cause: ErrorManager.carts.invalidValues(product.quantity),
+          code: ErrorManager.codes.INVALID_VALUES,
+          message: "The quantity parameter must be 1 or more",
+          status: 400,
+        });
+      }
+
+      if (!isValidObjectId(product.product)) {
+        ErrorService.create({
+          name: "Error updating a product in a cart",
+          cause: ErrorManager.carts.invalidMongoId(product.product),
+          code: ErrorManager.codes.INVALID_TYPES,
+          message: `The product id: ${product.product} is not valid`,
+          status: 400,
+        });
+      }
+
+      const productInCart = cart.products.find(
+        (p) => p.product._id.toString() === product.product
+      );
+      if (!productInCart) {
+        ErrorService.create({
+          name: "Error updating a product in a cart",
+          cause: ErrorManager.carts.notFoundProduct(id, product.product),
+          code: ErrorManager.codes.NOT_FOUND,
+          message: `There is not registered product with id: ${product.product} in cart with id: ${id}`,
+          status: 404,
+        });
+      }
+
+      if (product.quantity > productInCart.product.stock) {
+        ErrorService.create({
+          name: "Error updating a product in a cart",
+          cause: ErrorManager.carts.insuficientStock(product.product),
+          code: ErrorManager.codes.INSUFICIENT_STOCK,
+          message: `Insufficient stock for the product with the id: ${product.product}`,
+          status: 409,
+        });
+      }
+
+      await cartsService.updateProduct(id, product);
+    });
+
+    return res.sendSuccess("Products Updated");
   } catch (error) {
     return res.sendError(error);
   }
@@ -358,4 +436,5 @@ export {
   clearCart,
   purchase,
   updateQuantityOfProduct,
+  updateProducts,
 };
