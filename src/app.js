@@ -2,8 +2,11 @@ import Express from "express";
 import handlebars from "express-handlebars";
 import { Server } from "socket.io";
 import cookieParser from "cookie-parser";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUiExpress from "swagger-ui-express";
 
 import initializePassportStrategies from "./config/passport.config.js";
+import swaggerConfig from "./config/docs.config.js";
 import { attachLoggers } from "./middlewares/logger.midleware.js";
 import environmentOptions from "./constants/server/environment.options.js";
 import { __dirname } from "./utils.js";
@@ -34,6 +37,10 @@ const io = new Server(server);
 app.engine("handlebars", handlebars.engine());
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "handlebars");
+
+//Swagger config
+const openApiSpecs = swaggerJSDoc(swaggerConfig);
+app.use("/docs", swaggerUiExpress.serve, swaggerUiExpress.setup(openApiSpecs));
 
 //Middlewares Express
 app.use(Express.json());

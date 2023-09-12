@@ -2,7 +2,7 @@ const incompleteValues = (product) => {
   return `One or more parameters were not provided:
     Required properties:
     * title: must be a string and was received ${product.title}
-    * description: must be a string and was received ${product.description}
+    * desc: must be a string and was received ${product.desc}
     * price: must be a number and was received ${product.price}
     * category: must be a string and was received ${product.category}
     * stock: must be a number and was received ${product.stock}
@@ -13,7 +13,7 @@ const invalidTypes = (product) => {
   return `One or more parameters were provided with an erroneous data type:
   Required type properties:
     * title: must be a string and was received ${typeof product.title}
-    * description: must be a string and was received ${typeof product.description}
+    * desc: must be a string and was received ${typeof product.desc}
     * price: must be a number and was received ${typeof product.price}
     * category: must be a string and was received ${typeof product.category}
     * stock: must be a number and was received ${typeof product.stock}

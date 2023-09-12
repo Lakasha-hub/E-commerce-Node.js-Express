@@ -13,7 +13,7 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: "The title is required",
     },
-    description: {
+    desc: {
       type: String,
       required: "The description is required",
     },

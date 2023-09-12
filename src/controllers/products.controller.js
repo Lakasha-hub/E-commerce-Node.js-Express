@@ -99,7 +99,7 @@ const getProducts = async (req, res) => {
           }&sort=${sort}`)
         : (nextLink = null);
 
-      return res.sendSuccessWithPayload({
+      return res.status(200).json({
         payload: result.docs,
         totalDocs: result.totalDocs,
         prevPage: result.prevPage,
@@ -131,7 +131,7 @@ const getProducts = async (req, res) => {
         }&sort=${sort}&query=${query}`)
       : (nextLink = null);
 
-    return res.sendSuccessWithPayload({
+    return res.status(200).json({
       payload: result.docs,
       totalDocs: result.totalDocs,
       prevPage: result.prevPage,
@@ -149,11 +149,11 @@ const getProducts = async (req, res) => {
 
 const createProduct = async (req, res) => {
   try {
-    const { title, description, price, stock, category, thumbnails } = req.body;
+    const { title, desc, price, stock, category, thumbnails } = req.body;
 
     const newProduct = {
       title,
-      description,
+      desc,
       price,
       stock,
       category,
@@ -188,7 +188,7 @@ const createProduct = async (req, res) => {
 
     if (
       typeof title !== "string" ||
-      typeof description !== "string" ||
+      typeof desc !== "string" ||
       typeof price !== "number" ||
       typeof stock !== "number" ||
       typeof category !== "string" ||
@@ -257,7 +257,23 @@ const updateProduct = async (req, res) => {
     // product id
     const { id } = req.params;
     // updated properties
-    const { ...properties } = req.body;
+    const { title, desc, price, stock, category, thumbnails } = req.body;
+
+    const propertiesFromBody = {
+      title,
+      desc,
+      price,
+      stock,
+      category,
+      thumbnails,
+    };
+
+    let propertiesUpdated = {}
+    for (const key in propertiesFromBody) {
+      if(propertiesFromBody[key]){
+        propertiesUpdated[key] = propertiesFromBody[key] 
+      } 
+    }
 
     const product = await productsService.getById(id);
     if (!product) {
@@ -280,7 +296,7 @@ const updateProduct = async (req, res) => {
       });
     }
 
-    await productsService.updateById(id, properties);
+    await productsService.updateById(id, propertiesUpdated);
     const result = await productsService.getById(id);
 
     const productsToView = await productsService.getAll();

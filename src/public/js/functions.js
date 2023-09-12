@@ -14,7 +14,7 @@ const createRowOfProducts = (products) => {
 
     //Add Card information
     cardBody.innerHTML = `<h5>${element.title}</h5>
-      <p class="card-text">Description:${element.description}</p>
+      <p class="card-text">Description:${element.desc}</p>
       <p class="card-text">Price:${element.price}</p>
       <button type="button" class="btn btn-primary" id="${element._id}">Add To Cart</button>
       `;
@@ -40,7 +40,7 @@ const createViewOfProducts = (products) => {
 
     //Add Card information
     cardBody.innerHTML = `<h5>${element.title}</h5>
-      <p class="card-text">Description:${element.description}</p>
+      <p class="card-text">Description:${element.desc}</p>
       <p class="card-text">Price:${element.price}</p>
       <p class="card-text">Code:${element.code}</p>
       <p class="card-text">Stock:${element.stock}</p>

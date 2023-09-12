@@ -5,7 +5,7 @@ fetch("/api/products")
   .then((res) => res.json())
   .then((data) => {
     const products = data.payload;
-    createRowOfProducts(products.payload);
+    createRowOfProducts(products);
 
     /** Create listeners to products */
     fetch("/api/sessions/current")

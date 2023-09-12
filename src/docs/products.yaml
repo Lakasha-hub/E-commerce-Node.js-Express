@@ -1,0 +1,310 @@
+paths:
+  /api/products:
+    get:
+      summary: Return paginated products
+      tags:
+        - Products
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          description: number of documents on a page, default is 10
+          schema:
+            type: number
+        - name: page
+          in: query
+          required: false
+          description: page to be displayed, default is 1
+          schema:
+            type: number
+        - name: sort
+          in: query
+          required: false
+          description: sorting by product price, default is "asc" but can be defined as "desc"
+          schema:
+            type: string
+        - name: query
+          in: query
+          required: false
+          description: format of filter is "key:value", without default value
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Request Completed, returned the products correctly
+          content:
+            application/json:
+              schema:
+                properties:
+                  payload:
+                    type: array
+                    items:
+                      $ref: "#components/schemas/Product"
+                    description: array with products
+                  totalDocs:
+                    type: number
+                    description: represent total of documents in collection Products
+                    example: 20
+                  prevPage:
+                    type: number
+                    description: reference the previous page, if it takes as null value is because there is no previous page
+                    example: null
+                  nextPage:
+                    type: number
+                    description: reference the next page, if it takes as null value is because there is no next page
+                    example: 2
+                  page:
+                    type: number
+                    description: current page
+                    example: 1
+                  hasPrevPage:
+                    type: boolean
+                    description: is false if it does not have a previous page and true otherwise
+                    example: false
+                  hasNextPage:
+                    type: boolean
+                    description: is false if it does not have a next page and true otherwise
+                    example: true
+                  prevLink:
+                    type: string
+                    description: url of the previous page, if its value is null it is because there is no previous page
+                    example: null
+                  nextLink:
+                    type: string
+                    description: url of the next page, if its value is null it is because there is no next page
+                    example: http://localhost:8080/api/products/?limit=10&page=2&sort=asc
+        "400":
+          description: Request Error, invalid query params or invalid data type
+        "401":
+          description: Authorization Error, invalid token, role not allowed or missing token
+        "500":
+          description: Internal Error, problem with paging dependencies, with socket server or with the database
+    post:
+      summary: Create new product
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/CreateProduct"
+      responses:
+        "201":
+          description: Request Completed, successfully created product
+        "400":
+          description: Request Error, invalid data types or invalid values from request body
+        "401":
+          description: Authorization Error, invalid token, role not allowed or missing token
+        "409":
+          description: Conflict Error, product already exists
+        "500":
+          description: Internal Error, problem with uuid module, with socket server or with database
+  /api/products/{id}:
+    get:
+      summary: Return product with id sent
+      tags:
+        - Products
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: product id from database
+          schema:
+            type: string
+      responses: 
+        "200":
+          description: Request Completed, returned the product correctly
+          content:
+              application/json:
+                schema:
+                  properties:
+                    payload:
+                      type: object
+                      $ref: "#components/schemas/Product"
+                      description: product with id sent
+        "400":
+          description: Request Error, invalid product id
+        "401":
+          description: Authorization Error, invalid token, role not allowed or missing token
+        "404":
+          description: Not Found document, no product is registered with the submitted id 
+        "500":
+          description: Internal Error, problem with database
+    put:
+      summary: Return product updated with id sent
+      tags:
+        - Products
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: product id from database
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/UpdateProduct"
+      responses:
+        "200":
+          description: Request Completed, return product updated
+          content: 
+            application/json:
+              schema:
+                properties:
+                  payload:
+                    type: object
+                    $ref: "#components/schemas/Product"
+                    description: product updated with id sent
+        "400":
+          description: Request Error, invalid product id
+        "401":
+          description: Authorization Error, invalid token, role not allowed or missing token
+        "404":
+          description: Not Found, no product is registered with the submitted id
+        "500":
+          description: Internal Error, problem with socket server or with database
+    delete:
+      summary: delete product with id sent
+      tags: 
+        - Products
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: product id from database
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Request Completed, product deleted
+        "400":
+          description: Request Error, invalid product id
+        "401":
+          description: Authorization Error, invalid token, role not allowed or missing token
+        "404":
+          description: Not Found, no product is registered with the submitted id
+        "500":
+          description: Internal Error, problem with socket server or with database
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        title:
+          type: string
+          description: title or name of product
+          example: Computer New Generation 23423
+        desc:
+          type: string
+          description: specifications of product
+          example: This is the description of new computer
+        price:
+          type: number
+          description: value of product
+          example: 70.98
+        code:
+          type: string
+          description: unique identification code of product
+          example: 8460079f-4b1e-4df8-8c0b-926b505cd895
+        owner:
+          type: string
+          description: product owner id
+          example: ObjectId("64ea1ce83af4e40ea2de66a3")
+        stock:
+          type: number
+          description: product units available
+          example: 10
+        category:
+          type: string
+          description: category or class of product
+          example: Technology
+        thumbnails:
+          type: array
+          items:
+            type: string
+          definition: array with images of product
+          example: ["image1ofComputer.png", "image2ofComputer.png"]
+        status:
+          type: boolean
+          definition: product availability
+          example: true
+        _id:
+          type: string
+          description: id auto-generated by the database
+          example: ObjectId("64ea1ce83af4e40ea2de66a3")
+        created_at:
+          type: string
+          description: timestamp auto-generated by the database
+          example: 2023-07-22T20:37:54.155+00:00
+        updated_at:
+          type: string
+          description: timestamp auto-generated by the database
+          example: 2023-07-22T20:37:54.155+00:00
+        __v:
+          type: number
+          description: version auto-generated by the database
+          example: 0
+  requestBodies:
+    CreateProduct:
+      type: object
+      properties:
+        title:
+          type: string
+          description: title or name of product
+          example: Computer New Generation 23423
+        desc:
+          type: string
+          description: specifications of product
+          example: This is the description of new computer
+        price:
+          type: number
+          description: value of product
+          example: 70.98
+        stock:
+          type: number
+          description: product units available
+          example: 10
+        category:
+          type: string
+          description: category or class of product
+          example: Technology
+        thumbnails:
+          type: array
+          items:
+            type: string
+          definition: array with images of product
+          example: ["image1ofComputer.png", "image2ofComputer.png"]
+    UpdateProduct:
+      type: object
+      properties:
+        title:
+          type: string
+          description: title or name of product
+          example: Computer New Generation 23423
+        desc:
+          type: string
+          description: specifications of product
+          example: This is the description of new computer
+        price:
+          type: number
+          description: value of product
+          example: 70.98
+        stock:
+          type: number
+          description: product units available
+          example: 10
+        category:
+          type: string
+          description: category or class of product
+          example: Technology
+        thumbnails:
+          type: array
+          items:
+            type: string
+          definition: array with images of product
+          example: ["image1ofComputer.png", "image2ofComputer.png"]
