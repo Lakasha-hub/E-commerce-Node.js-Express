@@ -168,7 +168,7 @@ paths:
         "500":
           description: Internal Error, problem with socket server or with database
     delete:
-      summary: delete product with id sent
+      summary: Delete product with id sent
       tags: 
         - Products
       parameters:

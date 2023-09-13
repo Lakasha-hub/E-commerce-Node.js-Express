@@ -1,0 +1,364 @@
+paths:
+  /api/carts:
+    get:
+      summary: Return carts
+      tags:
+        - Carts
+      responses:
+        "200":
+          description: Request Completed, return all carts in database
+          content: 
+            application/json:
+              schema:
+                properties:
+                  payload:
+                    type: array
+                    items:
+                      $ref: "#components/schemas/Cart"
+                    description: array with all carts
+        "401":
+          description: Authorization Error, invalid token, role not allowed or missing token
+        "500": 
+          description: Internal Error, problem with database
+    post:
+      summary: Create new cart
+      tags:
+        - Carts
+      responses:
+        "200":
+          description: Request Completed, Cart created succesfully
+          content: 
+            application/json:
+              schema:
+                properties:
+                  payload:
+                    type: object
+                    $ref: "#components/schemas/Cart"
+                    description: body of new cart
+        "401":
+          description: Authorization Error, invalid token, role not allowed or missing token
+        "500": 
+          description: Internal Error, problem with database
+  /api/carts/{id}:
+    get:
+      summary: Return one cart with id sent
+      tags:
+        - Carts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: cart id from database
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Request Completed, return product with submitted id
+          content:
+            application/json:
+              schema:
+                properties:
+                  payload:
+                    type: object
+                    $ref: "#components/schemas/Cart"
+                    description: body of cart
+        "400":
+          description: Request Error, invalid cart id
+        "401":
+          description: Authorization Error, invalid token, role not allowed or missing token
+        "404":
+          description: Not Found, no cart is registered with the submitted id
+        "500":
+          description: Internal Error, problem with database
+    put:
+      summary: Update product quantity set
+      tags: 
+        - Carts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: cart id from database
+          schema: 
+            type: string
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+              properties:
+                products:
+                  type: array
+                  items:
+                    $ref: "#components/requestBodies/UpdateProductInCart"          
+      responses:
+        "200":
+          description: Request Completed, products of cart updated
+        "400":
+          description: Request Error, invalid cart or product id, invalid type or invalid values of params
+        "401":
+          description: Authorization Error, invalid token, role not allowed or missing token
+        "404":
+          description: Not Found, no cart or product with the delivered ids exists
+        "409":
+          description: Conflict Error, insufficient stock of product in database 
+        "500":
+          description: Internal Error, problem with database
+    delete:
+      summary: Clear cart
+      tags:
+        - Carts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: cart id from database
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Request Completed, Cart with id sent is empty
+        "400":
+          description: Request Error, invalid cart id
+        "401":
+          description: Authorization Error, invalid token, role not allowed or missing token
+        "404":
+          description: Not Found, no cart is registered with the submitted id 
+        "409":
+          description: Conflict Error, cart is already empty 
+        "500":
+          description: Internal Error, problem with database
+  /api/carts/{id}/products/{pid}:
+    post:
+      summary: Add product in cart
+      tags: 
+        - Carts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: cart id from database
+          schema:
+            type: string
+        - name: pid
+          in: path
+          required: true
+          description: product id from database
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/AddProductInCart"
+      responses:
+        "200":
+          description: Request Completed, product added in cart
+          content: 
+            application/json:
+              schema:
+                properties:
+                  payload:
+                    $ref: "#components/schemas/Cart"
+                    description: cart body
+        "400":
+          description: Request Error, invalid cart or product id, invalid type or invalid value of quantity, unauthorized owner
+        "401":
+          description: Authorization Error, invalid token, role not allowed or missing token
+        "404":
+          description: Not Found, no cart or product with the delivered ids exists
+        "500":
+          description: Internal Error, problem with database
+    put:
+      summary: Update quantity of product by one
+      tags: 
+        - Carts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: cart id from database
+          schema:
+            type: string
+        - name: pid
+          in: path
+          required: true
+          description: product id from database
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/UpdateProductInCartByOne"
+      responses:
+        "200":
+          description: Request Completed, product in cart updated
+        "400":
+          description: Request Error, invalid cart or product id, invalid type or invalid value of quantity
+        "401":
+          description: Authorization Error, invalid token, role not allowed or missing token
+        "404":
+          description: Not Found, no cart or product with the delivered ids exists
+        "409":
+          description: Conflict Error, insufficient stock of product in database 
+        "500":
+          description: Internal Error, problem with database
+    delete:
+      summary: Delete product in cart
+      tags: 
+        - Carts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: cart id from database
+          schema:
+            type: string
+        - name: pid
+          in: path
+          required: true
+          description: product id from database
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Request Completed, product deleted of cart
+        "400":
+          description: Request Error, invalid cart or product id
+        "401":
+          description: Authorization Error, invalid token, role not allowed or missing token
+        "404":
+          description: Not Found, no cart or product with the delivered ids exists
+        "500":
+          description: Internal Error, problem with database
+  /api/carts/{id}/purchase:
+    post:
+      summary: Complete purchase with products in cart
+      tags: 
+        - Carts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: cart id from database
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Request Completed, purchase completed
+          content: 
+            application/json:
+              schema:
+                properties:
+                  payload:
+                    type: object
+                    $ref: "#components/schemas/Ticket"
+                    description: Ticket summary
+        "400":
+          description: Request Error, invalid cart id 
+        "401":
+          description: Authorization Error, invalid token, role not allowed or missing token
+        "404":
+          description: Not Found, no cart with the delivered id exists
+        "409":
+          description: Conflict Error, insufficient stock of product in database
+        "500":
+          description: Internal Error, problem with uuid module or with database
+ 
+
+components: 
+  schemas:
+    Cart:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              quantity:
+                type: number
+                description: quantity of product in cart
+              product:
+                $ref: "#components/schemas/Product"
+          description: array with products, default value is []
+        _id:
+          type: string
+          description: id auto-generated by the database
+          example: ObjectId("64ea1ce83af4e40ea2de66a3")
+        created_at:
+          type: string
+          description: timestamp auto-generated by the database
+          example: 2023-07-22T20:37:54.155+00:00
+        updated_at:
+          type: string
+          description: timestamp auto-generated by the database
+          example: 2023-07-22T20:37:54.155+00:00
+        __v:
+          type: number
+          description: version auto-generated by the database
+          example: 0
+    Ticket:
+      type: object
+      properties:
+        code:
+          type: string
+          description: unique code of purchase
+          example: 8460079f-4b1e-4df8-8c0b-926b505cd895
+        amount: 
+          type: number
+          description: total amount of purchase
+          example: 499.99
+        purchaser:
+          type: string
+          description: purchaser id from database
+          example: ObjectId("64ea1ce83af4e40ea2de66a3")
+        purchase_datetime:
+          type: string
+          description: purchase date auto-generated by the database
+          example: 2023-07-22T20:37:54.155+00:00
+        updated_at:
+          type: string
+          description: timestamp auto-generated by the database
+          example: 2023-07-22T20:37:54.155+00:00
+        _id:
+          type: string
+          description: id auto-generated by the database
+          example: ObjectId("64ea1ce83af4e40ea2de66a3")
+        __v:
+          type: number
+          description: version auto-generated by the database
+          example: 0
+  requestBodies:
+    AddProductInCart:
+      type: object
+      properties:
+        quantity:
+          type: number
+          description: quantity of product to be added
+          example: 4
+    UpdateProductInCart:
+      type: object
+      properties:
+        quantity:
+          type: number
+          description: quantity of product to be updated
+          example: 10
+        product:
+          type: string
+          description: product id from database
+          example: 64ea1ce83af4e40ea2de66a3
+    UpdateProductInCartByOne:
+      type: object
+      properties:
+        quantity:
+          type: number
+          description: quantity of product to be updated
+          example: 10
+        operation:
+          type: string
+          description: operation for quantity, can be "rest" or "sum", default is "sum"
+          example: "sum"  

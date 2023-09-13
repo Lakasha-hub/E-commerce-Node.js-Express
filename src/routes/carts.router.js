@@ -27,20 +27,18 @@ export default class CartsRouter extends BaseRouter {
       getCartById
     );
 
-    this.delete(
-      "/:id",
-      ["USER_ROLE", "PREMIUM_ROLE", "ADMIN_ROLE"],
-      verifyMongoID,
-      clearCart
-    );
-
-    this.post("/:id/purchase", ["USER_ROLE", "PREMIUM_ROLE"], purchase);
-
     this.put(
       "/:id",
       ["USER_ROLE", "PREMIUM_ROLE"],
       verifyMongoID,
       updateProducts
+    );
+
+    this.delete(
+      "/:id",
+      ["USER_ROLE", "PREMIUM_ROLE", "ADMIN_ROLE"],
+      verifyMongoID,
+      clearCart
     );
 
     this.post(
@@ -63,5 +61,7 @@ export default class CartsRouter extends BaseRouter {
       verifyMongoID,
       deleteProduct
     );
+
+    this.post("/:id/purchase", ["USER_ROLE", "PREMIUM_ROLE"], purchase);
   }
 }
