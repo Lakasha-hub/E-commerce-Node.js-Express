@@ -73,6 +73,13 @@ const getCart = (req, res) => {
   });
 };
 
+const getPurchases = (req, res) => {
+  res.render("purchases", {
+    title: "Purchases",
+    user: req.user,
+  });
+};
+
 export {
   getHome,
   getRealTimeProducts,
@@ -84,4 +91,5 @@ export {
   getRetoreRequest,
   getRestorePassword,
   getCart,
+  getPurchases,
 };

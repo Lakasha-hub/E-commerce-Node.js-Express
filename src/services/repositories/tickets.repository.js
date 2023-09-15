@@ -7,6 +7,10 @@ export default class TicketRepository {
     return this.dao.getTicketBy(filter);
   };
 
+  getAllBy = filter => {
+    return this.dao.getTicketsBy(filter)
+  }
+
   getById = (id) => {
     return this.dao.getTicketById(id);
   };

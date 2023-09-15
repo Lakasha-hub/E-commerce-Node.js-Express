@@ -5,6 +5,10 @@ export default class TicketManager {
     return ticketModel.findOne(filter);
   };
 
+  getTicketsBy = (filter) => {
+    return ticketModel.find(filter).lean();
+  };
+
   getTicketById = (id) => {
     return ticketModel.findById(id).lean();
   };

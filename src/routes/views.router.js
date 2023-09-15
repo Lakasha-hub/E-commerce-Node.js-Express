@@ -11,6 +11,7 @@ import {
   getRegister,
   getRestorePassword,
   getRetoreRequest,
+  getPurchases,
 } from "../controllers/views.controller.js";
 
 export default class ViewsRouter extends BaseRouter {
@@ -39,6 +40,12 @@ export default class ViewsRouter extends BaseRouter {
       "/profile",
       ["USER_ROLE", "PREMIUM_ROLE", "ADMIN_ROLE"],
       getProfile
+    );
+
+    this.get(
+      "/purchases",
+      ["USER_ROLE", "PREMIUM_ROLE", "ADMIN_ROLE"],
+      getPurchases
     );
 
     this.get("/restoreRequest", ["PUBLIC"], getRetoreRequest);
