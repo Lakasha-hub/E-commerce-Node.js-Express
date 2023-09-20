@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-import { options } from "../config/server.config.js";
+import { serverOptions } from "../config/server.config.js";
 import environmentOptions from "../constants/server/environment.options.js";
 
-const persistence = options.dao;
+const persistence = serverOptions.dao;
 console.log(`Persistence in use: ${persistence}`);
 
 export default class PersistenceFactory {
@@ -15,7 +15,13 @@ export default class PersistenceFactory {
 
     switch (persistence) {
       case "MONGO":
-        mongoose.connect(environmentOptions.mongo.URL_CONNECTION);
+        
+        let urlConnection;
+        serverOptions.env === "prod"
+          ? (urlConnection = environmentOptions.mongo.URL_CONNECTION)
+          : (urlConnection = environmentOptions.mongo.URL_CONNECTION_TEST);
+
+        mongoose.connect(urlConnection);
         const { default: UsersManager } = await import(
           "./mongo/manager/users.manager.js"
         );

@@ -5,9 +5,9 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./src/app.js --env prod",
-    "dev": "nodemon ./src/app.js"
+    "dev": "nodemon ./src/app.js",
+    "test": "mocha test/integration.test.js --timeout 15000"
   },
   "keywords": [],
   "author": "",
@@ -33,7 +33,10 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^8.0.2",
+    "chai": "^4.3.8",
+    "mocha": "^10.2.0",
     "nodemon": "^3.0.1",
+    "supertest": "^6.3.3",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0"
   }

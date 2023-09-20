@@ -6,4 +6,4 @@ const program = new Command();
 program.option("-d, --dao", "Data Access Object", "MONGO");
 program.option("-e, --env", "Environment", "dev");
 
-export const options = program.opts();
+export const serverOptions = program.opts();

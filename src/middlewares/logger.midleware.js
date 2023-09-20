@@ -1,7 +1,7 @@
 import LoggerService from "../services/logger.service.js";
-import { options } from "../config/server.config.js";
+import { serverOptions } from "../config/server.config.js";
 
-const enviroment = options.env;
+const enviroment = serverOptions.env;
 console.log(`Environment in use: ${enviroment}`);
 
 export const attachLoggers = (req, res, next) => {

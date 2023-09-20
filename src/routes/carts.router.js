@@ -29,7 +29,7 @@ export default class CartsRouter extends BaseRouter {
 
     this.put(
       "/:id",
-      ["USER_ROLE", "PREMIUM_ROLE"],
+      ["USER_ROLE", "PREMIUM_ROLE", "ADMIN_ROLE"],
       verifyMongoID,
       updateProducts
     );
@@ -43,14 +43,14 @@ export default class CartsRouter extends BaseRouter {
 
     this.post(
       "/:id/products/:pid",
-      ["USER_ROLE", "PREMIUM_ROLE"],
+      ["USER_ROLE", "PREMIUM_ROLE", "ADMIN_ROLE"],
       verifyMongoID,
       addProduct
     );
 
     this.put(
       "/:id/products/:pid",
-      ["USER_ROLE", "PREMIUM_ROLE"],
+      ["USER_ROLE", "PREMIUM_ROLE", "ADMIN_ROLE"],
       verifyMongoID,
       updateQuantityOfProduct
     );
@@ -62,6 +62,10 @@ export default class CartsRouter extends BaseRouter {
       deleteProduct
     );
 
-    this.post("/:id/purchase", ["USER_ROLE", "PREMIUM_ROLE"], purchase);
+    this.post(
+      "/:id/purchase",
+      ["USER_ROLE", "PREMIUM_ROLE", "ADMIN_ROLE"],
+      purchase
+    );
   }
 }

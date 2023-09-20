@@ -6,6 +6,7 @@ export default {
   },
   mongo: {
     URL_CONNECTION: process.env.DB_CONNECTION,
+    URL_CONNECTION_TEST: process.env.DB_CONNECTION_TEST,
   },
   jwt: {
     TOKEN_NAME: process.env.JWT_TOKEN_NAME,
