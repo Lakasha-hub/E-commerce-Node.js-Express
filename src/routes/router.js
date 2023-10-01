@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { passportCall } from "../services/auth.service.js";
+import { attachLoggers } from "../middlewares/logger.midleware.js";
 
 export default class BaseRouter {
   constructor() {
@@ -16,6 +17,7 @@ export default class BaseRouter {
   get(path, policies, ...callbacks) {
     this.router.get(
       path,
+      attachLoggers,
       passportCall("jwt", { strategyType: "jwt" }),
       this.customResponses,
       this.handlePolicies(policies),
@@ -26,6 +28,7 @@ export default class BaseRouter {
   post(path, policies, ...callbacks) {
     this.router.post(
       path,
+      attachLoggers,
       passportCall("jwt", { strategyType: "jwt" }),
       this.customResponses,
       this.handlePolicies(policies),
@@ -36,6 +39,7 @@ export default class BaseRouter {
   put(path, policies, ...callbacks) {
     this.router.put(
       path,
+      attachLoggers,
       passportCall("jwt", { strategyType: "jwt" }),
       this.customResponses,
       this.handlePolicies(policies),
@@ -46,6 +50,7 @@ export default class BaseRouter {
   delete(path, policies, ...callbacks) {
     this.router.delete(
       path,
+      attachLoggers,
       passportCall("jwt", { strategyType: "jwt" }),
       this.customResponses,
       this.handlePolicies(policies),

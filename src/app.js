@@ -7,7 +7,6 @@ import swaggerUiExpress from "swagger-ui-express";
 
 import initializePassportStrategies from "./config/passport.config.js";
 import swaggerConfig from "./config/docs.config.js";
-import { attachLoggers } from "./middlewares/logger.midleware.js";
 import environmentOptions from "./constants/server/environment.options.js";
 import { __dirname } from "./utils.js";
 
@@ -51,13 +50,9 @@ app.use(Express.static(`${__dirname}/public`));
 //Set cookie parser
 app.use(cookieParser());
 
-//Add logger service
-app.use(attachLoggers);
-
 //Middleware to add socket.io
 app.use((req, res, next) => {
   req.io = io;
-  req.logger.info("Socket connected");
   next();
 });
 
