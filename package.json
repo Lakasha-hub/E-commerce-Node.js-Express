@@ -4,6 +4,9 @@
   "description": "E-commerce with NodeJS - Express - MongoDB",
   "main": "app.js",
   "type": "module",
+  "engines": {
+    "node": ">=14 <17"
+  },
   "scripts": {
     "start": "node ./src/app.js --env prod",
     "dev": "nodemon ./src/app.js",
