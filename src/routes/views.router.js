@@ -12,6 +12,7 @@ import {
   getRestorePassword,
   getRetoreRequest,
   getPurchases,
+  getPanelControl,
 } from "../controllers/views.controller.js";
 
 export default class ViewsRouter extends BaseRouter {
@@ -51,6 +52,8 @@ export default class ViewsRouter extends BaseRouter {
     this.get("/restoreRequest", ["PUBLIC"], getRetoreRequest);
 
     this.get("/restorePassword", ["NO_AUTH"], getRestorePassword);
+
+    this.get("/panelControl", ["ADMIN_ROLE"], getPanelControl);
 
     this.get("/cart/:id", ["USER_ROLE", "ADMIN_ROLE"], getCart);
   }

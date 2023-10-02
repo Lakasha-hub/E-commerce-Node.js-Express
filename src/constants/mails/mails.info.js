@@ -31,4 +31,34 @@ export default {
       },
     ],
   },
+  deletedAccount: {
+    subject: "Account deleted",
+    attachments: [
+      {
+        filename: "logo.png",
+        path: `${__dirname}/public/img/ninja-programming.png`,
+        cid: "logo",
+      },
+    ],
+  },
+  expiredAccount: {
+    subject: "Account expired",
+    attachments: [
+      {
+        filename: "logo.png",
+        path: `${__dirname}/public/img/ninja-programming.png`,
+        cid: "logo",
+      },
+    ],
+  },
+  deletedProduct: {
+    subject: "Product deleted",
+    attachments: [
+      {
+        filename: "logo.png",
+        path: `${__dirname}/public/img/ninja-programming.png`,
+        cid: "logo",
+      },
+    ],
+  },
 };

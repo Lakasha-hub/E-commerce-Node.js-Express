@@ -22,7 +22,7 @@ const userRegister = async (req, res) => {
   try {
     const user = UserMailing.getFrom(req.user);
     const mailingService = new MailingService();
-    await mailingService.sendMail(user.email, mailsTemplates.WELCOME, user );
+    await mailingService.sendMail(user.email, mailsTemplates.WELCOME, user);
     return res.sendCreated("User successfully created");
   } catch (error) {
     res.sendInternalError(error);
@@ -30,6 +30,12 @@ const userRegister = async (req, res) => {
 };
 
 const userLogin = async (req, res) => {
+  if (req.user.role == "USER_ROLE" || req.user.role == "PREMIUM_ROLE") {
+    //Update last_connection
+    await usersService.updateById(req.user._id, {
+      last_connection: new Date().toISOString(),
+    });
+  }
   //Send token with user information
   const user = UserToken.getFrom(req.user);
   const accessToken = generateToken(user);
@@ -43,6 +49,10 @@ const userLogin = async (req, res) => {
 };
 
 const userLoginGithub = async (req, res) => {
+  //Update last_connection
+  await usersService.updateById(req.user._id, {
+    last_connection: new Date().toISOString(),
+  });
   //Send token with Github User information
   const user = UserToken.getFrom(req.user);
   const accessToken = generateToken(user);

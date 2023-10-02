@@ -33,6 +33,10 @@ const userSchema = new mongoose.Schema(
       enum: ["USER_ROLE", "PREMIUM_ROLE", "ADMIN_ROLE"],
       default: "USER_ROLE",
     },
+    last_connection: {
+      type: Date,
+      default: new Date().toISOString()
+    }
   },
   { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } }
 );

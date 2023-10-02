@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from "uuid";
 import { isValidObjectId } from "mongoose";
 
 import {
@@ -13,6 +12,7 @@ import { ErrorManager } from "../constants/errors/index.js";
 import MailingService from "../services/mailing.service.js";
 import TicketMailing from "../dtos/ticket/ticket.mailing.js";
 import mailsTemplates from "../constants/mails/mails.templates.js";
+import { generateRandomString } from "../utils.js";
 
 const getCarts = async (req, res) => {
   const carts = await cartsService.getAll();
@@ -213,7 +213,7 @@ const purchase = async (req, res) => {
     let code;
     let codeExists;
     do {
-      code = uuidv4();
+      code = generateRandomString(10);
       codeExists = await ticketsService.getBy({ code });
     } while (codeExists);
 

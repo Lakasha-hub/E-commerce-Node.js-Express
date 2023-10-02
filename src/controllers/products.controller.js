@@ -1,11 +1,17 @@
-import { v4 as uuidv4 } from "uuid";
 import { isValidObjectId } from "mongoose";
 
-import { productsService } from "../services/repositories/index.js";
+import {
+  productsService,
+  usersService,
+} from "../services/repositories/index.js";
+import MailingService from "../services/mailing.service.js";
+import mailsTemplates from "../constants/mails/mails.templates.js";
 
 import environmentOptions from "../constants/server/environment.options.js";
 import { ErrorManager } from "../constants/errors/index.js";
 import ErrorService from "../services/error.service.js";
+import ProductMailing from "../dtos/product/product..mailing.js";
+import { generateRandomString } from "../utils.js";
 
 const PORT = environmentOptions.app.PORT;
 
@@ -217,7 +223,7 @@ const createProduct = async (req, res) => {
     let code;
     let codeExists;
     do {
-      code = uuidv4();
+      code = generateRandomString(10);
       codeExists = await productsService.getBy({ code });
     } while (codeExists);
 
@@ -268,11 +274,11 @@ const updateProduct = async (req, res) => {
       thumbnails,
     };
 
-    let propertiesUpdated = {}
+    let propertiesUpdated = {};
     for (const key in propertiesFromBody) {
-      if(propertiesFromBody[key]){
-        propertiesUpdated[key] = propertiesFromBody[key] 
-      } 
+      if (propertiesFromBody[key]) {
+        propertiesUpdated[key] = propertiesFromBody[key];
+      }
     }
 
     const product = await productsService.getById(id);
@@ -335,6 +341,18 @@ const deleteProduct = async (req, res) => {
     }
 
     await productsService.deleteById(id);
+    if (product.owner !== "admin") {
+      const owner = await usersService.getBy({ _id: product.owner });
+      //Send an email to advice user
+      const mailingService = new MailingService();
+      const productMailing = ProductMailing.getFrom(product);
+      await mailingService.sendMail(
+        owner.email,
+        mailsTemplates.DELETED_PRODUCT,
+        { product: productMailing }
+      );
+    }
+
     const productsToView = await productsService.getAll();
     req.io.emit("GetProductsUpdated", productsToView);
 

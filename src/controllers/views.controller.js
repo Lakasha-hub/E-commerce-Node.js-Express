@@ -80,6 +80,12 @@ const getPurchases = (req, res) => {
   });
 };
 
+const getPanelControl = (req, res) => {
+  res.render("panelControl", {
+    title: "Panel Control",
+  });
+};
+
 export {
   getHome,
   getRealTimeProducts,
@@ -92,4 +98,5 @@ export {
   getRestorePassword,
   getCart,
   getPurchases,
+  getPanelControl,
 };

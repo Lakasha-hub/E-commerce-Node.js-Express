@@ -184,7 +184,7 @@ const updateProducts = () => {
 
 const chargeProducts = (cartId) => {
   const products = JSON.parse(localStorage.getItem("p"));
-    let filteredProducts = [];
+  let filteredProducts = [];
   products.forEach((product) => {
     const productId = product.id;
     const quantityProduct = product.quantity;
@@ -397,6 +397,105 @@ const clearCookie = (cookieName) => {
   document.cookie = `${cookieName}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
 };
 
+const createRowOfUsers = (users) => {
+  //Father Element
+  const rowBody = document.querySelector(".row.row-cols-1.row-cols-md-4.g-4");
+
+  //For Each User => create Card
+  users.forEach((element) => {
+    const column = document.createElement("div");
+    column.classList.add("col");
+    const card = document.createElement("div");
+    card.classList.add("card");
+    card.classList.add("h-100");
+    const cardBody = document.createElement("div");
+    cardBody.classList.add("card-body");
+
+    //Add Card information
+    cardBody.innerHTML = `<h5>${element.name}</h5>
+      <p class="card-text">role: ${element.role}</p>
+      <p class="card-text">email: ${element.email}</p>
+      <button type="button" class="btn btn-primary" id="${element.id}">Change role</button>
+      <button type="button" class="btn btn-danger" id="${element.id}">Delete</button>
+      `;
+    card.appendChild(cardBody);
+    column.appendChild(card);
+    rowBody.appendChild(column);
+  });
+};
+
+const changeRoleToButton = () => {
+  const btns_changeRole = document.querySelectorAll(".btn-primary");
+  btns_changeRole.forEach((element) => {
+    element.addEventListener("click", () => {
+      return Swal.fire({
+        title: "Are you sure you want to change the user role?",
+        confirmButtonColor: "#B40404",
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const userId = element.id;
+          fetch(`/api/users/premium/${userId}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+            .then((response) => {
+              response.json();
+            })
+            .then((data) => {
+              location.reload();
+            })
+            .catch((error) => {
+              Swal.fire({
+                title: error.message,
+                showCancelButton: true,
+                showConfirmButton: false,
+              });
+              console.log(error);
+            });
+        }
+      });
+    });
+  });
+};
+const deleteUserToButton = () => {
+  const btns_delete = document.querySelectorAll(".btn-danger");
+  btns_delete.forEach((element) => {
+    element.addEventListener("click", () => {
+      return Swal.fire({
+        title: "Are you sure you want to delete this user?",
+        confirmButtonColor: "#B40404",
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const userId = element.id;
+          fetch(`/api/users/${userId}`, {
+            method: "DELETE",
+          })
+            .then((response) => {
+              response.json();
+            })
+            .then((data) => {
+              location.reload();
+            })
+            .catch((error) => {
+              Swal.fire({
+                title: error.message,
+                showCancelButton: true,
+                showConfirmButton: false,
+              });
+              console.log(error);
+            });
+        }
+      });
+    });
+  });
+};
+
 export {
   createRowOfProducts,
   createViewOfProducts,
@@ -412,4 +511,7 @@ export {
   purchase,
   clearCookie,
   chargeProducts,
+  createRowOfUsers,
+  changeRoleToButton,
+  deleteUserToButton,
 };

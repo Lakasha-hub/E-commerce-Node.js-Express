@@ -22,5 +22,15 @@ export const generateMailTemplate = async (template, payload) => {
   return compiledContent;
 };
 
+export const generateRandomString = (length) => {
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let string = "";
+  for (let i = 0; i < length; i++) {
+    string += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return string;
+};
+
 const __filename = fileURLToPath(import.meta.url);
 export const __dirname = dirname(__filename);

@@ -19,7 +19,7 @@ export default class PersistenceFactory {
         let urlConnection;
         serverOptions.env === "prod"
           ? (urlConnection = environmentOptions.mongo.URL_CONNECTION)
-          : (urlConnection = environmentOptions.mongo.URL_CONNECTION_TEST);
+          : (urlConnection = environmentOptions.mongo.URL_CONNECTION);
 
         mongoose.connect(urlConnection);
         const { default: UsersManager } = await import(
