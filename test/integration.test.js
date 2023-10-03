@@ -11,7 +11,7 @@ import ProductManager from "../src/dao/mongo/manager/products.manager.js";
 import CartManager from "../src/dao/mongo/manager/carts.manager.js";
 import UsersManager from "../src/dao/mongo/manager/users.manager.js";
 
-const requester = supertest("http://localhost:8080");
+const requester = supertest(environmentOptions.app.BASE_URL);
 mongoose.connect(environmentOptions.mongo.URL_CONNECTION_TEST);
 
 describe("Integration Test of main routers", function () {

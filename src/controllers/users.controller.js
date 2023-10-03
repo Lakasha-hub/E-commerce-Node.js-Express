@@ -7,6 +7,7 @@ import UserGet from "../dtos/user/user.get.js";
 
 import ErrorService from "../services/error.service.js";
 import { ErrorManager } from "../constants/errors/index.js";
+import environmentOptions from "../constants/server/environment.options.js";
 
 const getUsers = async (req, res) => {
   try {
@@ -31,8 +32,11 @@ const deleteUsers = async (req, res) => {
     await usersService.bulkDelete(users);
 
     //Send an email to advice users
+    const url = environmentOptions.app.BASE_URL;
     const mailingService = new MailingService();
-    await mailingService.sendMail(emails, mailsTemplates.EXPIRED_ACCOUNT);
+    await mailingService.sendMail(emails, mailsTemplates.EXPIRED_ACCOUNT, {
+      url,
+    });
 
     res.sendSuccess("Users deleted");
   } catch (error) {
@@ -59,8 +63,11 @@ const deleteOneUser = async (req, res) => {
     await usersService.deleteById(id);
 
     //Send an email to advice user
+    const url = environmentOptions.app.BASE_URL;
     const mailingService = new MailingService();
-    await mailingService.sendMail(user.email, mailsTemplates.DELETED_ACCOUNT);
+    await mailingService.sendMail(user.email, mailsTemplates.DELETED_ACCOUNT, {
+      url,
+    });
 
     res.sendSuccess("User deleted");
   } catch (error) {

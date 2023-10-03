@@ -97,9 +97,11 @@ const userRestoreRequest = async (req, res) => {
 
     const userToken = UserRestorePassword.getFrom(user);
     const restoreToken = generateToken({ user: userToken }, "1h");
+    const url = environmentOptions.app.BASE_URL;
     const mailingService = new MailingService();
     await mailingService.sendMail(email, mailsTemplates.RESTORE, {
       restoreToken,
+      url,
     });
 
     return res.sendSuccess(`Mail sent to: ${email}`);

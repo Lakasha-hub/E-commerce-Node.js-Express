@@ -26,8 +26,9 @@ const app = Express();
 
 //Initialize Server Express
 const PORT = environmentOptions.app.PORT;
+const BASE_URL = environmentOptions.app.BASE_URL;
 const server = app.listen(PORT, () => {
-  console.log(`Server running on: http://localhost:${PORT}`);
+  console.log(`Server running on: ${BASE_URL}`);
 });
 
 //Connect Server to io (Server Socket)

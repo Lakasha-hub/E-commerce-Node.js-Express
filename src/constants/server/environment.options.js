@@ -1,6 +1,8 @@
 export default {
   app: {
     PORT: process.env.PORT || 8080,
+    BASE_URL:
+      process.env.BASE_URL || `http://localhost:${process.env.PORT || 8080}`,
     ADMIN_EMAIL: process.env.ADMIN_EMAIL,
     ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
   },

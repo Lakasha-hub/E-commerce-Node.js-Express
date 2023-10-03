@@ -83,7 +83,7 @@ const getProducts = async (req, res) => {
       sort = "asc";
     }
 
-    const baseUrl = `http://localhost:${PORT}/api/products/`;
+    const baseUrl = `${environmentOptions.app.BASE_URL}/api/products/`;
     let prevLink;
     let nextLink;
 

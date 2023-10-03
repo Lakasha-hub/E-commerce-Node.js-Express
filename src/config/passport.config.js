@@ -148,7 +148,7 @@ const initializePassportStrategies = () => {
       {
         clientID: environmentOptions.github.CLIENT_ID,
         clientSecret: environmentOptions.github.CLIENT_SECRET,
-        callbackURL: `http://localhost:${environmentOptions.app.PORT}/api/sessions/githubcallback`,
+        callbackURL: `${environmentOptions.app.BASE_URL}/api/sessions/githubcallback`,
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
