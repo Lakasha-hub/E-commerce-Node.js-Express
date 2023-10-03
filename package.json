@@ -8,8 +8,8 @@
     "node": ">=14 <17"
   },
   "scripts": {
-    "start": "node ./src/app.js --env prod",
-    "dev": "nodemon ./src/app.js",
+    "start": "node ./src/app.js -e prod",
+    "dev": "nodemon ./src/app.js -e dev",
     "test": "mocha test/integration.test.js --timeout 15000"
   },
   "keywords": [],
