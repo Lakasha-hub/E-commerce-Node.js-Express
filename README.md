@@ -1,3 +1,5 @@
+## 🛍️ E-commerce API (Node.js + MongoDB)
+
 🚀 API REST para plataforma de e-commerce desarrollada como proyecto de aprendizaje. Incluye:
 
 - **CRUD completo** de productos, usuarios y carritos
