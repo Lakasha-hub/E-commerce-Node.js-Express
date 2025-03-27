@@ -1,4 +1,4 @@
-API REST para plataforma de e-commerce desarrollada como proyecto de aprendizaje. Incluye:
+🚀 API REST para plataforma de e-commerce desarrollada como proyecto de aprendizaje. Incluye:
 
 - **CRUD completo** de productos, usuarios y carritos
 - **Autenticación JWT** para seguridad
